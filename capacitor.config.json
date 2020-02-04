@@ -1,0 +1,8 @@
+{
+  "appId": "io.runningdinner.starter",
+  "appName": "runningdinner",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "cordova": {}
+}
