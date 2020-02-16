@@ -9,25 +9,6 @@ const routes: Routes = [
     component: PlacesPage,
     children: [
       {
-        path: 'offers', // elenco chat
-        children: [
-          {
-            path: '', // elenco chat
-            loadChildren: './offers/offers.module#OffersPageModule'
-          },
-          {
-            path: 'new', // apro chat attuale
-            loadChildren:
-            './offers/new-offer/new-offer.module#NewOfferPageModule'
-          },
-          {
-            path: ':placeId', // apro chat chiusa
-            loadChildren:
-            './offers/offer-bookings/offer-bookings.module#OfferBookingsPageModule'
-          }
-        ]
-      },
-      {
         path: 'profile',
         children: [
           {
@@ -37,21 +18,54 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'chat',
+        children: [
+          {
+            path: '',
+            loadChildren: './chat/chat.module#ChatPageModule'
+          }
+        ]
+      },
+      {
         path: 'rooms',
         children: [
           {
             path: '',
             loadChildren: './rooms/rooms.module#RoomsPageModule'
+          },
+        {
+          path: 'createRoom', // apro chat attuale
+          loadChildren:
+          './rooms/create-room/create-room.module#CreateRoomPageModule'
+        }
+        ]
+      },
+      {
+        path: 'contacts',
+        children: [
+          {
+            path: '',
+            loadChildren: './contacts/contacts.module#ContactsPageModule'
           }
         ]
       }
     ]
   },
   {
-    path: '',
-    redirectTo: '/places/tabs/offers',
-    pathMatch: 'full'
+    path: 'create-room',
+    loadChildren: () => import('./rooms/create-room/create-room.module').then( m => m.CreateRoomPageModule)
+  },
+  {
+    path: 'chat',
+    loadChildren: () => import('./chat/chat.module').then( m => m.ChatPageModule)
+  },
+  {
+    path: 'contacts',
+    loadChildren: () => import('./contacts/contacts.module').then( m => m.ContactsPageModule)
   }
+
+
+
 ];
 
 @NgModule({
