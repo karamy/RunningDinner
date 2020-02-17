@@ -7,12 +7,12 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="padding">
-  <ion-slides pager="true">
-    <ion-slide>
+<ion-content >
+  <ion-slides pager="true" [options]="slideOpts" style="height:100%;">
+    <ion-slide style="Background:red;">
       <h1>Slide 1</h1>
     </ion-slide>
-    <ion-slide>
+    <ion-slide style="Background:green;">
       <h1>Slide 2</h1>
     </ion-slide>
   </ion-slides>
