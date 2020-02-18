@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1582058222760,
+  "timestamp": 1582058365131,
   "index": "https://karamy.github.io/RunningDinner/index.html",
   "assetGroups": [
     {
@@ -96,8 +96,8 @@
         "https://karamy.github.io/RunningDinner/48-es5.975417ee61bbdd76eae9.js",
         "https://karamy.github.io/RunningDinner/49-es2015.7a2438260723aa90a128.js",
         "https://karamy.github.io/RunningDinner/49-es5.7a2438260723aa90a128.js",
-        "https://karamy.github.io/RunningDinner/5-es2015.fd69273ee3047a5d82b9.js",
-        "https://karamy.github.io/RunningDinner/5-es5.fd69273ee3047a5d82b9.js",
+        "https://karamy.github.io/RunningDinner/5-es2015.7b6a92ecf559a279a07e.js",
+        "https://karamy.github.io/RunningDinner/5-es5.7b6a92ecf559a279a07e.js",
         "https://karamy.github.io/RunningDinner/50-es2015.a1577c83d230de40220e.js",
         "https://karamy.github.io/RunningDinner/50-es5.a1577c83d230de40220e.js",
         "https://karamy.github.io/RunningDinner/51-es2015.2e70cb6f08447f24a615.js",
@@ -213,8 +213,8 @@
         "https://karamy.github.io/RunningDinner/main-es5.36b128f753f51d8e3eaa.js",
         "https://karamy.github.io/RunningDinner/polyfills-es2015.f12d64fca467b64f3dec.js",
         "https://karamy.github.io/RunningDinner/polyfills-es5.81377d1c317b68e1287d.js",
-        "https://karamy.github.io/RunningDinner/runtime-es2015.d48b8ef56daf63cf0c24.js",
-        "https://karamy.github.io/RunningDinner/runtime-es5.d48b8ef56daf63cf0c24.js",
+        "https://karamy.github.io/RunningDinner/runtime-es2015.acccae8294701582dfce.js",
+        "https://karamy.github.io/RunningDinner/runtime-es5.acccae8294701582dfce.js",
         "https://karamy.github.io/RunningDinner/styles.b4a07f6128d1e67dc472.css"
       ],
       "patterns": []
@@ -336,8 +336,8 @@
     "https://karamy.github.io/RunningDinner/48-es5.975417ee61bbdd76eae9.js": "a6a9131295b51cfb812724490a767ccc69b6f92c",
     "https://karamy.github.io/RunningDinner/49-es2015.7a2438260723aa90a128.js": "676b3fcd49cd363bb11e6cab623c53cc1b465089",
     "https://karamy.github.io/RunningDinner/49-es5.7a2438260723aa90a128.js": "923af1dfbe54b2e327cf22545d6e73be73f2356e",
-    "https://karamy.github.io/RunningDinner/5-es2015.fd69273ee3047a5d82b9.js": "c5fe74d7f309e3cbffe771729b3d73b1082cf0b3",
-    "https://karamy.github.io/RunningDinner/5-es5.fd69273ee3047a5d82b9.js": "afb1d234f3b4d2daf11fe0b2d38dba9e1a793aa2",
+    "https://karamy.github.io/RunningDinner/5-es2015.7b6a92ecf559a279a07e.js": "c5fe74d7f309e3cbffe771729b3d73b1082cf0b3",
+    "https://karamy.github.io/RunningDinner/5-es5.7b6a92ecf559a279a07e.js": "afb1d234f3b4d2daf11fe0b2d38dba9e1a793aa2",
     "https://karamy.github.io/RunningDinner/50-es2015.a1577c83d230de40220e.js": "6ae96cba38dd692e37d43d2e4e2d26f516f4f74c",
     "https://karamy.github.io/RunningDinner/50-es5.a1577c83d230de40220e.js": "c480d23ff234484b70d36a6d593f86e7f8f25885",
     "https://karamy.github.io/RunningDinner/51-es2015.2e70cb6f08447f24a615.js": "dbd394da7fba3a06234a6ddf9445cb5444f4f2db",
@@ -466,13 +466,13 @@
     "https://karamy.github.io/RunningDinner/assets/shapes.svg": "5413e95adabcb2cb639970051f55e0ddb64ace53",
     "https://karamy.github.io/RunningDinner/common-es2015.b4bad0e20cf4a5c21e6b.js": "7b981964145d2477a443aa7bca17aa1ca5c47c1a",
     "https://karamy.github.io/RunningDinner/common-es5.b4bad0e20cf4a5c21e6b.js": "4b87368e9eef49deee0a4b239fb7bbf4318b9e73",
-    "https://karamy.github.io/RunningDinner/index.html": "2b658e00421a093b8677dde5e77b002d9f35d256",
+    "https://karamy.github.io/RunningDinner/index.html": "48f4af241468e4df214d6c9afa38bb4931d88aa8",
     "https://karamy.github.io/RunningDinner/main-es2015.36b128f753f51d8e3eaa.js": "b7ef570fa27a856a0d37fb8b31668f7b8100928e",
     "https://karamy.github.io/RunningDinner/main-es5.36b128f753f51d8e3eaa.js": "5371f8b43436f0248720008d8439deb6b5491ad1",
     "https://karamy.github.io/RunningDinner/polyfills-es2015.f12d64fca467b64f3dec.js": "48e2eb5548653f28b6f588c8d091bc7728ebb226",
     "https://karamy.github.io/RunningDinner/polyfills-es5.81377d1c317b68e1287d.js": "b4b2595ef0d7fc574c63fd2158aa3d23a31f2fed",
-    "https://karamy.github.io/RunningDinner/runtime-es2015.d48b8ef56daf63cf0c24.js": "2bbd2e7d9ea30f8bf36d0376227e923fb888c829",
-    "https://karamy.github.io/RunningDinner/runtime-es5.d48b8ef56daf63cf0c24.js": "3ad364cbe91c63eb839a9e93bea7332aa9ec3de5",
+    "https://karamy.github.io/RunningDinner/runtime-es2015.acccae8294701582dfce.js": "c2528ff8e2269a5e31181abb050c277dae98acfc",
+    "https://karamy.github.io/RunningDinner/runtime-es5.acccae8294701582dfce.js": "026fef408b18e3edecc25ee7a6b1f2348b45303e",
     "https://karamy.github.io/RunningDinner/styles.b4a07f6128d1e67dc472.css": "b52c70eadbd4ca38fc3b03b5255b15b183eefaad"
   },
   "navigationUrls": [
