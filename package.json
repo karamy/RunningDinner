@@ -9,7 +9,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "gh-pages": "ionic build --prod -- --base-href https://karamy.github.io/RunningDinner/ && npx angular-cli-ghpages --dir=www"
   },
   "private": true,
   "dependencies": {
