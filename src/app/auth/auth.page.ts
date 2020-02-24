@@ -15,6 +15,6 @@ export class AuthPage implements OnInit {
 
   onLogin() {
     this.authService.login();
-    this.router.navigateByUrl('/places/tabs/rooms');
+    this.router.navigateByUrl('/home/tabs');
   }
 }

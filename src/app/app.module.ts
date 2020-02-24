@@ -8,11 +8,11 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { ContactDetailPage } from './places/contacts/contact-detail/contact-detail.page';
+import { ContactsDetailPage } from './home/tabs/contacts/contacts-detail/contacts-detail.page';
 
 @NgModule({
-  declarations: [AppComponent, ContactDetailPage],
-  entryComponents: [ContactDetailPage],
+  declarations: [AppComponent, ContactsDetailPage],
+  entryComponents: [ContactsDetailPage],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
   providers: [
     StatusBar,
