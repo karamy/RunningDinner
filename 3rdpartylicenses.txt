@@ -41,6 +41,9 @@ MIT
 @ionic-native/core
 MIT
 
+@ionic-native/keyboard
+MIT
+
 @ionic-native/splash-screen
 MIT
 
