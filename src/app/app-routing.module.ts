@@ -5,7 +5,30 @@ import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'auth', loadChildren: './auth/auth.module#AuthPageModule' },
+  { path: 'auth',
+    children: [
+      {
+        path: '',
+        loadChildren: () => import('./auth/auth.module').then( m => m.AuthPageModule)
+      },
+      {
+        path: 'phone',
+        loadChildren: () => import('./auth/phone/phone.module').then( m => m.PhonePageModule)
+      },
+      {
+        path: 'instructions',
+        loadChildren: () => import('./auth/instructions/instructions.module').then( m => m.InstructionsPageModule)
+      },
+      {
+        path: 'geolocation',
+        loadChildren: () => import('./auth/geolocation/geolocation.module').then( m => m.GeolocationPageModule)
+      },
+      {
+        path: 'notification',
+        loadChildren: () => import('./auth/notification/notification.module').then( m => m.NotificationPageModule)
+      }
+    ] 
+  },
   {
     path: 'home',
     loadChildren: './home/home.module#HomePageModule',
@@ -18,7 +41,24 @@ const routes: Routes = [
   {
     path: 'dinner',
     loadChildren: () => import('./home/tabs/dinner/dinner.module').then( m => m.DinnerPageModule)
+  },
+  {
+    path: 'phone',
+    loadChildren: () => import('./auth/phone/phone.module').then( m => m.PhonePageModule)
+  },
+  {
+    path: 'instructions',
+    loadChildren: () => import('./auth/instructions/instructions.module').then( m => m.InstructionsPageModule)
+  },
+  {
+    path: 'geolocation',
+    loadChildren: () => import('./auth/geolocation/geolocation.module').then( m => m.GeolocationPageModule)
+  },
+  {
+    path: 'notification',
+    loadChildren: () => import('./auth/notification/notification.module').then( m => m.NotificationPageModule)
   }
+
 
 ];
 
