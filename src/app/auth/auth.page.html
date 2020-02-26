@@ -1,19 +1,33 @@
-<ion-content class="padding">
+<ion-content color="secondary" class="ion-padding">
   <ion-grid>
-    <ion-row>
-      <ion-col offset="3">
-        <ion-img src="assets/Logo.png"></ion-img>
+    <ion-row class="ion-align-self-center ion-align-items-center">
+      <ion-col class="ion-align-self-center" size-md="6" size-sm="12" size-xs="12">
+        <div class="ion-padding">
+          <ion-img src="assets/Logo.png"></ion-img>
+        </div>
+        <div class="ion-text-center">
+          <ion-label color="primary">
+            Selezionando Accedi o Crea un nuovo account, accetti i nostri Termini. Per maggiori informazioni su come elaboriamo i tuoi dati, puoi consultare l'informativa sulla Privacy e sui Cookie
+          </ion-label>
+        </div>
       </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <ion-button color="primary" fill="outline" (click)="onLogin()">
-          ENTRA
-        </ion-button>
+      <ion-col class="ion-align-self-center" size-md="6" size-sm="12" size-xs="12">
+        <div>
+          <ion-button size="large" shape="round" color="primary" fill="outline" expand="block" routerLink="/auth/phone">LOGIN</ion-button>
+        </div>
+        <br>
+        <div>
+          <ion-button size="large" shape="round" color="primary" fill="outline" expand="block" routerLink="/sign-up/username">SIGNUP</ion-button>
+        </div>
+        <br>
+        <div>
+          <ion-button size="large" shape="round" color="primary" fill="outline" expand="block" (click)="onLogin()">TO ROOMS</ion-button>
+        </div>
+        <br>
+        <div class="ion-text-center">
+          <ion-label color="primary">Non riesci ad accedere?</ion-label>
+        </div>
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-button color="primary" routerLink="/sign-up/username">
-    Sign-Up
-  </ion-button>
 </ion-content>
