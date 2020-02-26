@@ -1,13 +1,18 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Authenticate</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content class="padding">
-  <ion-button color="primary" (click)="onLogin()">
-    Login
-  </ion-button>
+  <ion-grid>
+    <ion-row>
+      <ion-col offset="3">
+        <ion-img src="assets/Logo.png"></ion-img>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <ion-button color="primary" fill="outline" (click)="onLogin()">
+          ENTRA
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
   <ion-button color="primary" routerLink="/sign-up/username">
     Sign-Up
   </ion-button>
