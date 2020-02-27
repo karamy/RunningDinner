@@ -14,7 +14,6 @@ export class ProfilePhotoPage implements OnInit {
   constructor(public photoService: PhotoService, public actionSheetController: ActionSheetController) {
     defineCustomElements(window);
   }
-
   ngOnInit() {
     this.photoService.loadSaved();
   }
