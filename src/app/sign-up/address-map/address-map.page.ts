@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-address-map',
@@ -17,6 +18,12 @@ export class AddressMapPage implements OnInit {
   onLogin() {
     this.authService.login();
     this.router.navigateByUrl('/home/tabs/rooms');
+  }
+
+  public getMapImage() {
+    return `https://maps.googleapis.com/maps/api/staticmap?center=44.55077,7.71922&zoom=16&size=500x300&maptype=roadmap
+    &markers=color:red%7Clabel:Place%7C44.55077,7.71922
+    &key=${environment.googleMapsAPIKey}`;
   }
 
 }
