@@ -1,10 +1,15 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>address-map</ion-title>
+<ion-toolbar>
+  <ion-buttons slot="start">
+    <ion-back-button color="secondary" defaultHref="/sing-up/profile-photo"></ion-back-button>
+  </ion-buttons>
   </ion-toolbar>
-</ion-header>
-
 <ion-content>
-  <img [src]="getMapImage()">
+  <ion-item><h1 >My <br> address is</h1> 
+    <ion-label position="floating">Address</ion-label>
+    <ion-input></ion-input>
+  </ion-item>
+<div>
+      <img class="map-preview" [src]="getMapImage()">
+</div>
 </ion-content>
 <ion-button expand="block" strong=true color='secondary' fill='outline' (click)="onLogin()">Conferma</ion-button>

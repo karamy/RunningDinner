@@ -21,7 +21,7 @@ export class AddressMapPage implements OnInit {
   }
 
   public getMapImage() {
-    return `https://maps.googleapis.com/maps/api/staticmap?center=44.55077,7.71922&zoom=16&size=500x300&maptype=roadmap
+    return `https://maps.googleapis.com/maps/api/staticmap?center=44.55077,7.71922&zoom=16&size=200x200&maptype=roadmap
     &markers=color:red%7Clabel:Place%7C44.55077,7.71922
     &key=${environment.googleMapsAPIKey}`;
   }
