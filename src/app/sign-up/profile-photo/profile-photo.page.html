@@ -11,12 +11,10 @@
         </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col class="ion-align-self-center ion-text-center" size-md="12" size-sm="12" size-xs="12">
-          <ion-avatar >
+        <ion-col size-md="12" size-sm="12" size-xs="12">
             <ion-img  *ngIf="photoService.profilePhoto" src="{{ photoService.profilePhoto.base64 ? photoService.profilePhoto.base64 : photoService.profilePhoto.webviewPath }}"></ion-img>
-          </ion-avatar>
         </ion-col>
-        <ion-col>
+        <ion-col class="ion-text-center">
           <ion-button (click)="photoService.addNewToGallery()">
             <ion-icon name="camera"></ion-icon>
           </ion-button>
