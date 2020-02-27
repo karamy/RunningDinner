@@ -1,11 +1,19 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>phone</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
-  <ion-button color="primary" fill="outline" routerLink="/auth/instructions">
-    To Instructions
-  </ion-button>
-</ion-content>
+  <ion-grid>
+    <ion-row class="ion-align-self-center ion-align-items-center">
+      <ion-col class="ion-align-self-center" size-md="6" size-sm="12" size-xs="12">
+        <ion-item lines="none">
+          <h1>My phone number is</h1>
+        </ion-item>
+        <ion-item>
+          <ion-input inputmode="tel"></ion-input>
+        </ion-item>
+        <br>
+        <ion-label color='medium'>
+            Ti invieremo un messaggio contenente un codice di verifica. Possono applicarsi tariffe per l'invio di messaggi e il trasferimento di dati
+        </ion-label>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  </ion-content>
+    <ion-button expand="block" strong=true color='secondary' fill='outline' routerLink="auth/instructions">Conferma</ion-button>
