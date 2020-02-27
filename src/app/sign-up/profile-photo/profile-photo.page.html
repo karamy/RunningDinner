@@ -4,20 +4,25 @@
   </ion-buttons>
   </ion-toolbar>
   <ion-content>
-    <ion-item lines="none"><h1 >Choose <br> the profile image</h1> 
-    </ion-item>
-  <ion-grid>
-    <ion-row>
-    <ion-col size="6" *ngFor="let photo of photoService.photos; index as position">
-      <ion-img src="{{ photo.base64 ? photo.base64 : photo.webviewPath }}" (click)="showActionSheet(photo, position)"></ion-img>
-    </ion-col>
-    </ion-row>
-  </ion-grid>
-
-  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-    <ion-fab-button (click)="photoService.addNewToGallery()">
-      <ion-icon name="camera"></ion-icon>
-    </ion-fab-button>
-  </ion-fab>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-item lines="none"><h1 >Choose <br> the profile image</h1> </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="ion-align-self-center ion-text-center" size-md="12" size-sm="12" size-xs="12">
+          <ion-avatar >
+            <ion-img  *ngIf="photoService.profilePhoto" src="{{ photoService.profilePhoto.base64 ? photoService.profilePhoto.base64 : photoService.profilePhoto.webviewPath }}"></ion-img>
+          </ion-avatar>
+        </ion-col>
+        <ion-col>
+          <ion-button (click)="photoService.addNewToGallery()">
+            <ion-icon name="camera"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  
 </ion-content>
 <ion-button expand="block" strong=true color='secondary' fill='outline' routerLink="/sign-up/address-map">Conferma</ion-button>
