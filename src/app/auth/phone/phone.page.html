@@ -6,7 +6,7 @@
           <h1>My phone number is</h1>
         </ion-item>
         <ion-item>
-          <ion-input inputmode="tel"></ion-input>
+          <ion-input #tel inputmode="tel" required></ion-input>
         </ion-item>
         <br>
         <ion-label color='medium'>
@@ -16,4 +16,4 @@
     </ion-row>
   </ion-grid>
   </ion-content>
-    <ion-button expand="block" strong=true color='secondary' fill='outline' routerLink="/instructions">Conferma</ion-button>
+    <ion-button [disabled]="!tel.value" expand="block" strong=true color='secondary' fill='outline' routerLink="/instructions">Conferma</ion-button>
