@@ -1,11 +1,30 @@
 .map-preview{
     justify-content: center;
     width: 50%;
-    height: 20%;
+    height: 30%;
     display:flex;
     margin:auto;
     align-items: center;
     border: 3px solid var(--ion-color-secondary);
     border-radius: 2rem;
     margin-top: 2rem;
+}
+
+.map {
+    justify-content: center;
+    display:flex;
+    margin:auto;
+    align-items: center;
+    margin-top: 2rem;
+    height: 40%;
+    width: 70%;
+    background-color: transparent;
+    opacity: 0;
+    transition: opacity 150ms ease-in;
+    border: 3px solid var(--ion-color-secondary);
+    border-radius: 2rem;
+}
+
+.map.visible {
+    opacity: 1;
 }

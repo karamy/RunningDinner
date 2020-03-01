@@ -6,11 +6,14 @@
 <ion-content>
   <ion-item><h1 >My <br> address is</h1> 
     <ion-label position="floating">Address</ion-label>
-    <ion-input></ion-input>
+    <ion-input [(ngModel)]="autocomplete.input" (ionChange)="updateSearchResults()"></ion-input>
   </ion-item>
-  
-<div>
-      <img class="map-preview" [src]="getMapImage()">
-</div>
+  <ion-list [hidden]="autocompleteItems.length == 0" *ngFor="let item of autocompleteItems; let i = index">
+    <ion-item  *ngIf="i<3" tappable (click)="selectSearchResult(item)">
+     {{ item.description }}
+    </ion-item>
+  </ion-list>
+  <!-- <div class="map" #map></div> -->
+  <img class="map-preview" [hidden]="!mapPreview" src="{{ mapPreview }}">
 </ion-content>
 <ion-button expand="block" strong=true color='secondary' fill='outline' (click)="onLogin()">Conferma</ion-button>
