@@ -23,14 +23,14 @@ export class UserService {
       "last_login": null
     }
 
-    this.http.post("http://runningdinnerapi.herokuapp.com/users", postData)
+    this.http.post("https://runningdinnerapi.herokuapp.com/users", postData)
     .subscribe(data => {
       console.log(data['_body']);
      }, error => {
       console.log(error);
     });
 
-    this.http.get('http://runningdinnerapi.herokuapp.com/users')
+    /* this.http.get('http://runningdinnerapi.herokuapp.com/users')
     .subscribe(data => {
       alert(JSON.stringify(data));
     }) 
@@ -38,6 +38,6 @@ export class UserService {
     this.http.get('http://runningdinnerapi.herokuapp.com/existsUser')
     .subscribe(data => {
       alert(data);
-    }) 
+    })  */
   }
 }
