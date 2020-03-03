@@ -12,7 +12,7 @@
       </ion-row>
       <ion-row>
         <ion-col size-md="12" size-sm="12" size-xs="12">
-            <ion-img  *ngIf="photoService.profilePhoto" src="{{ photoService.profilePhoto.base64 ? photoService.profilePhoto.base64 : photoService.profilePhoto.webviewPath }}"></ion-img>
+            <ion-img class="profileimage"  *ngIf="photoService.profilePhoto" src="{{ photoService.profilePhoto.base64 ? photoService.profilePhoto.base64 : photoService.profilePhoto.webviewPath }}"></ion-img>
         </ion-col>
         <ion-col class="ion-text-center">
           <ion-button (click)="photoService.addNewToGallery()">
@@ -21,6 +21,6 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-  
+    <ion-row style="height: 10%"></ion-row>
+<ion-button  expand="block" strong=true color='secondary' fill='outline' routerLink="/sign-up/address-map">Conferma</ion-button> 
 </ion-content>
-<ion-button expand="block" strong=true color='secondary' fill='outline' routerLink="/sign-up/address-map">Conferma</ion-button>
