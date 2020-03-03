@@ -12,15 +12,18 @@
       </ion-row>
       <ion-row>
         <ion-col size-md="12" size-sm="12" size-xs="12">
-            <ion-img class="profileimage"  *ngIf="photoService.profilePhoto" src="{{ photoService.profilePhoto.base64 ? photoService.profilePhoto.base64 : photoService.profilePhoto.webviewPath }}"></ion-img>
-        </ion-col>
+          <ion-avatar  *ngIf="photoService.profilePhoto" style="margin: auto;"  class="profilephoto">
+            <ion-img  class="profilephoto" src="{{ photoService.profilePhoto.base64 ? photoService.profilePhoto.base64 : photoService.profilePhoto.webviewPath }}"></ion-img>
+          </ion-avatar>
+          </ion-col>
+        </ion-row>
+          <ion-row>
         <ion-col class="ion-text-center">
-          <ion-button (click)="photoService.addNewToGallery()">
+          <ion-button color="secondary" (click)="photoService.addNewToGallery()">
             <ion-icon name="camera"></ion-icon>
           </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
-    <ion-row style="height: 10%"></ion-row>
-<ion-button  expand="block" strong=true color='secondary' fill='outline' routerLink="/sign-up/address-map">Conferma</ion-button> 
 </ion-content>
+<ion-button [disabled]="!photoService.profilePhoto" expand="block" strong=true color='secondary' fill='outline' routerLink="/sign-up/address-map">Conferma</ion-button> 

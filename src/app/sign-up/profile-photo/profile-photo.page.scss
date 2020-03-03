@@ -1,7 +1,6 @@
-.profileimage{
-    border-radius: 50% !important;
-    overflow: hidden;
-    width:40%;
-    margin:auto;
-    justify-content: center;
+.profilephoto{
+    border-radius:50%;
+    height:12rem;
+    width:12rem;
+    border: 3px solid var(--ion-color-secondary);
 }
