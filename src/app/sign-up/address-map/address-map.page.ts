@@ -81,7 +81,7 @@ export class AddressMapPage implements OnInit, AfterViewInit {
   /* Autocomplete Address */
 
   updateSearchResults(){
-    if (this.autocomplete.input == '' || this.isItem ) {
+    if (this.autocomplete.input == '') {
       this.autocompleteItems = [];
       return;
     }
@@ -100,7 +100,7 @@ export class AddressMapPage implements OnInit, AfterViewInit {
 
   selectSearchResult(item) {
     console.log(item)
-    this.isItem = true;
+    this.autocompleteItems = [];
     this.autocomplete.input = item.description
     this.getMapImage(item.description)
   }

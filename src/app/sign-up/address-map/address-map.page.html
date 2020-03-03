@@ -6,7 +6,7 @@
 <ion-content>
   <ion-item><h1 >My <br> address is</h1> 
     <ion-label position="floating">Address</ion-label>
-    <ion-input [(ngModel)]="autocomplete.input" (ionChange)="updateSearchResults()"></ion-input>
+    <ion-input [(ngModel)]="autocomplete.input" (keyup)="updateSearchResults()"></ion-input>
   </ion-item>
   <ion-list [hidden]="autocompleteItems.length == 0" *ngFor="let item of autocompleteItems; let i = index">
     <ion-item  *ngIf="i<3" tappable (click)="selectSearchResult(item)">
