@@ -19,7 +19,7 @@ export class AddressMapPage implements OnInit, AfterViewInit {
   isItem: boolean;
   placeId: string;
   map: any;
-  service : google.maps.places.PlacesService;
+  service: google.maps.places.PlacesService;
   mapPreview: any = null;
 
 
@@ -37,9 +37,7 @@ export class AddressMapPage implements OnInit, AfterViewInit {
     this.router.navigateByUrl('/home/tabs/rooms');
   }
 
-  /* 
-  
-  Get Map from Google Maps */
+  /*  Get Map from Google Maps */
 
   ngAfterViewInit(){
     this.getGoogleMaps().then(googleMaps => {
