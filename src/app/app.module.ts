@@ -10,11 +10,13 @@ import { HttpClientModule} from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ContactsDetailPage } from './home/tabs/contacts/contacts-detail/contacts-detail.page';
+import { CountryCodesPage } from './auth/phone/country-codes/country-codes.page';
+import { CountryCodesPageModule } from './auth/phone/country-codes/country-codes.module';
 
 @NgModule({
   declarations: [AppComponent, ContactsDetailPage],
-  entryComponents: [ContactsDetailPage],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule],
+  entryComponents: [ContactsDetailPage, CountryCodesPage],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, HttpClientModule, CountryCodesPageModule],
   providers: [
     StatusBar,
     SplashScreen,

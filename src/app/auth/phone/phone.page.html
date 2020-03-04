@@ -5,10 +5,20 @@
         <ion-item lines="none">
           <h1>My phone number is</h1>
         </ion-item>
-        <ion-item>
-          <ion-input #tel inputmode="tel" required></ion-input>
-        </ion-item>
-        <br>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="4">
+              <ion-item class="ion-text-center">
+                <ion-input required readonly placeholder="Code" [value]="prefix" (click)="presentModal()"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="8">
+              <ion-item>
+                <ion-input required inputmode="tel" class="ion-text-center" placeholder="Phone number" [(ngModel)]="phoneNumber"></ion-input>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
         <ion-label color='medium'>
             Ti invieremo un messaggio contenente un codice di verifica. Possono applicarsi tariffe per l'invio di messaggi e il trasferimento di dati
         </ion-label>
@@ -16,4 +26,4 @@
     </ion-row>
   </ion-grid>
   </ion-content>
-    <ion-button [disabled]="!tel.value" expand="block" strong=true color='secondary' fill='outline' routerLink="/instructions">Conferma</ion-button>
+    <ion-button [disabled]="!phoneNumber || !prefix" expand="block" strong=true color='secondary' fill='outline' routerLink="/instructions">Conferma</ion-button>
