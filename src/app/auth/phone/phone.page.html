@@ -14,7 +14,7 @@
             </ion-col>
             <ion-col size="8">
               <ion-item>
-                <ion-input required inputmode="tel" class="ion-text-center" placeholder="Phone number" [(ngModel)]="phoneNumber"></ion-input>
+                <ion-input required inputmode="tel" class="ion-text-center" placeholder="Phone number" [(ngModel)]="inputNumber"></ion-input>
               </ion-item>
             </ion-col>
           </ion-row>
@@ -26,4 +26,4 @@
     </ion-row>
   </ion-grid>
   </ion-content>
-    <ion-button [disabled]="!phoneNumber || !prefix" expand="block" strong=true color='secondary' fill='outline' routerLink="/instructions">Conferma</ion-button>
+    <ion-button [disabled]="!inputNumber || !prefix" expand="block" strong=true color='secondary' fill='outline' routerLink="/instructions" (click)="getPhone()">Conferma</ion-button>

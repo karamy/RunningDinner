@@ -1116,15 +1116,4 @@ export class CountryService {
   ]
 
   constructor(private http: HttpClient) { }
-  /*
-  getCountry(){
-  const one = new Promise<any>((resolve, reject) => {
-    return this.http.get('https://restcountries.eu/rest/v2/all').subscribe(data => {
-      resolve(data)
-    }) 
-  });
-  return one;
-  }
-  */
-  
 }

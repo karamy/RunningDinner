@@ -6,6 +6,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class UserService {
 
+  userExist: boolean;
+
   constructor(private http: HttpClient) { }
 
   sendPostRequest() {
@@ -40,5 +42,15 @@ export class UserService {
     .subscribe(data => {
       alert(data)
     })
+  }
+
+  existsUser(phoneNumber){
+    const promise = new Promise<any>((resolve, reject) => {
+      return this.http.post("https://runningdinnerapi.herokuapp.com/existsUser", phoneNumber)
+      .subscribe(data => {
+        resolve(data)
+      })
+    });
+    return promise;
   }
 }

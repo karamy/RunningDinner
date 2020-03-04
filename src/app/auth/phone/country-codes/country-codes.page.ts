@@ -14,7 +14,6 @@ export class CountryCodesPage implements OnInit {
   searchTerm: string = "";
 
   constructor(private countryService: CountryService, private filterService: FilterService, public modalCtrl: ModalController) { 
-   /* this.countryService.getCountry().then(data => {this.countries = data;})*/
    this.countries = countryService.country
   }
 

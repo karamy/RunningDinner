@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { CountryCodesPage } from './country-codes/country-codes.page';
 import { CountryService } from './country-codes/country.service';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-phone',
@@ -10,10 +11,13 @@ import { CountryService } from './country-codes/country.service';
 })
 export class PhonePage implements OnInit {
 
-  phoneNumber: number;
+  inputNumber: number;
   prefix: number;
+  phoneNumber: number;
+  existUser;
 
-  constructor(private modalController: ModalController, private countryService: CountryService) {
+  constructor(private modalController: ModalController, private countryService: CountryService, private userService: UserService) {
+    this.userService.existsUser(this.phoneNumber).then(data => {this.existUser = data;})
    }
 
   ngOnInit() {
@@ -29,5 +33,11 @@ export class PhonePage implements OnInit {
       this.prefix = number;
   });
   return modal.present();
+  }
+
+  getPhone(){
+    this.phoneNumber = this.prefix + this.inputNumber;
+    this.userService.existsUser(this.phoneNumber);
+    this.userService.userExist = this.existUser;
   }
 }
