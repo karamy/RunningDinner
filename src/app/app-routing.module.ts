@@ -27,7 +27,7 @@ const routes: Routes = [
         path: 'notification',
         loadChildren: () => import('./auth/notification/notification.module').then( m => m.NotificationPageModule)
       }
-    ] 
+    ]
   },
   {
     path: 'home',
