@@ -30,6 +30,7 @@
     "@ionic/pwa-elements": "^1.4.2",
     "angular-cli-ghpages": "^0.6.2",
     "core-js": "^2.5.4",
+    "firebase": "^7.10.0",
     "rxjs": "~6.5.1",
     "serialize-javascript": ">=2.1.1",
     "tslib": "^1.9.0",

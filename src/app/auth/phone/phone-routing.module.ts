@@ -12,7 +12,6 @@ const routes: Routes = [
     path: 'country-codes',
     loadChildren: () => import('./country-codes/country-codes.module').then( m => m.CountryCodesPageModule)
   }
-
 ];
 
 @NgModule({
