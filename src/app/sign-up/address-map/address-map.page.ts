@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./address-map.page.scss'],
 })
 export class AddressMapPage implements OnInit, AfterViewInit {
-  @ViewChild('map', {static: false}) mapElementRef: ElementRef;
+  @ViewChild('map', { static: false }) mapElementRef: ElementRef;
 
   GoogleAutocomplete: google.maps.places.AutocompleteService;
   autocomplete: { input: string; };
@@ -27,23 +27,21 @@ export class AddressMapPage implements OnInit, AfterViewInit {
     this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
     this.autocomplete = { input: '' };
     this.autocompleteItems = [];
-   }
+  }
 
   ngOnInit() {
   }
 
-  onLogin() {
-    this.authService.login();
-    this.router.navigateByUrl('/home/tabs/rooms');
+  register() {
+    // TODO registrazione utente
   }
 
   /*  Get Map from Google Maps */
-
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.getGoogleMaps().then(googleMaps => {
       const mapEl = this.mapElementRef.nativeElement;
       const map = new googleMaps.Map(mapEl, {
-        center: { lat: 44.5464311, lng: 7.7184579},
+        center: { lat: 44.5464311, lng: 7.7184579 },
         zoom: 16
       });
       googleMaps.event.addListenerOnce(map, 'idle', () => {
@@ -57,7 +55,7 @@ export class AddressMapPage implements OnInit, AfterViewInit {
   private getGoogleMaps(): Promise<any> {
     const win = window as any;
     const googleModule = win.google;
-    if (googleModule && googleModule.maps){
+    if (googleModule && googleModule.maps) {
       return Promise.resolve(googleModule.maps);
     }
     return new Promise((resolve, reject) => {
@@ -68,45 +66,43 @@ export class AddressMapPage implements OnInit, AfterViewInit {
       document.body.appendChild(script);
       script.onload = () => {
         const loadedGoogleModule = win.google;
-        if (loadedGoogleModule && loadedGoogleModule.maps){
+        if (loadedGoogleModule && loadedGoogleModule.maps) {
           resolve(loadedGoogleModule.maps);
         } else {
           reject('Google maps SDK not available');
         }
-      }
-    })
+      };
+    });
   }
 
 
   /* Autocomplete Address */
-
-  updateSearchResults(){
+  updateSearchResults() {
     if (this.autocomplete.input == '') {
       this.autocompleteItems = [];
       return;
     }
     this.GoogleAutocomplete.getPlacePredictions({ input: this.autocomplete.input },
-    (predictions) => {
-      this.autocompleteItems = [];
-      this.zone.run(() => {
-        if (predictions){
-        predictions.forEach((prediction) => {
-          this.autocompleteItems.push(prediction);
+      (predictions) => {
+        this.autocompleteItems = [];
+        this.zone.run(() => {
+          if (predictions) {
+            predictions.forEach((prediction) => {
+              this.autocompleteItems.push(prediction);
+            });
+          }
         });
-      }
       });
-    });
   }
 
   selectSearchResult(item) {
-    console.log(item)
+    console.log(item);
     this.autocompleteItems = [];
-    this.autocomplete.input = item.description
-    this.getMapImage(item.description)
+    this.autocomplete.input = item.description;
+    this.getMapImage(item.description);
   }
 
-    /* Get a static Map image */
-
+  /* Get a static Map image */
   public getMapImage(place) {
     if (place) {
       this.mapPreview = `https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=roadmap

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-rooms',
@@ -7,8 +9,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RoomsPage implements OnInit {
 
-  constructor() {}
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
+  }
+
+  onLogout() {
+    this.authService.doLogout();
+    this.router.navigateByUrl('/auth');
   }
 }

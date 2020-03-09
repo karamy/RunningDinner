@@ -10,12 +10,17 @@ import { UserService } from './user.service';
   styleUrls: ['./auth.page.scss']
 })
 export class AuthPage implements OnInit {
-  constructor(private authService: AuthService, private router: Router, private userService: UserService) {}
+  constructor(private router: Router, private authService: AuthService) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
-  onLogin() {
-    this.authService.login();
-    this.router.navigateByUrl('/home/tabs/rooms');
+  loginToRooms() {
+    let phone_number = "3408552105";
+
+    this.authService.doLogin(phone_number).then(() => {
+      this.router.navigateByUrl('/home/tabs/rooms');
+    }, (err) => {
+      alert("errore login");
+    });
   }
 }

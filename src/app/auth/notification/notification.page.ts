@@ -14,16 +14,4 @@ export class NotificationPage implements OnInit {
 
   ngOnInit() {
   }
-
-  onLogin() {
-    if (this.userService.userExist) {
-      this.authService.login();
-      this.router.navigateByUrl('/home/tabs/rooms');
-    } else {
-      this.router.navigateByUrl('/sign-up/username');
-    }
-    
-    
-  }
-
 }

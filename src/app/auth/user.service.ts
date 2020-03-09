@@ -6,11 +6,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class UserService {
 
-  userExist: boolean;
-
   constructor(private http: HttpClient) { }
 
-  sendPostRequest() {
+  // Metodo di prova per testare post verso API
+  sendExampleRequests() {
     var headers = new HttpHeaders();
     headers.append('Accept', 'application/json');
     headers.append('Content-Type', 'application/json');
@@ -33,24 +32,15 @@ export class UserService {
         console.log(error);
       });
 
-    this.http.get('https://runningdinnerapi.herokuapp.com/users')
+    /* this.http.get('https://runningdinnerapi.herokuapp.com/users')
       .subscribe(data => {
         alert(JSON.stringify(data))
-      })
-
-    this.http.get('https://runningdinnerapi.herokuapp.com/existsUser')
-      .subscribe(data => {
-        alert(data)
-      })
+      }) */
   }
 
-  existsUser(phoneNumber) {
-    const promise = new Promise<any>((resolve, reject) => {
-      return this.http.post('https://runningdinnerapi.herokuapp.com/existsUser', phoneNumber)
-        .subscribe(data => {
-          resolve(data);
-        });
-    });
-    return promise;
+  // Ritorna se l'utente esiste o no su DB
+  existsUser(phoneNumber): Promise<object> {
+    return this.http.post('https://runningdinnerapi.herokuapp.com/existsUser', phoneNumber)
+      .toPromise();
   }
 }

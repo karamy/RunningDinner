@@ -15,19 +15,19 @@ export class PhonePage implements OnInit {
 
   inputNumber: number;
   prefix = '+39';
-  phoneNumber;
-  existUser;
-  otpSent: boolean = false;
-  otp: string = null;
+  phoneNumber: string;
+  otpSent = false;
+  otp: string;
   recaptchaVerifier: any;
   confirmationResult: firebase.auth.ConfirmationResult;
 
-  constructor(private modalController: ModalController, private countryService: CountryService, private userService: UserService, private router: Router) {
+  constructor(private modalController: ModalController, private countryService: CountryService,
+              private userService: UserService, private router: Router) {
   }
 
   ngOnInit() {
     this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('sign-in-button', {
-      'size': 'invisible'
+      size: 'invisible'
     });
   }
 
@@ -36,9 +36,8 @@ export class PhonePage implements OnInit {
       component: CountryCodesPage
     });
     modal.onDidDismiss()
-      .then((data) => {
-        const number = data['data'];
-        this.prefix = number;
+      .then((res) => {
+        this.prefix = res['data'];
       });
     return modal.present();
   }

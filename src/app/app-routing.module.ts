@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', redirectTo: 'auth', pathMatch: 'full' },
   { path: 'auth',
     children: [
       {
@@ -32,7 +32,7 @@ const routes: Routes = [
   {
     path: 'home',
     loadChildren: './home/home.module#HomePageModule',
-    canLoad: [AuthGuard]
+    canLoad: [/* AuthGuard */]
   },
   {
     path: 'sign-up',
@@ -58,8 +58,6 @@ const routes: Routes = [
     path: 'notification',
     loadChildren: () => import('./auth/notification/notification.module').then( m => m.NotificationPageModule)
   }
-
-
 ];
 
 @NgModule({
