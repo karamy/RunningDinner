@@ -10,7 +10,9 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "gh-pages": "ionic build --prod -- --base-href https://karamy.github.io/RunningDinner/ && npx angular-cli-ghpages --dir=www"
+    "gh-pages": "ionic build --prod -- --base-href https://karamy.github.io/RunningDinner/ && npx angular-cli-ghpages --dir=www",
+    "build-android" :  "ionic build --prod && npx cap copy android",
+    "run-android" :  "ionic build --prod && npx cap copy android && npx cap open android"
   },
   "private": true,
   "dependencies": {
@@ -21,7 +23,7 @@
     "@angular/platform-browser-dynamic": "~8.1.2",
     "@angular/router": "~8.1.2",
     "@capacitor/android": "^1.5.0",
-    "@capacitor/core": "1.5.0",
+    "@capacitor/core": "^1.5.0",
     "@capacitor/ios": "^1.5.0",
     "@ionic-native/core": "^5.0.0",
     "@ionic-native/splash-screen": "^5.0.0",
@@ -45,7 +47,7 @@
     "@angular/compiler": "~8.1.2",
     "@angular/compiler-cli": "~8.1.2",
     "@angular/language-service": "~8.1.2",
-    "@capacitor/cli": "1.5.0",
+    "@capacitor/cli": "^1.5.0",
     "@ionic/angular-toolkit": "^2.1.1",
     "@types/googlemaps": "^3.39.3",
     "@types/jasmine": "~3.3.8",

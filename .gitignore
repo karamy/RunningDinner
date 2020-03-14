@@ -1,3 +1,5 @@
 node_modules
 www
 ios
+*.DS_Store
+android
