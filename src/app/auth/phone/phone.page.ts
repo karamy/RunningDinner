@@ -5,6 +5,7 @@ import { CountryService } from './country-codes/country.service';
 import { UserService } from '../user.service';
 import * as firebase from 'firebase';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-phone',
@@ -22,16 +23,18 @@ export class PhonePage implements OnInit {
   confirmationResult: firebase.auth.ConfirmationResult;
 
   constructor(private modalController: ModalController, private countryService: CountryService,
-              private userService: UserService, private router: Router) {
+              private userService: UserService, private router: Router, private authService: AuthService) {
   }
 
   ngOnInit() {
+    // Inizializzazione verifier di Firebase
     this.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('sign-in-button', {
       size: 'invisible'
     });
   }
 
-  async presentModal() {
+  // Scelta codice paese
+  async presentModalCountryCodes() {
     const modal = await this.modalController.create({
       component: CountryCodesPage
     });
@@ -42,25 +45,34 @@ export class PhonePage implements OnInit {
     return modal.present();
   }
 
-  signIn() {
+  // Effettua un tentativo di login, o va alla registrazione
+  tryLogin() {
     this.confirmationResult.confirm(this.otp)
       .then(user => {
         console.log(user);
         const reqBody = {
-          phone_number: this.inputNumber + ''
+          phone_number: this.phoneNumber + ''
         };
         this.userService.existsUser(reqBody).then(
           data => {
-            if (data) {
+            if (!data) { // Utente non esiste a DB
               this.router.navigateByUrl('/auth/instructions');
+            } else { // Effettua il login in automatico
+              this.authService.doLogin(this.phoneNumber).then(() => {
+                this.router.navigateByUrl('/home/tabs/rooms');
+              }, (err) => {
+                alert('errore login');
+                this.router.navigateByUrl('/auth');
+              });
             }
           });
       }).catch(err => {
-        console.log(err)
-        alert('Codice di verifica non valido')
+        console.log(err);
+        alert('Codice di verifica non valido');
       });
   }
 
+  // Invia richiesta di invio codice via sms a Firebase
   sendOtp() {
     this.phoneNumber = this.prefix + this.inputNumber;
     firebase.auth().useDeviceLanguage();

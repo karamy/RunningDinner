@@ -10,7 +10,7 @@
     <ion-row>
       <ion-col size="4">
         <ion-item class="ion-text-center">
-          <ion-input required readonly placeholder="Code" [value]="prefix" (click)="presentModal()"></ion-input>
+          <ion-input required readonly placeholder="Code" [value]="prefix" (click)="presentModalCountryCodes()"></ion-input>
         </ion-item>
       </ion-col>
       <ion-col size="8">
@@ -39,7 +39,7 @@
     <ion-row>
       <ion-col class="ion-text-center">
         <ion-button [disabled]="!inputNumber || !prefix" *ngIf="!otpSent" block strong=true color='secondary' fill='outline' (click)="sendOtp()">Verifica</ion-button>
-        <ion-button *ngIf="otpSent" expand="block" strong=true color='secondary' fill='outline' (click)="signIn()">Conferma</ion-button>
+        <ion-button *ngIf="otpSent" expand="block" strong=true color='secondary' fill='outline' (click)="tryLogin()">Conferma</ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>

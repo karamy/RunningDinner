@@ -16,16 +16,27 @@ export class AppComponent {
     private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.initializeApp();
+
+    // Verifica login attivo
+    this.checkActiveLogin();
   }
 
   initializeApp() {
-    this.platform.ready().then(() => {
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
-    });
+    this.statusBar.styleDefault();
+    this.splashScreen.hide();
+  }
+
+  // Verifica se lo user è autenticato e ridirige verso opportuna rotta
+  checkActiveLogin() {
+    if (this.authService.isUserAuthenticated()) {
+      this.router.navigateByUrl('/home/tabs/rooms');
+    } else {
+      // this.router.navigateByUrl('/auth/phone'); TODO sarà da mettere questo
+      this.router.navigateByUrl('/auth');
+    }
   }
 }

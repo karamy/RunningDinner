@@ -15,12 +15,12 @@ export class AuthPage implements OnInit {
   ngOnInit() { }
 
   loginToRooms() {
-    let phone_number = "3408552105";
+    const phoneNumber = '+393408552105';
 
-    this.authService.doLogin(phone_number).then(() => {
+    this.authService.doLogin(phoneNumber).then(() => {
       this.router.navigateByUrl('/home/tabs/rooms');
     }, (err) => {
-      alert("errore login");
+      alert('errore login');
     });
   }
 }
