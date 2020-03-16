@@ -313,6 +313,9 @@ Apache-2.0
 @firebase/webchannel-wrapper
 Apache-2.0
 
+@ionic-native/contacts
+MIT
+
 @ionic-native/core
 MIT
 
