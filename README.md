@@ -29,3 +29,13 @@ Per buildare con Capacitor:
 Metodo rapido:
 npm run build-android -> effettua build e copia file per Android
 npm run run-android -> effettua build, copia file e apertura ide per Android
+
+TODO:
+
+* CC
+    - refresh token lato server
+    - test permessi su ios
+
+*PZ
+
+*AS
