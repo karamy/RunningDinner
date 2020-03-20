@@ -13,7 +13,6 @@ import { AuthService } from './auth/auth.service';
 })
 export class AppComponent {
   constructor(
-    private platform: Platform,
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private router: Router,
@@ -33,7 +32,7 @@ export class AppComponent {
   // Verifica se lo user è autenticato e ridirige verso opportuna rotta
   checkActiveLogin() {
     if (this.authService.isUserAuthenticated()) {
-      this.router.navigateByUrl('/home/tabs/rooms');
+      this.router.navigateByUrl('/home');
     } else {
       // this.router.navigateByUrl('/auth/phone'); TODO sarà da mettere questo
       this.router.navigateByUrl('/auth');

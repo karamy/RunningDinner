@@ -1,6 +1,6 @@
 {
   "appId": "io.runningdinner.starter",
-  "appName": "runningdinner",
+  "appName": "Running Dinner",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www",

@@ -1,5 +1,5 @@
 node_modules
 www
 ios
-*.DS_Store
+.DS_Store
 android

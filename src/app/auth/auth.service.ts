@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { LoadingController } from '@ionic/angular';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -8,14 +9,20 @@ import { LoadingController } from '@ionic/angular';
 export class AuthService {
 
   private _user: AuthenticatedUser;
+  private apiUrl = 'https://runningdinnerapi.herokuapp.com';
 
   constructor(private http: HttpClient, private loadingCtrl: LoadingController) {
-    this.refreshUser();
+    this.readUser();
   }
 
   // Legge le informazioni utente presenti in localStorage e le carica nel Service
-  private refreshUser() {
+  private readUser() {
     this._user = JSON.parse(localStorage.getItem('user')) as unknown as AuthenticatedUser;
+  }
+
+  // Aggiorna lo user in localStorage
+  private writeUser(user: AuthenticatedUser) {
+    localStorage.setItem('user', JSON.stringify(user));
   }
 
   // Indica se l'utente ha una sessione di login attiva
@@ -35,10 +42,10 @@ export class AuthService {
     loadingSpinner.present();
 
     return new Promise((resolve, reject) =>
-      this.http.post('https://runningdinnerapi.herokuapp.com/login', dataToSend)
+      this.http.post(this.apiUrl + '/login', dataToSend)
         .toPromise().then((res) => {
           localStorage.setItem('user', JSON.stringify(res));
-          this.refreshUser();
+          this.readUser();
           resolve();
         }, (err) => {
           reject(err);
@@ -52,10 +59,43 @@ export class AuthService {
     this._user = null;
     localStorage.setItem('user', null);
   }
+
+  // Ritorna l'utente loggato
+  getUser() {
+    return this._user;
+  }
+
+  // Ritorna il token dell'utente loggato, se login attivo
+  getUserToken() {
+    return this.isUserAuthenticated() ? this._user.accessToken : null;
+  }
+
+  // Effettua chiamata per ottenere un accessToken passando il refreshToken
+  refreshToken() {
+    const dataToSend = {
+      refreshToken: this.getRefreshToken()
+    };
+
+    return new Promise((resolve, reject) => {
+      this.http.post(this.apiUrl + '/refresh', dataToSend).
+        toPromise().then((token) => {
+          this._user.accessToken = JSON.stringify(token);
+          this.writeUser(this._user);
+        }, (err) => {
+          reject(err);
+        });
+    });
+  }
+
+  private getRefreshToken() {
+    return this.isUserAuthenticated() ? this._user.refreshToken : null;
+  }
+
 }
 
 // Rappresenta l'utente loggato
 export interface AuthenticatedUser {
+  refreshToken: string; // Token utilizzato per aggiornare la validità del login
   userData: UserData;
   accessToken: string; // Token utilizzato per effettuare chiamate autenticate
 }
