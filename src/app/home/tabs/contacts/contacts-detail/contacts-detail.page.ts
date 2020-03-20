@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-contacts-detail',
@@ -6,6 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./contacts-detail.page.scss'],
 })
 export class ContactsDetailPage implements OnInit {
+
+  @Input() contactName: string;
 
   constructor() { }
 

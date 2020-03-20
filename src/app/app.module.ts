@@ -12,6 +12,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { ContactsDetailPage } from './home/tabs/contacts/contacts-detail/contacts-detail.page';
 import { CountryCodesPage } from './auth/phone/country-codes/country-codes.page';
 import { CountryCodesPageModule } from './auth/phone/country-codes/country-codes.module';
+import { Contacts } from '@ionic-native/contacts';
 
 @NgModule({
   declarations: [AppComponent, ContactsDetailPage],
@@ -20,7 +21,8 @@ import { CountryCodesPageModule } from './auth/phone/country-codes/country-codes
   providers: [
     StatusBar,
     SplashScreen,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    Contacts
   ],
   bootstrap: [AppComponent]
 })

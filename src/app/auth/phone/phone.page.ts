@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, Platform } from '@ionic/angular';
 import { CountryCodesPage } from './country-codes/country-codes.page';
 import { CountryService } from './country-codes/country.service';
 import { UserService } from '../user.service';
@@ -23,7 +23,8 @@ export class PhonePage implements OnInit {
   confirmationResult: firebase.auth.ConfirmationResult;
 
   constructor(private modalController: ModalController, private countryService: CountryService,
-              private userService: UserService, private router: Router, private authService: AuthService) {
+              private userService: UserService, private router: Router, private authService: AuthService,
+              private platform: Platform) {
   }
 
   ngOnInit() {

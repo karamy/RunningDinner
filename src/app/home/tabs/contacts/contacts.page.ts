@@ -1,34 +1,35 @@
-import { Component, OnInit } from '@angular/core';
-import { ModalController, IonRouterOutlet } from '@ionic/angular';
-import { ContactsDetailPage } from './contacts-detail/contacts-detail.page';
+import { Component, OnInit } from "@angular/core";
+import { ModalController, IonRouterOutlet } from "@ionic/angular";
+import { ContactsDetailPage } from "./contacts-detail/contacts-detail.page";
+import { ContactsService } from "./contacts.service";
 
 @Component({
-  selector: 'app-contacts',
-  templateUrl: './contacts.page.html',
-  styleUrls: ['./contacts.page.scss'],
+  selector: "app-contacts",
+  templateUrl: "./contacts.page.html",
+  styleUrls: ["./contacts.page.scss"]
 })
 export class ContactsPage implements OnInit {
+  contactList = [];
 
-  contacts: any[];
-  constructor(public modalController: ModalController,private routerOutlet: IonRouterOutlet) { }
+  constructor(
+    public modalController: ModalController,
+    private routerOutlet: IonRouterOutlet,
+    private contactsService: ContactsService
+  ) {}
 
   async showContact(contactName: string) {
     const modal = await this.modalController.create({
       component: ContactsDetailPage,
       swipeToClose: true,
-      presentingElement: this.routerOutlet.parentOutlet.nativeEl
+      presentingElement: this.routerOutlet.parentOutlet.nativeEl,
+      componentProps: { contactName }
     });
     return await modal.present();
   }
-  ngOnInit() {
-    this.contacts = [
-      {
-        name: "pino"
-      },
-      {
-        name: "gino"
-      }
-    ];
-  }
 
+  ngOnInit() {
+    this.contactsService.importContact().then(list => {
+      this.contactList = this.contactsService.compareContacts(list);
+    });
+  }
 }
