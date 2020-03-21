@@ -313,10 +313,16 @@ Apache-2.0
 @firebase/webchannel-wrapper
 Apache-2.0
 
+@ionic-native/android-permissions
+MIT
+
 @ionic-native/contacts
 MIT
 
 @ionic-native/core
+MIT
+
+@ionic-native/diagnostic
 MIT
 
 @ionic-native/splash-screen
