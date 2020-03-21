@@ -13,6 +13,7 @@
     "gh-pages": "ionic build --prod -- --base-href https://karamy.github.io/RunningDinner/ && npx angular-cli-ghpages --dir=www",
     "build-android": "ionic build --prod && npx cap copy android",
     "run-android": "ionic build --prod && npx cap copy android && npx cap open android",
+    "build-ios": "ionic build --prod && npx cap copy ios",
     "run-ios": "ionic build --prod && npx cap copy ios && npx cap open ios"
   },
   "private": true,

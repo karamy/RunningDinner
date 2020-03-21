@@ -2,77 +2,82 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Contacts } from "@ionic-native/contacts";
 import { DomSanitizer } from "@angular/platform-browser";
+import { Platform } from "@ionic/angular";
 
 @Injectable({
   providedIn: "root"
 })
 export class ContactsService {
-  importedContacts = [
-    /*     {
-      name: "Paolo",
-      number: "+393483773817",
-      image: "assets/dummy.png"
-    },
-    {
-      name: "Arya",
-      number: "+39333444078",
-      image: "assets/dummy.png"
-    },
-    {
-      name: "Nadia",
-      number: "+393450166161",
-      image: "assets/dummy.png"
-    } */
-  ];
+  importedContacts = [];
 
   contactList = [];
 
   constructor(
     private http: HttpClient,
     private contacts: Contacts,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private platform: Platform
   ) {}
 
   importContact() {
-    // Importo contatti dal telefono
     let promise = new Promise(resolve => {
-      this.contacts
-        .find(["displayName", "phoneNumbers", "photos"])
-        .then(contacts => {
-          if (contacts.length == 0) {
-            alert("No Contacts found");
-          } else {
-            for (var i = 0; i < contacts.length; i++) {
-              if (contacts[i].name !== null) {
-                let contact = {};
-                contact["name"] = contacts[i].name.formatted;
-                if (contacts[i].phoneNumbers !== null) {
-                  contact["number"] = contacts[i].phoneNumbers[0].value.replace(
-                    /\s+/g,
-                    ""
-                  );
+      if (!this.platform.is("cordova")) {
+        //Setto valori per test su Web
+        this.importedContacts = [
+          {
+            name: "Paolo",
+            number: "+393483773817",
+            image: "assets/dummy.png"
+          },
+          {
+            name: "Arya",
+            number: "+39333444078",
+            image: "assets/dummy.png"
+          },
+          {
+            name: "Nadia",
+            number: "+393450166161",
+            image: "assets/dummy.png"
+          }
+        ];
+        this.getContacts().then(data => {
+          resolve(data);
+        });
+      } else {
+        // Importo contatti dal telefono
+        this.contacts
+          .find(["displayName", "phoneNumbers", "photos"])
+          .then(contacts => {
+            if (contacts.length == 0) {
+              alert("No Contacts found");
+            } else {
+              for (var i = 0; i < contacts.length; i++) {
+                if (contacts[i].name !== null) {
+                  let contact = {};
+                  contact["name"] = contacts[i].name.formatted;
+                  if (contacts[i].phoneNumbers !== null) {
+                    contact["number"] = contacts[
+                      i
+                    ].phoneNumbers[0].value.replace(/\s+/g, "");
+                  }
+                  if (contacts[i].photos !== null) {
+                    contact["image"] = this.sanitizer.bypassSecurityTrustUrl(
+                      (<any>window).Ionic.WebView.convertFileSrc(
+                        contacts[i].photos[0].value
+                      )
+                    );
+                  } else {
+                    contact["image"] = "assets/dummy.png";
+                  }
+                  this.importedContacts.push(contact);
                 }
-                if (contacts[i].photos !== null) {
-                  contact["image"] = this.sanitizer.bypassSecurityTrustUrl(
-                    (<any>window).Ionic.WebView.convertFileSrc(
-                      contacts[i].photos[0].value
-                    )
-                  );
-                } else {
-                  contact["image"] = "assets/dummy.png";
-                }
-                this.importedContacts.push(contact);
               }
             }
-          }
-          this.getContacts().then(data => {
-            resolve(data);
+            this.getContacts().then(data => {
+              resolve(data);
+            });
           });
-        });
-      /* Scommentare per testare su Web
-      this.getContacts().then(data => {
-        resolve(data);
-      }); */
+      }
     });
     return promise;
   }
