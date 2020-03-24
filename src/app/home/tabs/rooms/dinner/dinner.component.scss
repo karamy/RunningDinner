@@ -1,0 +1,38 @@
+.wrapper{
+    display: flex;
+    align-items: center;
+    margin-left :auto;
+}
+.list{
+    width: 85%;
+    height: 3em;
+    border-radius: 0.4em;
+    display:table;
+    position: absolute;
+    margin-left:10%;
+    background-image: url('src/assets/label1.jpeg');
+    background-size: 100% 100%;
+    border-radius: 0.4em;
+    border: 2px solid lightseagreen;
+}
+.dinnerlayer{
+    display: table-cell;
+    vertical-align: middle;  
+}
+.dinnername{
+    text-align: center;
+    margin-left:2em;
+    text-shadow: 2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff, 1px 1px #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
+}
+.dot{
+    background-color: lightseagreen;
+    border-radius: 50%;
+    height:5em;
+    width:5em;
+    display: grid;
+    place-items: center;
+    position: absolute;
+    margin-left:5%;
+    text-shadow: 2px 0 0 #fff, -2px 0 0 #fff, 0 2px 0 #fff, 0 -2px 0 #fff, 1px 1px #fff, -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff;
+}
+
