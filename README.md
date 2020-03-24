@@ -56,6 +56,7 @@ TODO:
 - CC
   - refresh token lato server --> https://angular-academy.com/angular-jwt/#authservice
   - test app su android x firebase
+  - tutorial firebase e risoluzione problemi sha1 per firebase auth
   - registrazione lato server con immagine
   - servizio per fare query in automatico su heroku
   - corso app
