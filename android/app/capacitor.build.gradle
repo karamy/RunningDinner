@@ -11,8 +11,7 @@ apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
 dependencies {
     implementation project(':capacitor-firebase-auth')
     implementation "com.android.support:support-v4:28.+"
-    implementation 'androidx.appcompat:appcompat:1.0.0'
-    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+    implementation "com.android.support:appcompat-v7:28.+"
 }
 
 
