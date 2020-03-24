@@ -1,129 +1,150 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Contacts } from "@ionic-native/contacts";
-import { DomSanitizer } from "@angular/platform-browser";
-import { Platform } from "@ionic/angular";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Contacts } from '@ionic-native/contacts';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { Platform } from '@ionic/angular';
+import { RDCostantsService } from 'src/app/rdcostants.service';
+
+// Rappresente i dati di un contatto sul telefono
+export class RDContact {
+  constructor() { }
+
+  name: string;
+  phoneNumber: string;
+  imageUrl: SafeUrl;
+}
+
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class ContactsService {
-  importedContacts = [];
-
-  contactList = [];
 
   constructor(
     private http: HttpClient,
     private contacts: Contacts,
     private sanitizer: DomSanitizer,
-    private platform: Platform
-  ) {}
+    private platform: Platform,
+    private rdCostants: RDCostantsService
+  ) { }
 
-  importContact() {
-    let promise = new Promise(resolve => {
-      if (!this.platform.is("cordova")) {
-        //Setto valori per test su Web
-        this.importedContacts = [
+  // Legge i contatti all'interno del telefono
+  getLocalContacts(skipDuplicates: boolean): Promise<RDContact[]> {
+    return new Promise((resolve, reject) => {
+      if (!this.platform.is('cordova')) {
+        const testContacts: RDContact[] = [ // Contatti di test per il Web
           {
-            name: "Paolo",
-            number: "+393483773817",
-            image: "assets/dummy.png"
+            name: 'Paolo',
+            phoneNumber: '+393483773817',
+            imageUrl: 'assets/dummy.png'
           },
           {
-            name: "Arya",
-            number: "+39333444078",
-            image: "assets/dummy.png"
+            name: 'Arya',
+            phoneNumber: '+39333444078',
+            imageUrl: 'assets/dummy.png'
           },
           {
-            name: "Nadia",
-            number: "+393450166161",
-            image: "assets/dummy.png"
+            name: 'Nadia',
+            phoneNumber: '+393450166161',
+            imageUrl: 'assets/dummy.png'
           }
         ];
-        this.getContacts().then(data => {
-          resolve(data);
-        });
+
+        resolve(testContacts);
       } else {
+        const importedContacts: RDContact[] = [];
+
         // Importo contatti dal telefono
         this.contacts
-          .find(["displayName", "phoneNumbers", "photos"])
-          .then(contacts => {
-            if (contacts.length == 0) {
-              alert("No Contacts found");
+          .find(['displayName', 'phoneNumbers', 'photos'])
+          .then(localContacts => {
+            if (localContacts.length === 0) { // Se non trovo contatti rifiuto la promise
+              console.warn('No contacts found');
+              reject();
             } else {
-              for (var i = 0; i < contacts.length; i++) {
-                if (contacts[i].name !== null) {
-                  let contact = {};
-                  contact["name"] = contacts[i].name.formatted;
-                  if (contacts[i].phoneNumbers !== null) {
-                    contact["number"] = contacts[
-                      i
-                    ].phoneNumbers[0].value.replace(/\s+/g, "");
+              for (let i = 0; i < localContacts.length; i++) {
+                if (localContacts[i].name !== null) {
+                  const newContact: RDContact = new RDContact();
+                  newContact.name = localContacts[i].name.formatted;
+                  if (localContacts[i].phoneNumbers !== null) {
+                    newContact.phoneNumber = localContacts[i].phoneNumbers[0].value.replace(/\s+/g, '');
                   }
-                  if (contacts[i].photos !== null) {
-                    contact["image"] = this.sanitizer.bypassSecurityTrustUrl(
-                      (<any>window).Ionic.WebView.convertFileSrc(
-                        contacts[i].photos[0].value
+                  if (localContacts[i].photos !== null) {
+                    newContact.imageUrl = this.sanitizer.bypassSecurityTrustUrl(
+                      (window as any).Ionic.WebView.convertFileSrc(
+                        localContacts[i].photos[0].value
                       )
                     );
                   } else {
-                    contact["image"] = "assets/dummy.png";
+                    newContact.imageUrl = 'assets/dummy.png';
                   }
-                  this.importedContacts.push(contact);
+                  importedContacts.push(newContact);
                 }
               }
+
+              // Rimuovo eventualmente i duplicati
+              if (skipDuplicates) {
+                const uniqueList = Array.from(
+                  new Set(importedContacts.map(a => a.phoneNumber))
+                ).map(phoneNumber => {
+                  return importedContacts.find(a => a.phoneNumber === phoneNumber);
+                });
+                resolve(uniqueList);
+              } else {
+                resolve(importedContacts);
+              }
             }
-            this.getContacts().then(data => {
-              resolve(data);
-            });
           });
       }
     });
-    return promise;
   }
 
-  getContacts() {
-    // POST dei contatti al DB
-    let promise = new Promise((resolve, reject) => {
-      /*      this.http.post(
-        "https://runningdinnerapi.herokuapp.com/login",
-        this.importedContacts
-      ); */
-      resolve([
-        {
-          number: "+393450166161"
+  // Invio dei propri contatti al server, che restituisce quelli che fanno match
+  postContacts(localContacts): Promise<RDContact[]> {
+    return new Promise((resolve, reject) => {
+      this.http.post(
+        this.rdCostants.getApiRoute('compareContacts'),
+        localContacts
+      ).subscribe(
+        (mathingContacts) => {
+          resolve(mathingContacts as unknown as RDContact[]);
         },
-        {
-          number: "+393483773817"
-        },
-        {
-          number: "+393389082282"
+        (err) => {
+          console.warn(err);
+          reject();
         }
-      ]);
+      );
+      /* resolve([
+        {
+          number: '+393450166161'
+        },
+        {
+          number: '+393483773817'
+        },
+        {
+          number: '+393389082282'
+        }
+      ]); */
     });
-    return promise;
   }
 
-  compareContacts(returnedNumbers) {
-    //Comparo contatti importati con quelli ottenuti dal DB
-    for (var i = 0; i < this.importedContacts.length; i++) {
-      for (var x = 0; x < returnedNumbers.length; x++) {
-        if (returnedNumbers[x].number == this.importedContacts[i].number) {
-          this.contactList.push(this.importedContacts[i]);
+  // Comparo contatti ottenuti dal server per visualizzare i nomi del contatto del telefono
+  compareContacts(returnedNumbers: RDContact[], localContacts: RDContact[]) {
+    let contactList = [];
+
+    for (let i = 0; i < localContacts.length; i++) {
+      for (let x = 0; x < returnedNumbers.length; x++) {
+        if (returnedNumbers[x].phoneNumber === localContacts[i].phoneNumber) {
+          contactList.push(localContacts[i]);
         }
       }
     }
-    //Ordino contactList
-    this.contactList = this.contactList.sort((a, b) =>
+
+    // Ordino contactList
+    contactList = contactList.sort((a, b) =>
       a.name.localeCompare(b.name)
     );
-    // Rimuovo duplicati
-    const uniqueList = Array.from(
-      new Set(this.contactList.map(a => a.number))
-    ).map(number => {
-      return this.contactList.find(a => a.number == number);
-    });
-    console.log(uniqueList);
-    return uniqueList;
+
+    return contactList;
   }
 }

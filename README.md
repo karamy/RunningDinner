@@ -37,9 +37,13 @@ npm run run-ios -> effettua build, copia file e apertura ide per iOS
 TODO:
 
 - CC
-  - refresh token lato server
-  - test permessi su ios
+  - refresh token lato server --> https://angular-academy.com/angular-jwt/#authservice
+  - test app su android x firebase
+  - registrazione lato server con immagine
+  - servizio per fare query in automatico su heroku
+  - corso app
 
-\*PZ
+- PZ
+  - permessi con plugin su ios
 
-\*AS
+- AS

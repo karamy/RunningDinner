@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { LoadingController } from '@ionic/angular';
-import { tap } from 'rxjs/operators';
+import { RDCostantsService } from '../rdcostants.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,9 +9,11 @@ import { tap } from 'rxjs/operators';
 export class AuthService {
 
   private _user: AuthenticatedUser;
-  private apiUrl = 'https://runningdinnerapi.herokuapp.com';
 
-  constructor(private http: HttpClient, private loadingCtrl: LoadingController) {
+  constructor(private http: HttpClient,
+              private loadingCtrl: LoadingController,
+              private rdCostants: RDCostantsService
+  ) {
     this.readUser();
   }
 
@@ -42,7 +44,7 @@ export class AuthService {
     loadingSpinner.present();
 
     return new Promise((resolve, reject) =>
-      this.http.post(this.apiUrl + '/login', dataToSend)
+      this.http.post(this.rdCostants.getApiRoute('login'), dataToSend)
         .toPromise().then((res) => {
           localStorage.setItem('user', JSON.stringify(res));
           this.readUser();
@@ -77,7 +79,7 @@ export class AuthService {
     };
 
     return new Promise((resolve, reject) => {
-      this.http.post(this.apiUrl + '/refresh', dataToSend).
+      this.http.post(this.rdCostants.getApiRoute('refresh'), dataToSend).
         toPromise().then((token) => {
           this._user.accessToken = JSON.stringify(token);
           this.writeUser(this._user);
