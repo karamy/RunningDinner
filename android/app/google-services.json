@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "65032950194",
+    "firebase_url": "https://runningdinnersms.firebaseio.com",
+    "project_id": "runningdinnersms",
+    "storage_bucket": "runningdinnersms.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:65032950194:android:b701d9228d75a3145454ab",
+        "android_client_info": {
+          "package_name": "io.runningdinner.starter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "65032950194-9imnd2b9u4vhmflrd7mgi841nd5nj8ad.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.runningdinner.starter",
+            "certificate_hash": "c9136114b97dc1df93d98c58d576493f95811e3f"
+          }
+        },
+        {
+          "client_id": "65032950194-vrl5l7r0j1f05trf2gcg5cos491vnpf1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCgx2woi1sgFGY9-2j5jJPlcbmbvXPBzg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "65032950194-vrl5l7r0j1f05trf2gcg5cos491vnpf1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "65032950194-m7vlf0ejttvib2ih01r97vqdiahoir1r.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.runningdinner.startero"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

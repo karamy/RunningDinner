@@ -1,0 +1,30 @@
+platform :ios, '11.0'
+use_frameworks!
+
+# workaround to avoid Xcode 10 caching of Pods that requires
+# Product -> Clean Build Folder after new Cordova plugins installed
+# Requires CocoaPods 1.6 or newer
+install! 'cocoapods', :disable_input_output_paths => true
+
+def capacitor_pods
+  # Automatic Capacitor Pod dependencies, do not delete
+  pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
+  pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
+  pod 'CapacitorFirebaseAuth', :path => '..\..\node_modules\capacitor-firebase-auth'
+  pod 'CordovaPlugins', :path => '../capacitor-cordova-ios-plugins'
+  # Do not delete
+end
+
+target 'App' do
+  capacitor_pods
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Core'
+  # Add your Pods here
+end
+
+
+# add the Firebase pod for Google Analytics
+pod 'Firebase/Analytics'
+# add pods for any other desired Firebase products
+# https://firebase.google.com/docs/ios/setup#available-pods

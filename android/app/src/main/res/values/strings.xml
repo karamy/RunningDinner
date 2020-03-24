@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Running Dinner</string>
+    <string name="title_activity_main">Running Dinner</string>
+    <string name="package_name">io.runningdinner.starter</string>
+    <string name="custom_url_scheme">io.runningdinner.starter</string>
+</resources>

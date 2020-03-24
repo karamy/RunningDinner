@@ -17,12 +17,12 @@ export class ContactsPage implements OnInit {
     private contactsService: ContactsService
   ) {}
 
-  async showContact(contactName: string) {
+  async showContact(contactName: string, contactImage) {
     const modal = await this.modalController.create({
       component: ContactsDetailPage,
       swipeToClose: true,
       presentingElement: this.routerOutlet.parentOutlet.nativeEl,
-      componentProps: { contactName }
+      componentProps: { contactName, contactImage }
     });
     return await modal.present();
   }
