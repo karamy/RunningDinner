@@ -49,16 +49,24 @@ Se durante la build l'app da un errore del tipo "Could not find plugin "proposal
   npm install again
   npm run build
 
----------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+
+Problemi utilizzo plugin Firebase Phone Authentication su Android
+
+Se durante il run l'app crasha e dal LogCat su Android Studio l'errore è che la chiave SHA1 non è
+stata registrata, su OSX occorre lanciare il seguente comando:
+
+keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+
+L'output a video mostrerà il codice SHA1 da inserire nella console Firebase nella sezione dell'app iOS
+
+------------------------------------------------------------------------------------------
 
 TODO:
 
 - CC
   - refresh token lato server --> https://angular-academy.com/angular-jwt/#authservice
-  - test app su android x firebase
-  - tutorial firebase e risoluzione problemi sha1 per firebase auth
   - registrazione lato server con immagine
-  - servizio per fare query in automatico su heroku
   - corso app
 
 - PZ
