@@ -13,10 +13,10 @@
   <ion-list>
     <ion-item
       *ngFor="let contact of contactList"
-      (click)="showContact(contact.name, contact.image)"
+      (click)="showContact(contact.name, contact.imageUrl)"
     >
       <ion-avatar>
-        <img [src]="contact.image" />
+        <img [src]="contact.imageUrl" />
       </ion-avatar>
       <p>{{contact.name}}</p>
     </ion-item>
