@@ -11,30 +11,26 @@ const routes: Routes = [
     children: [
       {
         path: 'contacts',
-        loadChildren: () => import('./tabs/contacts/contacts.module').then( m => m.ContactsPageModule)
+        loadChildren: () => import('./tabs/contacts/contacts.module').then(m => m.ContactsPageModule)
       },
       {
         path: 'rooms',
-        loadChildren: () => import('./tabs/rooms/rooms.module').then( m => m.RoomsPageModule),
+        loadChildren: () => import('./tabs/rooms/rooms.module').then(m => m.RoomsPageModule),
       },
       {
         path: 'chat',
-        loadChildren: () => import('./tabs/chat/chat.module').then( m => m.ChatPageModule),
-      },
-      {
-        path: 'dinner',
-        loadChildren: () => import('./tabs/dinner/dinner.module').then( m => m.DinnerPageModule),
-      },
+        loadChildren: () => import('./tabs/chat/chat.module').then(m => m.ChatPageModule),
+      }
     ]
   },
   {
     path: 'profile',
-    loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule)
+    loadChildren: () => import('./profile/profile.module').then(m => m.ProfilePageModule)
   }
-]
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class HomePageRoutingModule {}
+export class HomePageRoutingModule { }
