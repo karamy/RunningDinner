@@ -1,14 +1,100 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>geolocation</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
-  <ion-button color="primary" fill="outline" routerLink="/auth/notification">
-    To Notifications
-  </ion-button>
-  <ion-button color="primary" fill="outline" (click)="requestPermission()">
-    Richiedi permesso
-  </ion-button>
+  <ion-grid style="padding:0rem">
+    <ion-row
+      class="ion-align-self-center ion-align-items-center"
+      style="padding:0rem"
+    >
+      <ion-col
+        class="ion-align-self-center"
+        size-md="6"
+        size-sm="12"
+        size-xs="12"
+        style="padding:0rem"
+      >
+        <ion-item lines="none" *ngIf="permissionGranted === 'true'">
+          <img src="assets/location_granted.png" />
+        </ion-item>
+
+        <ion-item
+          lines="none"
+          *ngIf="permissionGranted === 'false' || permissionGranted === 'settings'"
+        >
+          <img src="assets/location_not_granted.png" />
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col
+        class="ion-align-self-center ion-text-center"
+        size-md="6"
+        size-sm="12"
+        size-xs="12"
+        style="padding:2rem"
+      >
+        <div *ngIf="permissionGranted === 'false'" style="padding:2rem">
+          Consenti la localizzazione così posso consigliarti le cene più vicine
+          e guidarti durante la tua <b>Running Dinner!</b>
+        </div>
+
+        <div *ngIf="permissionGranted === 'settings'" style="padding:2rem">
+          Purtroppo la localizzazione è obbligatoria per poterti guidare durante
+          la tua <b>Running Dinner!</b>
+        </div>
+
+        <br />
+
+        <div *ngIf="permissionGranted === 'settings'" style="padding:2rem">
+          Accedi alle impostazioni per attivarla
+        </div>
+
+        <div *ngIf="permissionGranted === 'true'" style="font-weight:bold">
+          GRANDE!
+        </div>
+
+        <br />
+
+        <div *ngIf="permissionGranted === 'true'" style="padding:2rem">
+          Sei quasi pronto per iniziare la tua prima <b>Running Dinner!</b>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar position="bottom">
+    <ion-button
+      *ngIf="permissionGranted === 'true'"
+      size="large"
+      color="secondary"
+      fill="solid"
+      expand="block"
+      routerLink="/auth/notification"
+    >
+      CONTINUA
+    </ion-button>
+
+    <ion-button
+      *ngIf="permissionGranted === 'false'"
+      size="large"
+      color="secondary"
+      fill="solid"
+      expand="block"
+      (click)="requestPermission()"
+    >
+      CONSENTI GEOLOCALIZZAZIONE
+    </ion-button>
+
+    <ion-button
+      *ngIf="permissionGranted === 'settings'"
+      size="large"
+      color="secondary"
+      fill="solid"
+      expand="block"
+      (click)="forcePermissions()"
+    >
+      VAI A IMPOSTAZIONI
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

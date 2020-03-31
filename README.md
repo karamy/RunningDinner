@@ -3,6 +3,7 @@
 App RunningDinner
 
 ----------------------------------------------------------------------------------------------------
+
 Deploy Ionic app to Github pages
 
 1. Run: npm run gh-pages
@@ -12,11 +13,11 @@ Metodo Manuale:
 1. Navigate in the terminal to your project directory and execute ionic build --prod -- --base-href https://karamy.github.io/RunningDinner/, what will create the www folder, which is comparable to the dist folder for Angular. It also sets your github page domain as base href in index.html.
 2. Then run the plugin: npx angular-cli-ghpages --dir=www . The flag at the end points to the www folder, where the index.html file is located that will be displayed at https://karamy.github.io/RunningDinner/. The plugin will create a branch called "gh-pages" in your project that contains all files which are located in your www folder.
 
----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 
 Per evitare problemi di CORS con le API installare l'estensione Moesif Orign & CORS Changer
 
----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 
 CAPACITOR
 
@@ -35,21 +36,21 @@ npm run run-android -> effettua build, copia file e apertura ide per Android
 npm run build-ios -> effettua build e copia file per iOS
 npm run run-ios -> effettua build, copia file e apertura ide per iOS
 
----------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 
 Problemi Ionic Build --prod
 
 Se durante la build l'app da un errore del tipo "Could not find plugin "proposal-numeric-separator". Ensure there is an entry in ./available-plugins.js for it" occorre fare i seguenti step:
-  
-  delete node_modules and package-lock.json
-  add "resolutions": { "@babel/preset-env": "^7.8.7" } to package.json
-  npm install npm-force-resolutions --save-dev
-  npm install
-  npx npm-force-resolutions
-  npm install again
-  npm run build
 
-------------------------------------------------------------------------------------------
+delete node_modules and package-lock.json
+add "resolutions": { "@babel/preset-env": "^7.8.7" } to package.json
+npm install npm-force-resolutions --save-dev
+npm install
+npx npm-force-resolutions
+npm install again
+npm run build
+
+----------------------------------------------------------------------------------------------------
 
 Problemi utilizzo plugin Firebase Phone Authentication su Android
 
@@ -60,16 +61,28 @@ keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -sto
 
 L'output a video mostrerà il codice SHA1 da inserire nella console Firebase nella sezione dell'app iOS
 
-------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+
+Permissions:
+
+Plugin: https://github.com/dpa99c/cordova-diagnostic-plugin
+
+- Geolocation
+  Sia su iOS 13+ che Android se selezionata la voce "ask every time" oppure "allow once" ad ogni avvio l'app perde i permessi. Per cui rifare il check ogni volta che si deve utilizzare la localizzazione ed, eventualmente, mostrare errore nel caso sia disabilitata.
+
+- Notifications
+  Non possibile, per adesso, testarle su iOS in quanto necessarie APN generabili solo con account Developer.
+
+----------------------------------------------------------------------------------------------------
 
 TODO:
 
 - CC
+
   - refresh token lato server --> https://angular-academy.com/angular-jwt/#authservice
   - registrazione lato server con immagine
   - corso app
 
 - PZ
-  - permessi con plugin su ios
 
 - AS
