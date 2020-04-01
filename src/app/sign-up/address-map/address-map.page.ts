@@ -11,7 +11,7 @@ import { SignupService } from '../signup-service.service';
   templateUrl: './address-map.page.html',
   styleUrls: ['./address-map.page.scss'],
 })
-export class AddressMapPage implements OnInit, AfterViewInit {
+export class AddressMapPage implements AfterViewInit {
   @ViewChild('map', { static: false }) mapElementRef: ElementRef;
 
   GoogleAutocomplete: google.maps.places.AutocompleteService;
@@ -24,22 +24,25 @@ export class AddressMapPage implements OnInit, AfterViewInit {
   mapPreview: any = null;
 
 
-  constructor(private signupService: SignupService,
-    private render: Renderer2,
-    public zone: NgZone) {
+  constructor(private signupService: SignupService, private render: Renderer2,
+    private zone: NgZone, private authService: AuthService,
+    private router: Router) {
     this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
     this.autocomplete = { input: '' };
     this.autocompleteItems = [];
   }
 
-  ngOnInit() {
-  }
-
-  register() {
+  // Effettua la registrazione utente, e in caso positivo entra nella home
+  onSignup() {
     this.signupService.setAddress(this.autocomplete.input);
     this.signupService.signupUser().then(
       () => {
-        alert('registrato');
+        this.authService.doLogin(this.signupService.getSignupData().phoneNumber).then(() => {
+          this.router.navigateByUrl('/home/tabs/rooms');
+        }, (err) => {
+          alert('Errore login');
+          console.warn(err);
+        });
       },
       (err) => {
         alert('Errore registrazione');

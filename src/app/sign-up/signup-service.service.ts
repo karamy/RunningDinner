@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { RDContact } from '../home/tabs/contacts/contacts.service';
 import { RDCostantsService } from '../rdcostants.service';
 import { HttpClient } from '@angular/common/http';
 
@@ -43,6 +42,9 @@ export class SignupService {
   }
   setProfilePhoto(profilePhoto: string) {
     this.signupData.profilePhoto = profilePhoto;
+  }
+  getSignupData(): SignupData {
+    return this.signupData;
   }
 
   // Registra nuovo utente a DB

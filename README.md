@@ -2,6 +2,8 @@
 
 App RunningDinner
 
+Repo GDrive: https://drive.google.com/drive/u/0/folders/1UH0TRlFf0-ZpmZUsC7uzacQWe_u0UGxX
+
 ----------------------------------------------------------------------------------------------------
 
 Deploy Ionic app to Github pages
@@ -75,16 +77,3 @@ Plugin: https://github.com/dpa99c/cordova-diagnostic-plugin
 
 ----------------------------------------------------------------------------------------------------
 
-TODO:
-
-- CC
-
-  - refresh token lato server --> https://angular-academy.com/angular-jwt/#authservice
-  - registrazione lato server con immagine (dataorareg.)
-  - login aggiornando lastLogin e rendo notnull i campi
-  - photo service, rifattorizzare per salvare solo il base64 senza troppi casini e abilitare la possibilità di cache-are la foto
-  - corso app
-
-- PZ
-
-- AS
