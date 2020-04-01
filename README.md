@@ -80,7 +80,9 @@ TODO:
 - CC
 
   - refresh token lato server --> https://angular-academy.com/angular-jwt/#authservice
-  - registrazione lato server con immagine
+  - registrazione lato server con immagine (dataorareg.)
+  - login aggiornando lastLogin e rendo notnull i campi
+  - photo service, rifattorizzare per salvare solo il base64 senza troppi casini e abilitare la possibilità di cache-are la foto
   - corso app
 
 - PZ

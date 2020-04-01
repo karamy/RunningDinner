@@ -17,5 +17,5 @@
       </ion-label>
     </ion-item>
     <ion-row style="height: 10%"></ion-row>
-    <ion-button [disabled]="!username" expand="block" strong=true color='secondary' fill='outline' routerLink="/sign-up/birth-date">Conferma</ion-button>
+    <ion-button [disabled]="!username" expand="block" strong=true color='secondary' fill='outline' (click)=goToBirthDate()>Conferma</ion-button>
   </ion-content>

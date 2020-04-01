@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 const routes: Routes = [
+  // Dal momento che non esiste rotta 'signup', andare qui significa andare a 'username'
   { path: '', redirectTo: 'username', pathMatch: 'full' },
   {
     path: 'username',
@@ -19,7 +20,6 @@ const routes: Routes = [
     path: 'address-map',
     loadChildren: () => import('./address-map/address-map.module').then(m => m.AddressMapPageModule)
   }
-
 ];
 
 @NgModule({

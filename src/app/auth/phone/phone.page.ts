@@ -1,19 +1,19 @@
-import { Component, OnInit } from "@angular/core";
-import { ModalController } from "@ionic/angular";
-import { CountryCodesPage } from "./country-codes/country-codes.page";
-import { PhoneService } from "./phone.service";
-import { UserService } from "../user.service";
-import { Router } from "@angular/router";
-import { AuthService } from "../auth.service";
+import { Component, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { CountryCodesPage } from './country-codes/country-codes.page';
+import { PhoneService } from './phone.service';
+import { UserService } from '../user.service';
+import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 
 @Component({
-  selector: "app-phone",
-  templateUrl: "./phone.page.html",
-  styleUrls: ["./phone.page.scss"]
+  selector: 'app-phone',
+  templateUrl: './phone.page.html',
+  styleUrls: ['./phone.page.scss']
 })
 export class PhonePage implements OnInit {
   inputNumber: number;
-  prefix = "+39";
+  prefix = '+39';
   phoneNumber: string;
   otp: string;
   otpSent = false;
@@ -24,9 +24,9 @@ export class PhonePage implements OnInit {
     private userService: UserService,
     private router: Router,
     private authService: AuthService
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   // Scelta codice paese
   async presentModalCountryCodes() {
@@ -34,7 +34,7 @@ export class PhonePage implements OnInit {
       component: CountryCodesPage
     });
     modal.onDidDismiss().then(res => {
-      this.prefix = res["data"];
+      this.prefix = res.data;
     });
     return modal.present();
   }
@@ -51,21 +51,21 @@ export class PhonePage implements OnInit {
   tryLogin() {
     this.phoneService.verifyNumber(this.otp).then(() => {
       const reqBody = {
-        phone_number: this.phoneNumber + ""
+        phone_number: this.phoneNumber + ''
       };
       this.userService.existsUser(reqBody).then(data => {
         if (!data) {
-          // Utente non esiste a DB
-          this.router.navigateByUrl("/auth/instructions");
+          // Utente non esiste a DB, vado a registrazione
+          this.router.navigateByUrl('/sign-up');
         } else {
           // Effettua il login in automatico
           this.authService.doLogin(this.phoneNumber).then(
             () => {
-              this.router.navigateByUrl("/home/tabs/rooms");
+              this.router.navigateByUrl('/home/tabs/rooms');
             },
             err => {
-              alert("errore login");
-              this.router.navigateByUrl("/auth");
+              alert('errore login');
+              this.router.navigateByUrl('/auth');
             }
           );
         }
