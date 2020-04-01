@@ -9,7 +9,9 @@ export class ContactsDetailPage implements OnInit {
   @Input() contactName: string;
   @Input() contactImage: string;
 
-  constructor() {}
+  constructor() { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log(this.contactImage)
+  }
 }

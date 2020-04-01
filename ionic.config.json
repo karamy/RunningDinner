@@ -1,7 +1,8 @@
 {
   "name": "runningdinner",
   "integrations": {
-    "capacitor": {}
+    "capacitor": {},
+    "cordova": {}
   },
   "type": "angular"
 }

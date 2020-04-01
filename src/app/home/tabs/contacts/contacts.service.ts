@@ -36,16 +36,16 @@ export class ContactsService {
           {
             name: 'Paolo',
             phoneNumber: '+393483773817',
+            imageUrl: 'assets/Logo.png'
+          },
+          {
+            name: 'Carlo Caramia',
+            phoneNumber: '+393408552105',
             imageUrl: 'assets/dummy.png'
           },
           {
-            name: 'Arya',
-            phoneNumber: '+39333444078',
-            imageUrl: 'assets/dummy.png'
-          },
-          {
-            name: 'Nadia',
-            phoneNumber: '+393450166161',
+            name: 'Pange',
+            phoneNumber: '+393495339159',
             imageUrl: 'assets/dummy.png'
           }
         ];

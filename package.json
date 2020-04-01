@@ -41,7 +41,6 @@
     "@ionic/pwa-elements": "^1.4.2",
     "angular-cli-ghpages": "^0.6.2",
     "capacitor-firebase-auth": "^0.3.0",
-    "cordova-plugin-android-permissions": "^1.0.2",
     "cordova-plugin-contacts": "^3.0.1",
     "cordova.plugins.diagnostic": "^5.0.1",
     "core-js": "^2.5.4",
