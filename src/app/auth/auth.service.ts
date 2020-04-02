@@ -1,35 +1,42 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { LoadingController } from '@ionic/angular';
-import { RDCostantsService } from '../rdcostants.service';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { LoadingController } from "@ionic/angular";
+import { RDCostantsService } from "../rdcostants.service";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root"
 })
 export class AuthService {
-
   private _user: AuthenticatedUser;
 
-  constructor(private http: HttpClient,
-              private loadingCtrl: LoadingController,
-              private rdCostants: RDCostantsService
+  constructor(
+    private http: HttpClient,
+    private loadingCtrl: LoadingController,
+    private rdCostants: RDCostantsService
   ) {
     this.readUser();
   }
 
   // Legge le informazioni utente presenti in localStorage e le carica nel Service
   private readUser() {
-    this._user = JSON.parse(localStorage.getItem('user')) as unknown as AuthenticatedUser;
+    this._user = (JSON.parse(
+      localStorage.getItem("user")
+    ) as unknown) as AuthenticatedUser;
+    this._user.userData = this._user["user"]; //Fix per errore DB user, da sistemare
   }
 
   // Aggiorna lo user in localStorage
   private writeUser(user: AuthenticatedUser) {
-    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(user));
   }
 
   // Indica se l'utente ha una sessione di login attiva
   isUserAuthenticated() {
-    return this._user && this._user.accessToken !== undefined && this._user.accessToken !== null;
+    return (
+      this._user &&
+      this._user.accessToken !== undefined &&
+      this._user.accessToken !== null
+    );
   }
 
   // Effettua il login e valorizza la proprietà User
@@ -39,27 +46,34 @@ export class AuthService {
     };
 
     const loadingSpinner = await this.loadingCtrl.create({
-      message: 'Effettuo login...'
+      message: "Effettuo login..."
     });
     loadingSpinner.present();
 
     return new Promise((resolve, reject) =>
-      this.http.post(this.rdCostants.getApiRoute('login'), dataToSend)
-        .toPromise().then((res) => {
-          localStorage.setItem('user', JSON.stringify(res));
-          this.readUser();
-          resolve();
-        }, (err) => {
-          reject(err);
-        })).finally(() => {
-          loadingSpinner.dismiss();
-        });
+      this.http
+        .post(this.rdCostants.getApiRoute("login"), dataToSend)
+        .toPromise()
+        .then(
+          res => {
+            localStorage.setItem("user", JSON.stringify(res));
+            this.readUser();
+            console.log(this._user);
+            resolve();
+          },
+          err => {
+            reject(err);
+          }
+        )
+    ).finally(() => {
+      loadingSpinner.dismiss();
+    });
   }
 
   // Effettua il logout cancellando i dati utente
   doLogout() {
     this._user = null;
-    localStorage.setItem('user', null);
+    localStorage.setItem("user", null);
   }
 
   // Ritorna l'utente loggato
@@ -79,20 +93,24 @@ export class AuthService {
     };
 
     return new Promise((resolve, reject) => {
-      this.http.post(this.rdCostants.getApiRoute('refresh'), dataToSend).
-        toPromise().then((token) => {
-          this._user.accessToken = JSON.stringify(token);
-          this.writeUser(this._user);
-        }, (err) => {
-          reject(err);
-        });
+      this.http
+        .post(this.rdCostants.getApiRoute("refresh"), dataToSend)
+        .toPromise()
+        .then(
+          token => {
+            this._user.accessToken = JSON.stringify(token);
+            this.writeUser(this._user);
+          },
+          err => {
+            reject(err);
+          }
+        );
     });
   }
 
   private getRefreshToken() {
     return this.isUserAuthenticated() ? this._user.refreshToken : null;
   }
-
 }
 
 // Rappresenta l'utente loggato

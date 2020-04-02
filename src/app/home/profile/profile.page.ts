@@ -1,13 +1,18 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthService } from 'src/app/auth/auth.service';
-import { Router } from '@angular/router';
+import { Component, OnInit } from "@angular/core";
+import {
+  AuthService,
+  AuthenticatedUser,
+  UserData
+} from "src/app/auth/auth.service";
+import { Router } from "@angular/router";
 
 @Component({
-  selector: 'app-profile',
-  templateUrl: './profile.page.html',
-  styleUrls: ['./profile.page.scss'],
+  selector: "app-profile",
+  templateUrl: "./profile.page.html",
+  styleUrls: ["./profile.page.scss"]
 })
 export class ProfilePage implements OnInit {
+  user;
 
   // Configurazione slider
   slideOpts = {
@@ -22,10 +27,13 @@ export class ProfilePage implements OnInit {
           slidesPerGroup: 1,
           watchSlidesProgress: true,
           spaceBetween: 0,
-          virtualTranslate: true,
+          virtualTranslate: true
         };
         swiper.params = Object.assign(swiper.params, overwriteParams);
-        swiper.originalParams = Object.assign(swiper.originalParams, overwriteParams);
+        swiper.originalParams = Object.assign(
+          swiper.originalParams,
+          overwriteParams
+        );
       },
       setTranslate() {
         const swiper = this;
@@ -51,25 +59,43 @@ export class ProfilePage implements OnInit {
             rotateY = -rotateY;
           }
 
-          $slideEl[0].style.zIndex = -Math.abs(Math.round(progress)) + slides.length;
+          $slideEl[0].style.zIndex =
+            -Math.abs(Math.round(progress)) + slides.length;
 
           if (swiper.params.flipEffect.slideShadows) {
             // Set shadows
-            let shadowBefore = swiper.isHorizontal() ? $slideEl.find('.swiper-slide-shadow-left') : $slideEl.find('.swiper-slide-shadow-top');
-            let shadowAfter = swiper.isHorizontal() ? $slideEl.find('.swiper-slide-shadow-right') : $slideEl.find('.swiper-slide-shadow-bottom');
+            let shadowBefore = swiper.isHorizontal()
+              ? $slideEl.find(".swiper-slide-shadow-left")
+              : $slideEl.find(".swiper-slide-shadow-top");
+            let shadowAfter = swiper.isHorizontal()
+              ? $slideEl.find(".swiper-slide-shadow-right")
+              : $slideEl.find(".swiper-slide-shadow-bottom");
             if (shadowBefore.length === 0) {
-              shadowBefore = swiper.$(`<div class="swiper-slide-shadow-${swiper.isHorizontal() ? 'left' : 'top'}"></div>`);
+              shadowBefore = swiper.$(
+                `<div class="swiper-slide-shadow-${
+                  swiper.isHorizontal() ? "left" : "top"
+                }"></div>`
+              );
               $slideEl.append(shadowBefore);
             }
             if (shadowAfter.length === 0) {
-              shadowAfter = swiper.$(`<div class="swiper-slide-shadow-${swiper.isHorizontal() ? 'right' : 'bottom'}"></div>`);
+              shadowAfter = swiper.$(
+                `<div class="swiper-slide-shadow-${
+                  swiper.isHorizontal() ? "right" : "bottom"
+                }"></div>`
+              );
               $slideEl.append(shadowAfter);
             }
-            if (shadowBefore.length) { shadowBefore[0].style.opacity = Math.max(-progress, 0); }
-            if (shadowAfter.length) { shadowAfter[0].style.opacity = Math.max(progress, 0); }
+            if (shadowBefore.length) {
+              shadowBefore[0].style.opacity = Math.max(-progress, 0);
+            }
+            if (shadowAfter.length) {
+              shadowAfter[0].style.opacity = Math.max(progress, 0);
+            }
           }
-          $slideEl
-            .transform(`translate3d(${tx}px, ${ty}px, 0px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`);
+          $slideEl.transform(
+            `translate3d(${tx}px, ${ty}px, 0px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
+          );
         }
       },
       setTransition(duration) {
@@ -77,18 +103,24 @@ export class ProfilePage implements OnInit {
         const { slides, activeIndex, $wrapperEl } = swiper;
         slides
           .transition(duration)
-          .find('.swiper-slide-shadow-top, .swiper-slide-shadow-right, .swiper-slide-shadow-bottom, .swiper-slide-shadow-left')
+          .find(
+            ".swiper-slide-shadow-top, .swiper-slide-shadow-right, .swiper-slide-shadow-bottom, .swiper-slide-shadow-left"
+          )
           .transition(duration);
         if (swiper.params.virtualTranslate && duration !== 0) {
           let eventTriggered = false;
           // eslint-disable-next-line
           slides.eq(activeIndex).transitionEnd(function onTransitionEnd() {
-            if (eventTriggered) { return; }
-            if (!swiper || swiper.destroyed) { return; }
+            if (eventTriggered) {
+              return;
+            }
+            if (!swiper || swiper.destroyed) {
+              return;
+            }
 
             eventTriggered = true;
             swiper.animating = false;
-            const triggerEvents = ['webkitTransitionEnd', 'transitionend'];
+            const triggerEvents = ["webkitTransitionEnd", "transitionend"];
             for (let i = 0; i < triggerEvents.length; i += 1) {
               $wrapperEl.trigger(triggerEvents[i]);
             }
@@ -98,13 +130,18 @@ export class ProfilePage implements OnInit {
     }
   };
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
+    this.user = this.authService.getUser();
+  }
+
+  showUser() {
+    console.log(this.user.userData.name);
   }
 
   onLogout() {
     this.authService.doLogout();
-    this.router.navigateByUrl('/auth');
+    this.router.navigateByUrl("/auth");
   }
 }
