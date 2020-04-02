@@ -50,7 +50,7 @@ export class PermissionsService {
     }
   }
 
-  //Richiesta di accesso a impostazioni per attivazione manuale GPS
+  // Richiesta di accesso a impostazioni per attivazione manuale GPS
   forcePermissions() {
     return new Promise((resolve, reject) => {
       function handleResume() {

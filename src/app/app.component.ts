@@ -6,6 +6,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { AuthService } from './auth/auth.service';
+import { PermissionsService } from './auth/permissions.service';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,9 @@ export class AppComponent {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private permissionService: PermissionsService,
+    private platform: Platform
   ) {
     this.initializeApp();
 
@@ -25,16 +28,31 @@ export class AppComponent {
   }
 
   initializeApp() {
-    this.statusBar.styleDefault();
-    this.splashScreen.hide();
+    // Attivo configurazioni statusBar e splashScreen solo su dispositivo
+    // in modo da non dare warning all'avvio
+    if (this.platform.is('cordova')) {
+      this.statusBar.styleDefault();
+      this.splashScreen.hide();
+    }
   }
 
   // Verifica se lo user è autenticato e ridirige verso opportuna rotta
-  checkActiveLogin() {
+  async checkActiveLogin() {
     if (this.authService.isUserAuthenticated()) {
+      // Verifico se utente ha disabilitato le permissions a login attivo
+      try {
+        await this.permissionService.hasGpsPermission();
+        await this.permissionService.hasNotificationPermission();
+      } catch (e) {
+        console.log("Login attivo ma permission non date");
+        this.router.navigateByUrl('/auth/geolocation');
+        return;
+      }
+
+      // Se arrivo qui possiedo entrambe le permission, vado in home
+      console.log("Login attivo e permission date, proseguo");
       this.router.navigateByUrl('/home');
     } else {
-      // this.router.navigateByUrl('/auth/phone'); TODO sarà da mettere questo
       this.router.navigateByUrl('/auth');
     }
   }
