@@ -73,7 +73,7 @@ export class ProfilePage implements OnInit {
             if (shadowBefore.length === 0) {
               shadowBefore = swiper.$(
                 `<div class="swiper-slide-shadow-${
-                  swiper.isHorizontal() ? "left" : "top"
+                swiper.isHorizontal() ? "left" : "top"
                 }"></div>`
               );
               $slideEl.append(shadowBefore);
@@ -81,7 +81,7 @@ export class ProfilePage implements OnInit {
             if (shadowAfter.length === 0) {
               shadowAfter = swiper.$(
                 `<div class="swiper-slide-shadow-${
-                  swiper.isHorizontal() ? "right" : "bottom"
+                swiper.isHorizontal() ? "right" : "bottom"
                 }"></div>`
               );
               $slideEl.append(shadowAfter);
@@ -130,14 +130,14 @@ export class ProfilePage implements OnInit {
     }
   };
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
-    this.user = this.authService.getUser();
+    this.user = this.authService.getUserData();
   }
 
   showUser() {
-    console.log(this.user.userData.name);
+    console.log(this.user.name);
   }
 
   onLogout() {

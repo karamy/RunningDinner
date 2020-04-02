@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { RDCostantsService } from '../rdcostants.service';
+import { RDConstantsService } from '../rdcostants.service';
 import { HttpClient } from '@angular/common/http';
 
 // Rappresenta i dati di registrazione nuovo utente
@@ -18,7 +18,7 @@ export class SignupService {
 
   private signupData: SignupData;
 
-  constructor(private http: HttpClient, private rdCostants: RDCostantsService) {
+  constructor(private http: HttpClient, private rdConstants: RDConstantsService) {
     this.signupData = {
       name: '',
       address: '',
@@ -49,7 +49,7 @@ export class SignupService {
 
   // Registra nuovo utente a DB
   signupUser(): Promise<object> {
-    return this.http.post(this.rdCostants.getApiRoute('users'), this.signupData)
+    return this.http.post(this.rdConstants.getApiRoute('users'), this.signupData)
       .toPromise();
   }
 }

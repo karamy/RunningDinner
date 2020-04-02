@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { RDCostantsService } from './rdcostants.service';
+import { RDConstantsService } from './rdcostants.service';
 
-describe('RDCostantsService', () => {
+describe('RDConstantsService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: RDCostantsService = TestBed.get(RDCostantsService);
+    const service: RDConstantsService = TestBed.get(RDConstantsService);
     expect(service).toBeTruthy();
   });
 });

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Contacts } from '@ionic-native/contacts';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Platform } from '@ionic/angular';
-import { RDCostantsService } from 'src/app/rdcostants.service';
+import { RDConstantsService } from 'src/app/rdcostants.service';
 
 // Rappresente i dati di un contatto sul telefono
 export class RDContact {
@@ -25,7 +25,7 @@ export class ContactsService {
     private contacts: Contacts,
     private sanitizer: DomSanitizer,
     private platform: Platform,
-    private rdCostants: RDCostantsService
+    private rdConstants: RDConstantsService
   ) { }
 
   // Legge i contatti all'interno del telefono
@@ -103,7 +103,7 @@ export class ContactsService {
   postContacts(localContacts): Promise<RDContact[]> {
     return new Promise((resolve, reject) => {
       this.http.post(
-        this.rdCostants.getApiRoute('compareContacts'),
+        this.rdConstants.getApiRoute('compareContacts'),
         localContacts
       ).subscribe(
         (mathingContacts) => {

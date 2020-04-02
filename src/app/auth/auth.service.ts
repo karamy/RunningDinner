@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { LoadingController } from "@ionic/angular";
-import { RDCostantsService } from "../rdcostants.service";
+import { RDConstantsService } from "../rdcostants.service";
 
 @Injectable({
   providedIn: "root"
@@ -12,7 +12,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private loadingCtrl: LoadingController,
-    private rdCostants: RDCostantsService
+    private rdConstants: RDConstantsService
   ) {
     this.readUser();
   }
@@ -22,7 +22,6 @@ export class AuthService {
     this._user = (JSON.parse(
       localStorage.getItem("user")
     ) as unknown) as AuthenticatedUser;
-    this._user.userData = this._user["user"]; //Fix per errore DB user, da sistemare
   }
 
   // Aggiorna lo user in localStorage
@@ -52,7 +51,7 @@ export class AuthService {
 
     return new Promise((resolve, reject) =>
       this.http
-        .post(this.rdCostants.getApiRoute("login"), dataToSend)
+        .post(this.rdConstants.getApiRoute("login"), dataToSend)
         .toPromise()
         .then(
           res => {
@@ -76,9 +75,14 @@ export class AuthService {
     localStorage.setItem("user", null);
   }
 
-  // Ritorna l'utente loggato
+  // Ritorna l'utente loggato completo
   getUser() {
     return this._user;
+  }
+
+  // Ritorna i dati dell'utente loggato
+  getUserData() {
+    return this._user.userData;
   }
 
   // Ritorna il token dell'utente loggato, se login attivo
@@ -94,7 +98,7 @@ export class AuthService {
 
     return new Promise((resolve, reject) => {
       this.http
-        .post(this.rdCostants.getApiRoute("refresh"), dataToSend)
+        .post(this.rdConstants.getApiRoute("refresh"), dataToSend)
         .toPromise()
         .then(
           token => {
@@ -122,8 +126,10 @@ export interface AuthenticatedUser {
 
 // Rappresente i dati di un utente loggato
 export interface UserData {
-  phone_number: number;
+  userid: number;
   name: string;
-  age: number;
   address: string;
+  phone_number: number;
+  birth_date: Date;
+  profile_photo: string;
 }

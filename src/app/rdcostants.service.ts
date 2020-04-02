@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class RDCostantsService {
+export class RDConstantsService {
 
   private apiUrl = 'https://runningdinnerapi.herokuapp.com/';  // 'http://localhost:1111/'
 
