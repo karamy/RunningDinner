@@ -2,9 +2,11 @@
 
 App RunningDinner
 
+Repo GDrive: https://drive.google.com/drive/u/0/folders/1UH0TRlFf0-ZpmZUsC7uzacQWe_u0UGxX
+URL  GitHub: https://karamy.github.io/RunningDinner/auth
 ----------------------------------------------------------------------------------------------------
 
-Deploy Ionic app to Github pages
+Deploy verso GitHub Pages
 
 1. Run: npm run gh-pages
 
@@ -75,14 +77,3 @@ Plugin: https://github.com/dpa99c/cordova-diagnostic-plugin
 
 ----------------------------------------------------------------------------------------------------
 
-TODO:
-
-- CC
-
-  - refresh token lato server --> https://angular-academy.com/angular-jwt/#authservice
-  - registrazione lato server con immagine
-  - corso app
-
-- PZ
-
-- AS

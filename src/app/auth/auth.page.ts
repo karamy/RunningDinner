@@ -14,6 +14,7 @@ export class AuthPage implements OnInit {
 
   ngOnInit() { }
 
+  // Funzione di test per effettuare login di prova con utente Carlo
   loginToRooms() {
     const phoneNumber = '+393408552105';
 

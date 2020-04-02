@@ -13,9 +13,4 @@ export class RoomsPage implements OnInit {
 
   ngOnInit() {
   }
-
-  onLogout() {
-    this.authService.doLogout();
-    this.router.navigateByUrl('/auth');
-  }
 }

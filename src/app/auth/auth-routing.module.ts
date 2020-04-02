@@ -12,10 +12,6 @@ const routes: Routes = [
     loadChildren: () => import('./phone/phone.module').then(m => m.PhonePageModule)
   },
   {
-    path: 'instructions',
-    loadChildren: () => import('./instructions/instructions.module').then(m => m.InstructionsPageModule)
-  },
-  {
     path: 'geolocation',
     loadChildren: () => import('./geolocation/geolocation.module').then(m => m.GeolocationPageModule)
   },

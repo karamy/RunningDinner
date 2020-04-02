@@ -1,36 +1,40 @@
-import { Component, OnInit } from "@angular/core";
-import { PermissionsService } from "../permissions.service";
-import { Platform } from "@ionic/angular";
+import { Component, OnInit } from '@angular/core';
+import { PermissionsService } from '../permissions.service';
+import { Platform } from '@ionic/angular';
+import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: "app-notification",
-  templateUrl: "./notification.page.html",
-  styleUrls: ["./notification.page.scss"]
+  selector: 'app-notification',
+  templateUrl: './notification.page.html',
+  styleUrls: ['./notification.page.scss']
 })
 export class NotificationPage implements OnInit {
   permissionGranted: string;
 
   constructor(
     private permServ: PermissionsService,
-    private platform: Platform
-  ) {}
+    private platform: Platform,
+    private authService: AuthService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
     this.permServ.hasNotificationPermission().then(
       () => {
         // Permesso Notifications dato
-        this.permissionGranted = "true";
-        console.log("Permesso dato");
+        this.permissionGranted = 'true';
+        console.log('Permesso dato');
       },
       () => {
-        //Permesso Notifications non dato.
-        if (this.platform.is("ios")) {
+        // Permesso Notifications non dato
+        if (this.platform.is('ios')) {
           // Mostro bottone notifiche
-          this.permissionGranted = "false";
+          this.permissionGranted = 'false';
           console.log(this.permissionGranted);
-        } else if (this.platform.is("android")) {
+        } else if (this.platform.is('android')) {
           // Mostro bottone impostazioni
-          this.permissionGranted = "settings";
+          this.permissionGranted = 'settings';
           console.log(this.permissionGranted);
         }
       }
@@ -43,32 +47,42 @@ export class NotificationPage implements OnInit {
       .requestNotificationPermission()
       .then(() => {
         // Permesso dato
-        this.permissionGranted = "true";
+        this.permissionGranted = 'true';
       })
       // Errore
       .catch(err => {
-        console.log("Errore: " + err);
+        console.log('Errore: ' + err);
       });
   }
 
-  //Richiesta accesso a impostazioni e ri-controllo
+  // Richiesta accesso a impostazioni e ri-controllo
   forcePermissions() {
     this.permServ
       .forcePermissions()
       .then(() => {
-        console.log("resolved");
+        console.log('resolved');
         this.permServ
           .hasNotificationPermission()
           .then(() => {
             // Permesso Notifiche dato
-            this.permissionGranted = "true";
+            this.permissionGranted = 'true';
           })
           .catch(() => {
-            console.log("Permission Denied");
+            console.log('Permission Denied');
           });
       })
       .catch(() => {
-        console.log("rejected");
+        console.log('rejected');
       });
+  }
+
+  // Valuto, in base alla presenza di un login attivo, se proseguire con la registrazione
+  // o entrare direttamente (caso in cui un utente a posteriori disabilita le autorizzazioni)
+  endPermissionCheck() {
+    if (this.authService.isUserAuthenticated()) {
+      this.router.navigateByUrl('/home/tabs/rooms');
+    } else {
+      this.router.navigateByUrl('/sign-up/username');
+    }
   }
 }

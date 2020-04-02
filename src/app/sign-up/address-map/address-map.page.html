@@ -1,6 +1,6 @@
 <ion-toolbar>
   <ion-buttons slot="start">
-    <ion-back-button color="secondary" defaultHref="/sing-up/profile-photo"></ion-back-button>
+    <ion-back-button color="secondary" defaultHref="/sign-up/profile-photo"></ion-back-button>
   </ion-buttons>
   </ion-toolbar>
 <ion-content>
@@ -17,6 +17,6 @@
   <img class="map-preview" [hidden]="!mapPreview" src="{{ mapPreview }}">
   <ion-row style="height: 10%"></ion-row>
 </ion-content>
-<ion-button [disabled]="!autocomplete.input" expand="block" strong=true color='secondary' fill='outline' (click)="register()">Conferma</ion-button>
+<ion-button [disabled]="!autocomplete.input" expand="block" strong=true color='secondary' fill='outline' (click)="onSignup()">Conferma</ion-button>
 
 

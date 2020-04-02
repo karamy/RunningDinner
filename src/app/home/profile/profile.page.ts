@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -7,6 +9,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProfilePage implements OnInit {
 
+  // Configurazione slider
   slideOpts = {
     on: {
       beforeInit() {
@@ -47,10 +50,10 @@ export class ProfilePage implements OnInit {
           } else if (rtl) {
             rotateY = -rotateY;
           }
-  
-           $slideEl[0].style.zIndex = -Math.abs(Math.round(progress)) + slides.length;
-  
-           if (swiper.params.flipEffect.slideShadows) {
+
+          $slideEl[0].style.zIndex = -Math.abs(Math.round(progress)) + slides.length;
+
+          if (swiper.params.flipEffect.slideShadows) {
             // Set shadows
             let shadowBefore = swiper.isHorizontal() ? $slideEl.find('.swiper-slide-shadow-left') : $slideEl.find('.swiper-slide-shadow-top');
             let shadowAfter = swiper.isHorizontal() ? $slideEl.find('.swiper-slide-shadow-right') : $slideEl.find('.swiper-slide-shadow-bottom');
@@ -62,8 +65,8 @@ export class ProfilePage implements OnInit {
               shadowAfter = swiper.$(`<div class="swiper-slide-shadow-${swiper.isHorizontal() ? 'right' : 'bottom'}"></div>`);
               $slideEl.append(shadowAfter);
             }
-            if (shadowBefore.length) shadowBefore[0].style.opacity = Math.max(-progress, 0);
-            if (shadowAfter.length) shadowAfter[0].style.opacity = Math.max(progress, 0);
+            if (shadowBefore.length) { shadowBefore[0].style.opacity = Math.max(-progress, 0); }
+            if (shadowAfter.length) { shadowAfter[0].style.opacity = Math.max(progress, 0); }
           }
           $slideEl
             .transform(`translate3d(${tx}px, ${ty}px, 0px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`);
@@ -80,9 +83,9 @@ export class ProfilePage implements OnInit {
           let eventTriggered = false;
           // eslint-disable-next-line
           slides.eq(activeIndex).transitionEnd(function onTransitionEnd() {
-            if (eventTriggered) return;
-            if (!swiper || swiper.destroyed) return;
-  
+            if (eventTriggered) { return; }
+            if (!swiper || swiper.destroyed) { return; }
+
             eventTriggered = true;
             swiper.animating = false;
             const triggerEvents = ['webkitTransitionEnd', 'transitionend'];
@@ -95,9 +98,13 @@ export class ProfilePage implements OnInit {
     }
   };
 
-  constructor() { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
   }
 
+  onLogout() {
+    this.authService.doLogout();
+    this.router.navigateByUrl('/auth');
+  }
 }

@@ -3,6 +3,7 @@ import { Component, OnInit, NgZone, AfterViewInit, ElementRef, ViewChild, Render
 import { AuthService } from 'src/app/auth/auth.service';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
+import { SignupService } from '../signup-service.service';
 
 
 @Component({
@@ -10,7 +11,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './address-map.page.html',
   styleUrls: ['./address-map.page.scss'],
 })
-export class AddressMapPage implements OnInit, AfterViewInit {
+export class AddressMapPage implements AfterViewInit {
   @ViewChild('map', { static: false }) mapElementRef: ElementRef;
 
   GoogleAutocomplete: google.maps.places.AutocompleteService;
@@ -23,30 +24,46 @@ export class AddressMapPage implements OnInit, AfterViewInit {
   mapPreview: any = null;
 
 
-  constructor(private authService: AuthService, private router: Router, private render: Renderer2, public zone: NgZone) {
+  constructor(private signupService: SignupService, private render: Renderer2,
+    private zone: NgZone, private authService: AuthService,
+    private router: Router) {
     this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
     this.autocomplete = { input: '' };
     this.autocompleteItems = [];
   }
 
-  ngOnInit() {
-  }
-
-  register() {
-    // TODO registrazione utente
+  // Effettua la registrazione utente, e in caso positivo entra nella home
+  onSignup() {
+    this.signupService.setAddress(this.autocomplete.input);
+    this.signupService.signupUser().then(
+      () => {
+        this.authService.doLogin(this.signupService.getSignupData().phoneNumber).then(() => {
+          this.router.navigateByUrl('/home/tabs/rooms');
+        }, (err) => {
+          alert('Errore login');
+          console.warn(err);
+        });
+      },
+      (err) => {
+        alert('Errore registrazione');
+        console.warn(err);
+      }
+    );
   }
 
   /*  Get Map from Google Maps */
   ngAfterViewInit() {
     this.getGoogleMaps().then(googleMaps => {
-      const mapEl = this.mapElementRef.nativeElement;
-      const map = new googleMaps.Map(mapEl, {
-        center: { lat: 44.5464311, lng: 7.7184579 },
-        zoom: 16
-      });
-      googleMaps.event.addListenerOnce(map, 'idle', () => {
-        this.render.addClass(mapEl, 'visible');
-      });
+      if (this.mapElementRef) {
+        const mapEl = this.mapElementRef.nativeElement;
+        const map = new googleMaps.Map(mapEl, {
+          center: { lat: 44.5464311, lng: 7.7184579 },
+          zoom: 16
+        });
+        googleMaps.event.addListenerOnce(map, 'idle', () => {
+          this.render.addClass(mapEl, 'visible');
+        });
+      }
     }).catch(err => {
       console.log(err);
     });
@@ -75,10 +92,9 @@ export class AddressMapPage implements OnInit, AfterViewInit {
     });
   }
 
-
   /* Autocomplete Address */
   updateSearchResults() {
-    if (this.autocomplete.input == '') {
+    if (this.autocomplete.input === '') {
       this.autocompleteItems = [];
       return;
     }
@@ -108,9 +124,6 @@ export class AddressMapPage implements OnInit, AfterViewInit {
       this.mapPreview = `https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=roadmap
     &markers=color:red%7Clabel:Place%7C${place}
     &key=${environment.googleMapsAPIKey}`;
-    } else {
-
     }
   }
-
 }
