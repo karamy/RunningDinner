@@ -63,6 +63,9 @@ keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -sto
 
 L'output a video mostrerà il codice SHA1 da inserire nella console Firebase nella sezione dell'app iOS
 
+NB: il plugin non funziona per policy di Firebase su emulatore, per testare utilizzare le seguenti credenziali impostate di prova
+Number: +391234567890 VerificationCode: 123456
+
 ----------------------------------------------------------------------------------------------------
 
 Permissions:

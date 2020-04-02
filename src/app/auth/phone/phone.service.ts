@@ -10,7 +10,7 @@ import { Platform } from "@ionic/angular";
 export class PhoneService {
   verificationId: string;
 
-  constructor(private platform: Platform) {}
+  constructor(private platform: Platform) { }
 
   sendOtp(phoneNumber: string) {
     return new Promise(resolve => {
