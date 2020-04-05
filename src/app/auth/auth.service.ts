@@ -79,6 +79,7 @@ export class AuthService {
   doLogout() {
     this._user = null;
     localStorage.setItem("user", null);
+    this.router.navigateByUrl("/auth");
   }
 
   // Ritorna l'utente loggato completo
@@ -121,7 +122,6 @@ export class AuthService {
     });
     toast.present();
     this.doLogout();
-    this.router.navigateByUrl("/auth");
   }
 
   private getRefreshToken() {

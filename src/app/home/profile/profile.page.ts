@@ -156,6 +156,5 @@ export class ProfilePage implements OnInit {
 
   onLogout() {
     this.authService.doLogout();
-    this.router.navigateByUrl("/auth");
   }
 }

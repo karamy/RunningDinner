@@ -26,17 +26,9 @@ export class TokenInterceptorService implements HttpInterceptor {
       request = this.addToken(request, this.authService.getUserToken());
     }
     return next.handle(request).pipe(catchError((error) => {
-      var first401 = 1;
       if (error instanceof HttpErrorResponse && error.status === 401) {
-        if (!first401) {
-          this.authService.doLogout();
-          this.router.navigateByUrl("/auth");
-        } else {
-          console.log('Refresh access token');
-          first401--;
-          // Gestione scadenza del token
-          return this.handle401Error(request, next);
-        }
+        // Gestione scadenza del token
+        return this.handle401Error(request, next);
       } else {
         // Se qualsiasi altro errore lo rilancio (non dovrebbe mai arrivare qui)
         return throwError(error);
