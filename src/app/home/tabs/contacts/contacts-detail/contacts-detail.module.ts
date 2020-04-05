@@ -15,7 +15,6 @@ import { ContactsDetailPage } from "./contacts-detail.page";
     IonicModule,
     ContactsDetailPageRoutingModule,
     BadgeComponentModule,
-  ],
-  declarations: [ContactsDetailPage],
+  ]
 })
 export class ContactsDetailPageModule {}

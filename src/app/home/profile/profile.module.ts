@@ -15,8 +15,8 @@ import { BadgeComponentModule } from "../badge/badge.component.module";
     FormsModule,
     IonicModule,
     ProfilePageRoutingModule,
-    BadgeComponentModule,
+    BadgeComponentModule
   ],
-  declarations: [ProfilePage],
+  declarations: [ProfilePage]
 })
 export class ProfilePageModule {}

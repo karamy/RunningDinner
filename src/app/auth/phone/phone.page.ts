@@ -14,7 +14,7 @@ import { SignupService } from 'src/app/sign-up/signup-service.service';
 })
 export class PhonePage implements OnInit {
   phoneNumber: string; // Numero completo che funge da ID utente
-  inputNumber: number;
+  inputNumber: string;
   prefix = '+39';
   otp: string;
   otpSent = false;

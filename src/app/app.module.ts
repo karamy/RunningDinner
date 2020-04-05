@@ -27,7 +27,7 @@ import { BadgeComponentModule } from "./home/badge/badge.component.module";
     AppRoutingModule,
     HttpClientModule,
     CountryCodesPageModule,
-    BadgeComponentModule,
+    BadgeComponentModule
   ],
   providers: [
     StatusBar,
@@ -40,8 +40,8 @@ import { BadgeComponentModule } from "./home/badge/badge.component.module";
       useClass: TokenInterceptorService,
       multi: true,
     },
-    Contacts,
+    Contacts
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }
