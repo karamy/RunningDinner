@@ -2,6 +2,10 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { LoadingController } from "@ionic/angular";
 import { RDConstantsService } from "../rdcostants.service";
+import { tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { ToastController } from '@ionic/angular';
+
 
 @Injectable({
   providedIn: "root"
@@ -12,7 +16,9 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private loadingCtrl: LoadingController,
-    private rdConstants: RDConstantsService
+    private rdConstants: RDConstantsService,
+    private router: Router,
+    private toastController: ToastController
   ) {
     this.readUser();
   }
@@ -96,20 +102,26 @@ export class AuthService {
       refreshToken: this.getRefreshToken()
     };
 
-    return new Promise((resolve, reject) => {
-      this.http
-        .post(this.rdConstants.getApiRoute("refresh"), dataToSend)
-        .toPromise()
-        .then(
-          token => {
-            this._user.accessToken = JSON.stringify(token);
-            this.writeUser(this._user);
-          },
-          err => {
-            reject(err);
-          }
-        );
+    var httpPost = this.http.post(this.rdConstants.getApiRoute("refreshToken"), dataToSend)
+    return httpPost.pipe(
+      tap((res) => {
+        this._user.accessToken = JSON.stringify(res['accessToken']);
+        this.writeUser(this._user);
+      }, () => { 
+        // Se la procedura di refresh ritorna errore (di solito per riavvio server torno a login)
+        this.onServerRestart();
+      })
+    )
+  }
+
+  private async onServerRestart() {
+    const toast = await this.toastController.create({
+      message: 'Server riavviato, effettua nuovamente login',
+      duration: 2000
     });
+    toast.present();
+    this.doLogout();
+    this.router.navigateByUrl("/auth");
   }
 
   private getRefreshToken() {

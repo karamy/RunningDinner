@@ -1,20 +1,23 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { AuthService } from './auth/auth.service';
-import { tap, switchMap, filter, take } from 'rxjs/operators';
+import { tap, switchMap, filter, take, catchError } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 
 @Injectable({
   providedIn: 'root'
 })
+// NB Per come funziona ora l'interceptor, non è previsto ricevere una risposta negativa
+// da rotta /refresh, bisogna gestire la cosa dentro AuthService.refreshToken()
 export class TokenInterceptorService implements HttpInterceptor {
 
   // Variabili utilizzate dal meccanismo di re-login automatico
   private isRefreshing = false;
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  constructor(public authService: AuthService) { }
+  constructor(private authService: AuthService, private router: Router) { }
 
   // Metodo richiamato in automatico da Angular per compiere azioni poco prima che la chiamata parta
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -22,11 +25,20 @@ export class TokenInterceptorService implements HttpInterceptor {
     if (this.authService.isUserAuthenticated()) {
       request = this.addToken(request, this.authService.getUserToken());
     }
-
-    return next.handle(request).pipe(tap(() => { }, (error) => {
+    return next.handle(request).pipe(catchError((error) => {
+      var first401 = 1;
       if (error instanceof HttpErrorResponse && error.status === 401) {
-        return this.handle401Error(request, next);
+        if (!first401) {
+          this.authService.doLogout();
+          this.router.navigateByUrl("/auth");
+        } else {
+          console.log('Refresh access token');
+          first401--;
+          // Gestione scadenza del token
+          return this.handle401Error(request, next);
+        }
       } else {
+        // Se qualsiasi altro errore lo rilancio (non dovrebbe mai arrivare qui)
         return throwError(error);
       }
     }));
@@ -35,24 +47,22 @@ export class TokenInterceptorService implements HttpInterceptor {
   // Gestione errore http 401 (unauthorized) per token scaduto
   handle401Error(request: HttpRequest<any>, next: HttpHandler) {
     if (!this.isRefreshing) {
-      this.isRefreshing = true;
+      this.isRefreshing = true; // Imposto semarofo per impedire alle altre richieste di proseguire
       this.refreshTokenSubject.next(null);
 
-      return this.authService.refreshToken().then(() => {
-        switchMap(() => {
+      return this.authService.refreshToken().pipe(
+        switchMap((res: any) => {
           this.isRefreshing = false;
-          this.refreshTokenSubject.next(this.authService.getUserToken());
-          return next.handle(this.addToken(request, this.authService.getUserToken()));
-        });
-      }, () => {
-        return Promise.reject('Impossibile aggiornare il token');
-      });
+          this.refreshTokenSubject.next(res);
+          return next.handle(this.addToken(request, res.accessToken));
+        }));
+
     } else {
       return this.refreshTokenSubject.pipe(
         filter(token => token != null),
         take(1),
-        switchMap(jwt => {
-          return next.handle(this.addToken(request, jwt));
+        switchMap(res => {
+          return next.handle(this.addToken(request, res.accessToken));
         }));
     }
   }
