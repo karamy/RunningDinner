@@ -1,21 +1,22 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 
-import { IonicModule } from '@ionic/angular';
+import { IonicModule } from "@ionic/angular";
 
-import { ProfilePageRoutingModule } from './profile-routing.module';
+import { ProfilePageRoutingModule } from "./profile-routing.module";
 
-import { ProfilePage } from './profile.page';
+import { ProfilePage } from "./profile.page";
+import { BadgeComponentModule } from "../badge/badge.component.module";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    ProfilePageRoutingModule
+    ProfilePageRoutingModule,
+    BadgeComponentModule,
   ],
-  declarations: [ProfilePage]
+  declarations: [ProfilePage],
 })
-export class ProfilePageModule {
-}
+export class ProfilePageModule {}

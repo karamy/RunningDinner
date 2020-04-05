@@ -1,9 +1,5 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home/tabs/rooms"></ion-back-button>
-    </ion-buttons>
-    <ion-title>profile</ion-title>
     <ion-buttons slot="primary">
       <ion-button (click)="onLogout()">
         <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
@@ -13,11 +9,33 @@
 </ion-header>
 
 <ion-content>
-  <ion-slides pager="true" [options]="slideOpts" style="height:100%;">
-    <ion-slide style="Background:red;">
-      <ion-button (click)="showUser()">Mostra utente</ion-button>
+  <ion-slides pager="true" [options]="slideOpts" style="height: 100%;">
+    <ion-slide>
+      <ion-grid>
+        <ion-row>
+          <ion-col class="ion-align-items-center">
+            <ion-avatar>
+              <img [src]="user.image" />
+            </ion-avatar>
+          </ion-col>
+          <ion-col class="ion-align-items-center">
+            <h1>{{user.name}}</h1>
+            <p>{{user.age}} anni</p>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col class="ion-align-items-center">
+            <p>{{user.address}}</p>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <app-badge></app-badge>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </ion-slide>
-    <ion-slide style="Background:green;">
+    <ion-slide style="background: green;">
       <h1>Slide 2</h1>
     </ion-slide>
   </ion-slides>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { ModalController, IonRouterOutlet } from "@ionic/angular";
+import { ModalController } from "@ionic/angular";
 import { ContactsDetailPage } from "./contacts-detail/contacts-detail.page";
 import { ContactsService } from "./contacts.service";
 
@@ -13,7 +13,6 @@ export class ContactsPage implements OnInit {
 
   constructor(
     public modalController: ModalController,
-    private routerOutlet: IonRouterOutlet,
     private contactsService: ContactsService
   ) {}
 
@@ -22,8 +21,8 @@ export class ContactsPage implements OnInit {
       component: ContactsDetailPage,
       swipeToClose: true,
       backdropDismiss: true,
-      presentingElement: this.routerOutlet.parentOutlet.nativeEl,
-      componentProps: { contactName, contactImage }
+      componentProps: { contactName, contactImage },
+      cssClass: "modal-style"
     });
     return await modal.present();
   }

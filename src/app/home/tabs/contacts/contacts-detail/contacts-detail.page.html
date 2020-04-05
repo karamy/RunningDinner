@@ -1,47 +1,36 @@
-<ion-grid>
-  <ion-row class="ion-align-items-center">
-    <ion-col size="2">
-      <ion-avatar>
-        <img [src]="contactImage" />
-      </ion-avatar>
-    </ion-col>
-    <ion-col size="10" class="ion-text-center">
-      <h1>
-        {{contactName}}
-      </h1>
-    </ion-col>
-  </ion-row>
-  <ion-row>
-    <ion-card class="badge-card">
-      <ion-grid>
-        <ion-row class="ion-align-items-center">
-          <ion-col>
-            <img class="badge" src="assets/goldmedal.png" />
-          </ion-col>
-          <ion-col>
-            <img class="badge" src="assets/silvermedal.png" />
-          </ion-col>
-          <ion-col>
-            <img class="badge" src="assets/fish.png" />
-          </ion-col>
-        </ion-row>
-        <ion-row class="ion-align-items-center">
-          <ion-col>
-            <img class="badge" src="assets/meat.png" />
-          </ion-col>
-          <ion-col>
-            <img class="badge" src="assets/dress.png" />
-          </ion-col>
-          <ion-col>
-            <img class="badge" src="assets/Logo.png" />
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-card>
-  </ion-row>
-  <ion-row class="ion-align-items-center">
-    <ion-col class="ion-align-items-center">
-      <ion-button>Aggiungi a gruppo</ion-button>
+<ion-content (click)="dismiss()"></ion-content>
+<!-- Workaround perchè backdropDismiss non funziona siccome la modale sta davanti al ion-backdrop -->
+<ion-grid class="no-padding">
+  <ion-row style="height: 100%;" class="ion-align-items-end">
+    <ion-col>
+      <ion-card>
+        <ion-grid>
+          <ion-row class="ion-align-items-center">
+            <ion-col size="2">
+              <ion-avatar>
+                <img [src]="contactImage" />
+              </ion-avatar>
+            </ion-col>
+            <ion-col size="10" class="ion-text-center">
+              <h1>
+                {{contactName}}
+              </h1>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card>
+      <app-badge></app-badge>
+      <ion-card>
+        <ion-grid>
+          <ion-row class="ion-align-items-center">
+            <ion-col class="ion-text-center">
+              <ion-button fill="clear" (click)="dismiss()"
+                >Aggiungi a gruppo</ion-button
+              >
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card>
     </ion-col>
   </ion-row>
 </ion-grid>

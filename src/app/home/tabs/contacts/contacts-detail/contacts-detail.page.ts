@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from "@angular/core";
+import { ModalController } from "@ionic/angular";
 
 @Component({
   selector: "app-contacts-detail",
@@ -9,9 +10,13 @@ export class ContactsDetailPage implements OnInit {
   @Input() contactName: string;
   @Input() contactImage: string;
 
-  constructor() { }
+  constructor(public modalCtrl: ModalController) {}
 
   ngOnInit() {
-    console.log(this.contactImage)
+    console.log(this.contactImage);
+  }
+
+  dismiss() {
+    this.modalCtrl.dismiss();
   }
 }

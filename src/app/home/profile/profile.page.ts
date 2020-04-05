@@ -73,7 +73,7 @@ export class ProfilePage implements OnInit {
             if (shadowBefore.length === 0) {
               shadowBefore = swiper.$(
                 `<div class="swiper-slide-shadow-${
-                swiper.isHorizontal() ? "left" : "top"
+                  swiper.isHorizontal() ? "left" : "top"
                 }"></div>`
               );
               $slideEl.append(shadowBefore);
@@ -81,7 +81,7 @@ export class ProfilePage implements OnInit {
             if (shadowAfter.length === 0) {
               shadowAfter = swiper.$(
                 `<div class="swiper-slide-shadow-${
-                swiper.isHorizontal() ? "right" : "bottom"
+                  swiper.isHorizontal() ? "right" : "bottom"
                 }"></div>`
               );
               $slideEl.append(shadowAfter);
@@ -130,10 +130,24 @@ export class ProfilePage implements OnInit {
     }
   };
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
     this.user = this.authService.getUserData();
+    this.user.image = "assets/Logo.png";
+    this.user.age = this.calcAge(this.user.birth_date.slice(0, 10));
+    console.log(this.user);
+  }
+
+  calcAge(userBirthdate) {
+    let today = new Date();
+    let birthDate = new Date(userBirthdate);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    let m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
   }
 
   showUser() {
