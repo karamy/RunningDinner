@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 
-import { Platform } from '@ionic/angular';
+import { Platform, NavController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 
@@ -16,10 +15,10 @@ export class AppComponent {
   constructor(
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
-    private router: Router,
     private authService: AuthService,
     private permissionService: PermissionsService,
-    private platform: Platform
+    private platform: Platform,
+    private navController: NavController
   ) {
     this.initializeApp();
 
@@ -45,15 +44,15 @@ export class AppComponent {
         await this.permissionService.hasNotificationPermission();
       } catch (e) {
         console.log("Login attivo ma permission non date");
-        this.router.navigateByUrl('/auth/geolocation');
+        this.navController.navigateRoot('/auth/geolocation');
         return;
       }
 
       // Se arrivo qui possiedo entrambe le permission, vado in home
       console.log("Login attivo e permission date, proseguo");
-      this.router.navigateByUrl('/home');
+      this.navController.navigateRoot('/home');
     } else {
-      this.router.navigateByUrl('/auth');
+      this.navController.navigateRoot('/auth');
     }
   }
 }

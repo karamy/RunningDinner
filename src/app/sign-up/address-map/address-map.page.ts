@@ -1,7 +1,6 @@
 /// <reference types="@types/googlemaps" />
-import { Component, OnInit, NgZone, AfterViewInit, ElementRef, ViewChild, Renderer2 } from '@angular/core';
+import { Component, NgZone, AfterViewInit, ElementRef, ViewChild, Renderer2 } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
-import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { SignupService } from '../signup-service.service';
 
@@ -25,8 +24,7 @@ export class AddressMapPage implements AfterViewInit {
 
 
   constructor(private signupService: SignupService, private render: Renderer2,
-    private zone: NgZone, private authService: AuthService,
-    private router: Router) {
+    private zone: NgZone, private authService: AuthService) {
     this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
     this.autocomplete = { input: '' };
     this.autocompleteItems = [];
@@ -37,12 +35,7 @@ export class AddressMapPage implements AfterViewInit {
     this.signupService.setAddress(this.autocomplete.input);
     this.signupService.signupUser().then(
       () => {
-        this.authService.doLogin(this.signupService.getSignupData().phoneNumber).then(() => {
-          this.router.navigateByUrl('/home/tabs/rooms');
-        }, (err) => {
-          alert('Errore login');
-          console.warn(err);
-        });
+        this.authService.doLogin(this.signupService.getSignupData().phoneNumber);
       },
       (err) => {
         alert('Errore registrazione');

@@ -1,11 +1,9 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { LoadingController } from "@ionic/angular";
+import { LoadingController, NavController } from "@ionic/angular";
 import { RDConstantsService } from "../rdcostants.service";
 import { tap } from 'rxjs/operators';
-import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
-
 
 @Injectable({
   providedIn: "root"
@@ -17,8 +15,8 @@ export class AuthService {
     private http: HttpClient,
     private loadingCtrl: LoadingController,
     private rdConstants: RDConstantsService,
-    private router: Router,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private navController: NavController
   ) {
     this.readUser();
   }
@@ -64,6 +62,7 @@ export class AuthService {
             localStorage.setItem("user", JSON.stringify(res));
             this.readUser();
             console.log(this._user);
+            this.navController.navigateRoot("/home/tabs/rooms");
             resolve();
           },
           err => {
@@ -79,7 +78,7 @@ export class AuthService {
   doLogout() {
     this._user = null;
     localStorage.setItem("user", null);
-    this.router.navigateByUrl("/auth");
+    this.navController.navigateRoot("/auth");
   }
 
   // Ritorna l'utente loggato completo

@@ -1,10 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import {
-  AuthService,
-  AuthenticatedUser,
-  UserData
+  AuthService
 } from "src/app/auth/auth.service";
-import { Router } from "@angular/router";
 
 @Component({
   selector: "app-profile",
@@ -130,7 +127,7 @@ export class ProfilePage implements OnInit {
     }
   };
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit() {
     this.user = this.authService.getUserData();
