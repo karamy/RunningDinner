@@ -4,6 +4,7 @@ import { LoadingController, NavController } from "@ionic/angular";
 import { RDConstantsService } from "../rdcostants.service";
 import { tap } from 'rxjs/operators';
 import { ToastController } from '@ionic/angular';
+import { RDSpinnerService } from '../rdspinner.service';
 
 @Injectable({
   providedIn: "root"
@@ -13,7 +14,7 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private loadingCtrl: LoadingController,
+    private spinner: RDSpinnerService,
     private rdConstants: RDConstantsService,
     private toastController: ToastController,
     private navController: NavController
@@ -48,11 +49,7 @@ export class AuthService {
       phone_number: phoneNumber
     };
 
-    const loadingSpinner = await this.loadingCtrl.create({
-      message: "Effettuo login..."
-    });
-    loadingSpinner.present();
-
+    this.spinner.create(/* "Effettuo login..." */);
     return new Promise((resolve, reject) =>
       this.http
         .post(this.rdConstants.getApiRoute("login"), dataToSend)
@@ -70,7 +67,7 @@ export class AuthService {
           }
         )
     ).finally(() => {
-      loadingSpinner.dismiss();
+      this.spinner.dismiss();
     });
   }
 
