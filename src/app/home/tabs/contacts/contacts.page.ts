@@ -14,7 +14,7 @@ export class ContactsPage implements OnInit {
   constructor(
     public modalController: ModalController,
     private contactsService: ContactsService
-  ) {}
+  ) { }
 
   async showContact(contactName: string, contactImage) {
     const modal = await this.modalController.create({

@@ -6,7 +6,6 @@ import { IonicModule } from "@ionic/angular";
 
 import { ContactsDetailPageRoutingModule } from "./contacts-detail-routing.module";
 import { BadgeComponentModule } from "src/app/home/badge/badge.component.module";
-import { ContactsDetailPage } from "./contacts-detail.page";
 
 @NgModule({
   imports: [
@@ -17,4 +16,4 @@ import { ContactsDetailPage } from "./contacts-detail.page";
     BadgeComponentModule,
   ]
 })
-export class ContactsDetailPageModule {}
+export class ContactsDetailPageModule { }

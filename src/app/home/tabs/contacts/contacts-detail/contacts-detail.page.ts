@@ -10,11 +10,9 @@ export class ContactsDetailPage implements OnInit {
   @Input() contactName: string;
   @Input() contactImage: string;
 
-  constructor(public modalCtrl: ModalController) {}
+  constructor(public modalCtrl: ModalController) { }
 
-  ngOnInit() {
-    console.log(this.contactImage);
-  }
+  ngOnInit() { }
 
   dismiss() {
     this.modalCtrl.dismiss();

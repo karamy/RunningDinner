@@ -35,7 +35,7 @@ export class ContactsService {
         const testContacts: RDContact[] = [ // Contatti di test per il Web
           {
             name: 'Paolo',
-            phoneNumber: '+393483773817',
+            phoneNumber: '+393483773819',
             imageUrl: 'assets/Logo.png'
           },
           {
@@ -46,6 +46,11 @@ export class ContactsService {
           {
             name: 'Pange',
             phoneNumber: '+393495339159',
+            imageUrl: 'assets/dummy.png'
+          },
+          {
+            name: 'Ale',
+            phoneNumber: '+393460500674',
             imageUrl: 'assets/dummy.png'
           }
         ];
@@ -135,6 +140,8 @@ export class ContactsService {
     for (let i = 0; i < localContacts.length; i++) {
       for (let x = 0; x < returnedNumbers.length; x++) {
         if (returnedNumbers[x].phoneNumber === localContacts[i].phoneNumber) {
+          // Assegno immagine dal server al contatto
+          localContacts[i].imageUrl = 'data:image/png;base64,' + returnedNumbers[x].imageUrl
           contactList.push(localContacts[i]);
         }
       }
@@ -147,4 +154,5 @@ export class ContactsService {
 
     return contactList;
   }
+
 }
