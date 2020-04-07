@@ -112,7 +112,7 @@ export class ContactsService {
         localContacts
       ).subscribe(
         (mathingContacts) => {
-          resolve(mathingContacts as unknown as RDContact[]);
+          resolve(mathingContacts as RDContact[]);
         },
         (err) => {
           console.warn(err);

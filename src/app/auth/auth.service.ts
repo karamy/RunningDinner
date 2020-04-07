@@ -24,9 +24,9 @@ export class AuthService {
 
   // Legge le informazioni utente presenti in localStorage e le carica nel Service
   private readUser() {
-    this._user = (JSON.parse(
+    this._user = JSON.parse(
       localStorage.getItem("user")
-    ) as unknown) as AuthenticatedUser;
+    ) as AuthenticatedUser;
   }
 
   // Aggiorna lo user in localStorage
