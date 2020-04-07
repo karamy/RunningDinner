@@ -1,25 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { PermissionsService } from '../permissions.service';
-import { Platform } from '@ionic/angular';
+import { Platform, NavController } from '@ionic/angular';
 import { AuthService } from '../auth.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-notification',
   templateUrl: './notification.page.html',
   styleUrls: ['./notification.page.scss']
 })
-export class NotificationPage implements OnInit {
+export class NotificationPage {
   permissionGranted: string;
 
   constructor(
     private permServ: PermissionsService,
     private platform: Platform,
     private authService: AuthService,
-    private router: Router
+    private navController: NavController
   ) { }
 
-  ngOnInit() {
+  ionViewDidEnter() {
     this.permServ.hasNotificationPermission().then(
       () => {
         // Permesso Notifications dato
@@ -80,9 +79,9 @@ export class NotificationPage implements OnInit {
   // o entrare direttamente (caso in cui un utente a posteriori disabilita le autorizzazioni)
   endPermissionCheck() {
     if (this.authService.isUserAuthenticated()) {
-      this.router.navigateByUrl('/home/tabs/rooms');
+      this.navController.navigateRoot('/home/tabs/rooms');
     } else {
-      this.router.navigateByUrl('/sign-up/username');
+      this.navController.navigateRoot('/sign-up/username');
     }
   }
 }

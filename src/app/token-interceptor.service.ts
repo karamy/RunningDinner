@@ -3,7 +3,6 @@ import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { AuthService } from './auth/auth.service';
 import { tap, switchMap, filter, take, catchError } from 'rxjs/operators';
-import { Router } from '@angular/router';
 
 
 @Injectable({
@@ -17,7 +16,7 @@ export class TokenInterceptorService implements HttpInterceptor {
   private isRefreshing = false;
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService) { }
 
   // Metodo richiamato in automatico da Angular per compiere azioni poco prima che la chiamata parta
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {

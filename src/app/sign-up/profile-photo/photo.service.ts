@@ -11,8 +11,8 @@ export class PhotoService {
   public profilePhotoData: string; // Rappresenta il Base64 della foto scattata
   private photoStorageName = 'profile_photo';
 
-  // Impostato a true per debug il fatto di mantenere l'immagine della registrazione in corso anche chiudendo l'app
-  private isCachingImage = true;
+  // Impostabile a true per debug il fatto di mantenere l'immagine della registrazione in corso anche chiudendo l'app
+  private isCachingImage = false;
 
   constructor() {
     this.loadSaved(); // Carico alla creazione del service i dati dell'immagine
@@ -30,7 +30,9 @@ export class PhotoService {
       allowEditing: true,
       resultType: CameraResultType.Base64, // richiedo il Base64 per memorizzarlo direttamente
       source: CameraSource.Prompt, // richiedo se aprire galleria o fotocamera
-      quality: 100 // massima qualità (0 to 100)
+      quality: 100, // massima qualità (0 to 100),
+      height: 400, // Valori fissi in pixel per altezza e larghezza per rimpicciolire immagine 
+      width: 400
     });
 
     this.profilePhotoData = capturedPhoto.base64String;

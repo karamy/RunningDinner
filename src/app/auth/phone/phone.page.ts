@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
 import { CountryCodesPage } from './country-codes/country-codes.page';
 import { PhoneService } from './phone.service';
 import { UserService } from '../user.service';
-import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { SignupService } from 'src/app/sign-up/signup-service.service';
+import { RDSpinnerService } from 'src/app/rdspinner.service';
 
 @Component({
   selector: 'app-phone',
@@ -23,7 +23,8 @@ export class PhonePage implements OnInit {
     private modalController: ModalController,
     private phoneService: PhoneService,
     private userService: UserService,
-    private router: Router,
+    private spinner: RDSpinnerService,
+    private navController: NavController,
     private authService: AuthService,
     private signupService: SignupService
   ) { }
@@ -55,24 +56,20 @@ export class PhonePage implements OnInit {
       const reqBody = {
         phone_number: this.phoneNumber
       };
+      this.spinner.create();
       this.userService.existsUser(reqBody).then(data => {
+        this.spinner.dismiss();
         if (!data) {
           // Utente non esiste a DB, inizio registrazione
           this.signupService.setPhoneNumber(this.phoneNumber);
-          this.router.navigateByUrl('/sign-up/instructions');
+          this.navController.navigateRoot('/sign-up/instructions');
         } else {
           // Effettua il login in automatico
-          this.authService.doLogin(this.phoneNumber).then(
-            () => {
-              this.router.navigateByUrl('/home/tabs/rooms');
-            },
-            err => {
-              alert('errore login');
-              this.router.navigateByUrl('/auth');
-            }
-          );
+          this.authService.doLogin(this.phoneNumber);
         }
-      });
+      },
+        () => { this.spinner.dismiss() }
+      );
     });
   }
 }

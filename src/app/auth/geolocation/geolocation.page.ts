@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { PermissionsService } from '../permissions.service';
 
 @Component({
@@ -6,12 +6,12 @@ import { PermissionsService } from '../permissions.service';
   templateUrl: './geolocation.page.html',
   styleUrls: ['./geolocation.page.scss']
 })
-export class GeolocationPage implements OnInit {
+export class GeolocationPage {
   permissionGranted: string;
 
   constructor(private permServ: PermissionsService) { }
 
-  ngOnInit() {
+  ionViewDidEnter() {
     this.permServ.hasGpsPermission().then(
       () => {
         // Permesso GPS dato
