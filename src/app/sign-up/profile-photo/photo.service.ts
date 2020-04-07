@@ -27,7 +27,7 @@ export class PhotoService {
   // Ottiene il Base64 di una foto da galleria o fotocamera, eventualmente salvandolo
   public async getPicture() {
     const capturedPhoto = await Camera.getPhoto({
-      allowEditing: true,
+      allowEditing: false, // Scelto di impedire l'edit della foto perchè causava problemi su Android
       resultType: CameraResultType.Base64, // richiedo il Base64 per memorizzarlo direttamente
       source: CameraSource.Prompt, // richiedo se aprire galleria o fotocamera
       quality: 100, // massima qualità (0 to 100),
