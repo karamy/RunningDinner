@@ -42,17 +42,17 @@ export class ContactsService {
           },
           {
             name: 'Fringo',
-            phoneNumber: '+393483773817',
+            phoneNumber: ['+393483773817'],
             imageUrl: 'assets/Logo.png'
           },
           {
             name: 'Chiara',
-            phoneNumber: '+393496824393',
+            phoneNumber: ['+393496824393'],
             imageUrl: 'assets/Logo.png'
           },
           {
             name: 'Carlo',
-            phoneNumber: '+393408552105',
+            phoneNumber: ['+393408552105','+393483773819'],
             imageUrl: 'assets/dummy.png'
           },
           {
@@ -67,7 +67,7 @@ export class ContactsService {
           },
           {
             name: 'Emulatore',
-            phoneNumber: '+391234567890',
+            phoneNumber: ['+391234567890'],
             imageUrl: 'assets/dummy.png'
           }
         ];
