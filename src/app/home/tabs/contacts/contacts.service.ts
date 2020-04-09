@@ -4,13 +4,14 @@ import { Contacts } from '@ionic-native/contacts';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Platform } from '@ionic/angular';
 import { RDConstantsService } from 'src/app/rdcostants.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 // Rappresente i dati di un contatto sul telefono
 export class RDContact {
   constructor() { }
 
   name: string;
-  phoneNumber: string;
+  phoneNumber: string[] = [];
   imageUrl: SafeUrl;
 }
 
@@ -25,7 +26,8 @@ export class ContactsService {
     private contacts: Contacts,
     private sanitizer: DomSanitizer,
     private platform: Platform,
-    private rdConstants: RDConstantsService
+    private rdConstants: RDConstantsService,
+    private authService: AuthService
   ) { }
 
   // Legge i contatti all'interno del telefono
@@ -35,22 +37,22 @@ export class ContactsService {
         const testContacts: RDContact[] = [ // Contatti di test per il Web
           {
             name: 'Paolo',
-            phoneNumber: '+393483773819',
+            phoneNumber: ['+393483773819', '+393381887043'],
             imageUrl: 'assets/Logo.png'
           },
           {
             name: 'Carlo Caramia',
-            phoneNumber: '+393408552105',
+            phoneNumber: ['+393408552105', '+397867665'],
             imageUrl: 'assets/dummy.png'
           },
           {
             name: 'Pange',
-            phoneNumber: '+393495339159',
+            phoneNumber: ['+393495339159'],
             imageUrl: 'assets/dummy.png'
           },
           {
             name: 'Ale',
-            phoneNumber: '+393460500674',
+            phoneNumber: ['+393460500674'],
             imageUrl: 'assets/dummy.png'
           }
         ];
@@ -58,6 +60,7 @@ export class ContactsService {
         resolve(testContacts);
       } else {
         const importedContacts: RDContact[] = [];
+        const userPhone: any = this.authService.getUserData().phone_number;
 
         // Importo contatti dal telefono
         this.contacts
@@ -68,11 +71,10 @@ export class ContactsService {
               reject();
             } else {
               for (let i = 0; i < localContacts.length; i++) {
-                if (localContacts[i].name !== null) {
+                if (localContacts[i].phoneNumbers !== null) {
                   const newContact: RDContact = new RDContact();
-                  newContact.name = localContacts[i].name.formatted;
-                  if (localContacts[i].phoneNumbers !== null) {
-                    newContact.phoneNumber = localContacts[i].phoneNumbers[0].value.replace(/\s+/g, '');
+                  if (localContacts[i].name !== null) {
+                    newContact.name = localContacts[i].name.formatted;
                   }
                   if (localContacts[i].photos !== null) {
                     newContact.imageUrl = this.sanitizer.bypassSecurityTrustUrl(
@@ -82,6 +84,11 @@ export class ContactsService {
                     );
                   } else {
                     newContact.imageUrl = 'assets/dummy.png';
+                  }
+                  for (let x = 0; x < localContacts[i].phoneNumbers.length; x++) {
+                    if (localContacts[i].phoneNumbers[x].value.replace(/\s+/g, '') !== userPhone) { //Controllo che non sia il proprio numero
+                      newContact.phoneNumber.push(localContacts[i].phoneNumbers[x].value.replace(/\s+/g, ''))
+                    }
                   }
                   importedContacts.push(newContact);
                 }
@@ -134,15 +141,19 @@ export class ContactsService {
   }
 
   // Comparo contatti ottenuti dal server per visualizzare i nomi del contatto del telefono
-  compareContacts(returnedNumbers: RDContact[], localContacts: RDContact[]) {
+  compareContacts(returnedNumbers: RDContact[], localContacts: any[]) {
     let contactList = [];
-
     for (let i = 0; i < localContacts.length; i++) {
-      for (let x = 0; x < returnedNumbers.length; x++) {
-        if (returnedNumbers[x].phoneNumber === localContacts[i].phoneNumber) {
-          // Assegno immagine dal server al contatto
-          localContacts[i].imageUrl = 'data:image/png;base64,' + returnedNumbers[x].imageUrl
-          contactList.push(localContacts[i]);
+      for (let j = 0; j < localContacts[i].phoneNumber.length; j++) {
+        for (let x = 0; x < returnedNumbers.length; x++) {
+          if (returnedNumbers[x].phoneNumber === localContacts[i].phoneNumber[j]) {
+            // Assegno immagine dal server al contatto
+            localContacts[i].imageUrl = 'data:image/png;base64,' + returnedNumbers[x].imageUrl
+            let tempPhoneNumber = localContacts[i].phoneNumber[j]
+            localContacts[i].phoneNumber = []
+            localContacts[i].phoneNumber.push(tempPhoneNumber)
+            contactList.push(localContacts[i]);
+          }
         }
       }
     }
@@ -151,7 +162,6 @@ export class ContactsService {
     contactList = contactList.sort((a, b) =>
       a.name.localeCompare(b.name)
     );
-
     return contactList;
   }
 
