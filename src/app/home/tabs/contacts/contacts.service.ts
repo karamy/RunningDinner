@@ -41,8 +41,18 @@ export class ContactsService {
             imageUrl: 'assets/Logo.png'
           },
           {
-            name: 'Carlo Caramia',
-            phoneNumber: ['+393408552105', '+397867665'],
+            name: 'Fringo',
+            phoneNumber: '+393483773817',
+            imageUrl: 'assets/Logo.png'
+          },
+          {
+            name: 'Chiara',
+            phoneNumber: '+393496824393',
+            imageUrl: 'assets/Logo.png'
+          },
+          {
+            name: 'Carlo',
+            phoneNumber: '+393408552105',
             imageUrl: 'assets/dummy.png'
           },
           {
@@ -53,6 +63,11 @@ export class ContactsService {
           {
             name: 'Ale',
             phoneNumber: ['+393460500674'],
+            imageUrl: 'assets/dummy.png'
+          },
+          {
+            name: 'Emulatore',
+            phoneNumber: '+391234567890',
             imageUrl: 'assets/dummy.png'
           }
         ];
@@ -126,17 +141,6 @@ export class ContactsService {
           reject();
         }
       );
-      /* resolve([
-        {
-          number: '+393450166161'
-        },
-        {
-          number: '+393483773817'
-        },
-        {
-          number: '+393389082282'
-        }
-      ]); */
     });
   }
 
