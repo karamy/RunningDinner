@@ -49,7 +49,7 @@ export class AuthService {
       phone_number: phoneNumber
     };
 
-    this.spinner.create(/* "Effettuo login..." */);
+    this.spinner.create("Effettuo login...");
     return new Promise((resolve, reject) =>
       this.http
         .post(this.rdConstants.getApiRoute("login"), dataToSend)
@@ -104,7 +104,7 @@ export class AuthService {
       tap((res) => {
         this._user.accessToken = JSON.stringify(res['accessToken']);
         this.writeUser(this._user);
-      }, () => { 
+      }, () => {
         // Se la procedura di refresh ritorna errore (di solito per riavvio server torno a login)
         this.onServerRestart();
       })

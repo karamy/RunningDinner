@@ -9,13 +9,14 @@ export class RDSpinnerService {
   constructor(private loadingCtrl: LoadingController) { }
 
   // Crea un istanza dello spinner
-  async create() {
+  async create(message) {
     const spinner = await this.loadingCtrl.create({
       spinner: null,
       message: `<div class="cssload-container">
                   <div class="cssload-whirlpool">
                   </div>
-                </div>`,
+                </div>
+                <div>${message}</div>`,
       cssClass: 'loader',
       duration: 10000 // Per evitare problemi imposto comunque che dopo 10 secondi si chiuderebbe
     });

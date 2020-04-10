@@ -52,17 +52,17 @@ export class ContactsService {
           },
           {
             name: 'Carlo',
-            phoneNumber: ['+393408552105','+393483773819'],
+            phoneNumber: ['+393408552105', '+393483773819'],
             imageUrl: 'assets/dummy.png'
           },
           {
             name: 'Pange',
-            phoneNumber: ['+393495339159'],
+            phoneNumber: ['+393495339159', '+393483773819'],
             imageUrl: 'assets/dummy.png'
           },
           {
-            name: 'Ale',
-            phoneNumber: ['+393460500674'],
+            name: 'Nadia',
+            phoneNumber: ['+393450166161'],
             imageUrl: 'assets/dummy.png'
           },
           {
@@ -71,7 +71,6 @@ export class ContactsService {
             imageUrl: 'assets/dummy.png'
           }
         ];
-
         resolve(testContacts);
       } else {
         const importedContacts: RDContact[] = [];
@@ -150,7 +149,7 @@ export class ContactsService {
     for (let i = 0; i < localContacts.length; i++) {
       for (let j = 0; j < localContacts[i].phoneNumber.length; j++) {
         for (let x = 0; x < returnedNumbers.length; x++) {
-          if (returnedNumbers[x].phoneNumber === localContacts[i].phoneNumber[j]) {
+          if (returnedNumbers[x].phoneNumber === localContacts[i].phoneNumber[j] && !contactList.find(contact => contact.phoneNumber[0] === localContacts[i].phoneNumber[j])) { //Match e rimuovo duplicati
             // Assegno immagine dal server al contatto
             localContacts[i].imageUrl = 'data:image/png;base64,' + returnedNumbers[x].imageUrl
             let tempPhoneNumber = localContacts[i].phoneNumber[j]

@@ -35,7 +35,7 @@ export class AddressMapPage implements AfterViewInit {
   onSignup() {
     this.signupService.setAddress(this.autocomplete.input);
 
-    this.spinner.create(); // Creo lo spinner ma non lo rimuovo tanto ci pensa l'authService dopo il login a farlo
+    this.spinner.create("Effettuo login..."); // Creo lo spinner ma non lo rimuovo tanto ci pensa l'authService dopo il login a farlo
     this.signupService.signupUser().then(
       () => {
         this.authService.doLogin(this.signupService.getSignupData().phoneNumber);
