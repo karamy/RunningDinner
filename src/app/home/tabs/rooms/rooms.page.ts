@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from 'src/app/auth/auth.service';
+import { RDParamsService } from 'src/app/rdparams.service';
 
 @Component({
   selector: 'app-rooms',
@@ -8,7 +8,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 })
 export class RoomsPage implements OnInit {
 
-  constructor(private authService: AuthService) { }
+  constructor(public paramsService: RDParamsService) { }
 
   ngOnInit() {
   }

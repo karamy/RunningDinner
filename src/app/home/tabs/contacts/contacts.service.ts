@@ -5,14 +5,16 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Platform } from '@ionic/angular';
 import { RDConstantsService } from 'src/app/rdcostants.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { RDSpinnerService } from 'src/app/rdspinner.service';
 
 // Rappresente i dati di un contatto sul telefono
 export class RDContact {
   constructor() { }
+  phoneNumber: string[] = [];
 
   name: string;
-  phoneNumber: string[] = [];
   imageUrl: SafeUrl;
+  userId: number;
 }
 
 
@@ -27,7 +29,8 @@ export class ContactsService {
     private sanitizer: DomSanitizer,
     private platform: Platform,
     private rdConstants: RDConstantsService,
-    private authService: AuthService
+    private authService: AuthService,
+    private spinner: RDSpinnerService
   ) { }
 
   // Legge i contatti all'interno del telefono
@@ -37,38 +40,45 @@ export class ContactsService {
         const testContacts: RDContact[] = [ // Contatti di test per il Web
           {
             name: 'Paolo',
-            phoneNumber: ['+393483773819', '+393381887043'],
-            imageUrl: 'assets/Logo.png'
+            phoneNumber: ['+393483773819'],
+            imageUrl: 'assets/Logo.png',
+            userId: 0
           },
           {
             name: 'Fringo',
             phoneNumber: ['+393483773817'],
-            imageUrl: 'assets/Logo.png'
-          },
-          {
-            name: 'Chiara',
-            phoneNumber: ['+393496824393'],
-            imageUrl: 'assets/Logo.png'
+            imageUrl: 'assets/Logo.png',
+            userId: 0
           },
           {
             name: 'Carlo',
-            phoneNumber: ['+393408552105', '+393483773819'],
-            imageUrl: 'assets/dummy.png'
+            phoneNumber: ['+393408552105'],
+            imageUrl: 'assets/dummy.png',
+            userId: 0
           },
           {
             name: 'Pange',
-            phoneNumber: ['+393495339159', '+393483773819'],
-            imageUrl: 'assets/dummy.png'
+            phoneNumber: ['+393495339159'],
+            imageUrl: 'assets/dummy.png',
+            userId: 0
           },
           {
             name: 'Nadia',
             phoneNumber: ['+393450166161'],
-            imageUrl: 'assets/dummy.png'
+            imageUrl: 'assets/dummy.png',
+            userId: 0
+          },
+          {
+            name: 'Ale',
+            phoneNumber: ['+393460500674'],
+            imageUrl: 'assets/dummy.png',
+            userId: 0
           },
           {
             name: 'Emulatore',
             phoneNumber: ['+391234567890'],
-            imageUrl: 'assets/dummy.png'
+            imageUrl: 'assets/dummy.png',
+            userId: 0
           }
         ];
         resolve(testContacts);
@@ -155,6 +165,7 @@ export class ContactsService {
             let tempPhoneNumber = localContacts[i].phoneNumber[j]
             localContacts[i].phoneNumber = []
             localContacts[i].phoneNumber.push(tempPhoneNumber)
+            localContacts[i].userId = returnedNumbers[x].userId;
             contactList.push(localContacts[i]);
           }
         }
@@ -166,6 +177,34 @@ export class ContactsService {
       a.name.localeCompare(b.name)
     );
     return contactList;
+  }
+
+  // Per ora aggiunge direttamente il contatto creando un gruppo, in futuro
+  // dovrà inviare la notifica, e aggiungerlo quando l'altro avrà accettato
+  async sendGroupInvite(userId) {
+    const addGroupBody = {
+      userId : userId
+    };
+    await this.spinner.create();
+    return this.http.post(this.rdConstants.getApiRoute('inviteGroup'), addGroupBody)
+      .toPromise()
+      .finally(
+        () => { this.spinner.dismiss(); }
+      );
+  }
+
+  // Scioglie il gruppo di cui fa parte l'utente, anche qui in automatico dovrebbe
+  // inviare una notifica all'altro partecipante, che viene informato dell'azione fatta
+  async leaveGroup(groupId) {
+    const leaveGroupBody = {
+      groupId : groupId
+    };
+    await this.spinner.create();
+    return this.http.post(this.rdConstants.getApiRoute('leaveGroup'), leaveGroupBody)
+      .toPromise()
+      .finally(
+        () => { this.spinner.dismiss(); }
+      );
   }
 
 }

@@ -3,10 +3,27 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home/tabs/rooms"></ion-back-button>
     </ion-buttons>
-    <ion-title>Create Room</ion-title>
+    <ion-title>Crea la tua cena</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-
+<ion-content class="padding">
+  <ion-item>
+    <ion-label position="floating">Descrizione</ion-label>
+    <ion-input [(ngModel)]="dinnerDescription"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Tipologia</ion-label>
+    <ion-select [(ngModel)]="dinnerType" placeholder="Tipologia">
+      <ion-select-option *ngFor="let type of dinnerTypes" [value]="type.code">{{type.description}}</ion-select-option>
+    </ion-select>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Data</ion-label>
+    <ion-datetime [(ngModel)]="dinnerDateStr" displayFormat="DD/MM/YYYY" placeholder="Data"></ion-datetime>
+  </ion-item>
 </ion-content>
+<ion-footer class="ion-no-border">
+  <ion-button [disabled]="!dinnerDescription" expand="block" strong=true color='secondary'
+    fill='outline' (click)=onCreateDinner()>Crea Cena</ion-button>
+</ion-footer>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
-import {
-  AuthService
-} from "src/app/auth/auth.service";
+import { AuthService, UserData } from "src/app/auth/auth.service";
+import { RDParamsService } from 'src/app/rdparams.service';
+import { ContactsService } from '../tabs/contacts/contacts.service';
 
 @Component({
   selector: "app-profile",
@@ -9,7 +9,8 @@ import {
   styleUrls: ["./profile.page.scss"]
 })
 export class ProfilePage implements OnInit {
-  user;
+  user: UserData;
+  userAge: number;
 
   // Configurazione slider
   slideOpts = {
@@ -127,12 +128,14 @@ export class ProfilePage implements OnInit {
     }
   };
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService,
+    public paramsService: RDParamsService,
+    private contactsService: ContactsService) { }
 
   ngOnInit() {
     this.user = this.authService.getUserData();
-    this.user.image = "assets/Logo.png";
-    this.user.age = this.calcAge(this.user.birth_date.slice(0, 10));
+    this.user.profile_photo = "assets/Logo.png";
+    this.userAge = this.calcAge(this.user.birth_date);
     console.log(this.user);
   }
 
@@ -153,5 +156,17 @@ export class ProfilePage implements OnInit {
 
   onLogout() {
     this.authService.doLogout();
+  }
+
+  // Abbandona gruppo
+  onLeaveGroup() {
+    this.contactsService.leaveGroup(this.paramsService.getParams().groupId).then(
+      () => { // Gruppo abbandonato, ricarico parametri
+        this.paramsService.loadParams();
+      },
+      (err) => { // Errore abbandono gruppo
+        console.warn(err);
+      }
+    );
   }
 }

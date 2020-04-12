@@ -19,12 +19,12 @@
         <ion-row>
           <ion-col class="ion-align-items-center">
             <ion-avatar>
-              <img [src]="user.image" />
+              <img [src]="user.profile_photo" />
             </ion-avatar>
           </ion-col>
           <ion-col class="ion-align-items-center">
             <h1>{{user.name}}</h1>
-            <p>{{user.age}} anni</p>
+            <p>{{userAge}} anni</p>
           </ion-col>
         </ion-row>
         <ion-row>
@@ -35,6 +35,14 @@
         <ion-row>
           <ion-col>
             <app-badge></app-badge>
+          </ion-col>
+        </ion-row>
+
+        <!-- Permetto di uscire da un gruppo solo se ancora non partecipo a una cena -->
+        <ion-row *ngIf="paramsService.getParams().groupId && !paramsService.getParams().dinnerId"
+          class="ion-align-items-center">
+          <ion-col class="ion-text-center">
+            <ion-button (click)="onLeaveGroup()">Lascia il gruppo</ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
