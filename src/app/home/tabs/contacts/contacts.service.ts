@@ -39,6 +39,12 @@ export class ContactsService {
       if (!this.platform.is('cordova')) {
         const testContacts: RDContact[] = [ // Contatti di test per il Web
           {
+            name: 'Carlo',
+            phoneNumber: ['+393408552105'],
+            imageUrl: 'assets/dummy.png',
+            userId: 0
+          },
+          {
             name: 'Paolo',
             phoneNumber: ['+393483773819'],
             imageUrl: 'assets/Logo.png',
@@ -48,12 +54,6 @@ export class ContactsService {
             name: 'Fringo',
             phoneNumber: ['+393483773817'],
             imageUrl: 'assets/Logo.png',
-            userId: 0
-          },
-          {
-            name: 'Carlo',
-            phoneNumber: ['+393408552105'],
-            imageUrl: 'assets/dummy.png',
             userId: 0
           },
           {
@@ -78,6 +78,12 @@ export class ContactsService {
             name: 'Emulatore',
             phoneNumber: ['+391234567890'],
             imageUrl: 'assets/dummy.png',
+            userId: 0
+          },
+          {
+            name: 'Chiara',
+            phoneNumber: ['+393496824393'],
+            imageUrl: 'assets/Logo.png',
             userId: 0
           }
         ];
@@ -183,7 +189,7 @@ export class ContactsService {
   // dovrà inviare la notifica, e aggiungerlo quando l'altro avrà accettato
   async sendGroupInvite(userId) {
     const addGroupBody = {
-      userId : userId
+      userId: userId
     };
     await this.spinner.create();
     return this.http.post(this.rdConstants.getApiRoute('inviteGroup'), addGroupBody)
@@ -197,7 +203,7 @@ export class ContactsService {
   // inviare una notifica all'altro partecipante, che viene informato dell'azione fatta
   async leaveGroup(groupId) {
     const leaveGroupBody = {
-      groupId : groupId
+      groupId: groupId
     };
     await this.spinner.create();
     return this.http.post(this.rdConstants.getApiRoute('leaveGroup'), leaveGroupBody)
