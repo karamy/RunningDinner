@@ -10,6 +10,7 @@ export class RDSpinnerService {
 
   // Crea un istanza dello spinner
   async create(message?: string) {
+    if (!message) message = "";
     const spinner = await this.loadingCtrl.create({
       spinner: null,
       message: `<div class="cssload-container">
