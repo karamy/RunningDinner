@@ -80,3 +80,9 @@ Plugin: https://github.com/dpa99c/cordova-diagnostic-plugin
 
 ----------------------------------------------------------------------------------------------------
 
+Suddivisione logica progetto
+
+Il progetto si basa su una struttura gerarchica derivata da come i moduli vengono caricati tramite lazy loading (da app.routing.module in giu).
+Sono presenti le cartelle rdcomponents e rdmodals dove inserire rispettivamente i component e le pagine caricate nei modali. 
+Il motivo è che il lazy loading non è attivo per i component, dunque scelto di aggiungerli ad un unico modulo da importare nelle pagine dove serve.
+Per quanto riguarda i modali, è stato creato il modulo rdmodals per raggrupparli, ma vengono caricati all'avvio dall'app.module in quanto per utilizzarli bisogna dichiararli negli entryComponents, che per definizione li carica all'avvio dell'app.

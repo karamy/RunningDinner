@@ -13,7 +13,7 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    loadChildren: './home/home.module#HomePageModule',
+    loadChildren: () => import('./home/home.module').then(m => m.HomePageModule),
     canLoad: [/* AuthGuard */] // Lasciato commentato l'AuthGuard per usi futuri
   }
 ];

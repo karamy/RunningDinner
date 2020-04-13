@@ -1,0 +1,19 @@
+<ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button color="secondary"></ion-back-button>
+      </ion-buttons>
+      <ion-searchbar type="text" [(ngModel)]="searchTerm" (ionChange)="setFilteredItems()"></ion-searchbar>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngFor="let country of countries">
+      <ion-item (click)="dismiss(country.number)">
+      <ion-avatar slot="start">
+        <ion-img class="flag" style="border-radius: 10px; border-style: solid" [src]="country.flag"></ion-img>
+      </ion-avatar>
+      <label class="ion-text-left">{{country.name}} {{country.number}}</label>
+      </ion-item>
+  </ion-list>
+</ion-content>

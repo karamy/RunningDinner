@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, NavController } from '@ionic/angular';
-import { CountryCodesPage } from './country-codes/country-codes.page';
+import { CountryCodesPage } from '../../rdmodals/country-codes/country-codes.page';
 import { PhoneService } from './phone.service';
 import { UserService } from '../user.service';
 import { AuthService } from '../auth.service';
