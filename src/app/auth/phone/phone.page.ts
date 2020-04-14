@@ -42,17 +42,48 @@ export class PhonePage implements OnInit {
     return modal.present();
   }
 
-  // Invia richiesta di invio codice via sms a Firebase e riceve verificationID
+  // Invia richiesta di invio codice via sms a Firebase e riceve verificationID (in iOS) oppure verificationID e OTP (in Android)
   sendOtp() {
     this.phoneNumber = this.prefix + this.inputNumber;
-    this.phoneService.sendOtp(this.phoneNumber).then(() => {
-      this.otpSent = true;
-    });
+    this.phoneService.sendOtp(this.phoneNumber).then((verificationId) => {
+      if (verificationId) {
+        this.otpSent = true;
+      } else {
+        this.otp = null;
+        this.tryLogin()
+      }
+    })
+      .catch(() => {
+        alert("Si è verificato un errore nella verifica del numero");
+      })
   }
 
   // Effettua un tentativo di login, o va alle istruzioni
   tryLogin() {
-    this.phoneService.verifyNumber(this.otp).then(() => {
+    if (this.otp !== null) {
+      this.phoneService.verifyNumber(this.otp).then(() => {
+        const reqBody = {
+          phone_number: this.phoneNumber
+        };
+        this.spinner.create("Effettuo login...");
+        this.userService.existsUser(reqBody).then(data => {
+          this.spinner.dismiss();
+          if (!data) {
+            // Utente non esiste a DB, inizio registrazione
+            this.signupService.setPhoneNumber(this.phoneNumber);
+            this.navController.navigateRoot('/sign-up/instructions');
+          } else {
+            // Effettua il login in automatico
+            this.authService.doLogin(this.phoneNumber);
+          }
+        },
+          () => { this.spinner.dismiss() }
+        );
+      })
+        .catch(() => {
+          alert("Si è verificato un errore nella verifica del numero di telefono")
+        })
+    } else {
       const reqBody = {
         phone_number: this.phoneNumber
       };
@@ -70,6 +101,6 @@ export class PhonePage implements OnInit {
       },
         () => { this.spinner.dismiss() }
       );
-    });
+    }
   }
 }

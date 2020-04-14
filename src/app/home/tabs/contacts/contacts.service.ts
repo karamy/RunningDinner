@@ -37,12 +37,12 @@ export class ContactsService {
         const testContacts: RDContact[] = [ // Contatti di test per il Web
           {
             name: 'Paolo',
-            phoneNumber: ['+393483773819', '+393381887043'],
+            phoneNumber: ['+393483773819'],
             imageUrl: 'assets/Logo.png'
           },
           {
             name: 'Fringo',
-            phoneNumber: ['+393483773817'],
+            phoneNumber: ['+393483773817', '+39387677788877'],
             imageUrl: 'assets/Logo.png'
           },
           {
@@ -52,12 +52,12 @@ export class ContactsService {
           },
           {
             name: 'Carlo',
-            phoneNumber: ['+393408552105', '+393483773819'],
+            phoneNumber: ['+393408552105'],
             imageUrl: 'assets/dummy.png'
           },
           {
             name: 'Pange',
-            phoneNumber: ['+393495339159', '+393483773819'],
+            phoneNumber: ['+393495339159'],
             imageUrl: 'assets/dummy.png'
           },
           {
@@ -146,16 +146,19 @@ export class ContactsService {
   // Comparo contatti ottenuti dal server per visualizzare i nomi del contatto del telefono
   compareContacts(returnedNumbers: RDContact[], localContacts: any[]) {
     let contactList = [];
-    for (let i = 0; i < localContacts.length; i++) {
-      for (let j = 0; j < localContacts[i].phoneNumber.length; j++) {
-        for (let x = 0; x < returnedNumbers.length; x++) {
-          if (returnedNumbers[x].phoneNumber === localContacts[i].phoneNumber[j] && !contactList.find(contact => contact.phoneNumber[0] === localContacts[i].phoneNumber[j])) { //Match e rimuovo duplicati
-            // Assegno immagine dal server al contatto
-            localContacts[i].imageUrl = 'data:image/png;base64,' + returnedNumbers[x].imageUrl
-            let tempPhoneNumber = localContacts[i].phoneNumber[j]
-            localContacts[i].phoneNumber = []
-            localContacts[i].phoneNumber.push(tempPhoneNumber)
-            contactList.push(localContacts[i]);
+    for (let counter = 0; counter < 4; counter++) {
+      for (let i = 0; i < localContacts.length; i++) {
+        if (localContacts[i].phoneNumber.length > counter) {
+          for (let x = 0; x < returnedNumbers.length; x++) {
+            if (returnedNumbers[x].phoneNumber === localContacts[i].phoneNumber[counter] && !contactList.find(contact => contact.phoneNumber[0] === localContacts[i].phoneNumber[counter])) { //Match e rimuovo duplicati
+              // Assegno immagine dal server al contatto
+              localContacts[i].imageUrl = 'data:image/png;base64,' + returnedNumbers[x].imageUrl
+              let tempPhoneNumber = localContacts[i].phoneNumber[counter]
+              localContacts[i].phoneNumber = []
+              localContacts[i].phoneNumber.push(tempPhoneNumber)
+              contactList.push(localContacts[i]);
+              break;
+            }
           }
         }
       }

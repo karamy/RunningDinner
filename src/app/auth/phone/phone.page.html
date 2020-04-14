@@ -41,7 +41,7 @@
     </ion-row>
     <ion-row>
       <ion-col class="ion-text-center">
-        <ion-button [disabled]="!inputNumber || !(inputNumber.length === 10) || !prefix" *ngIf="!otpSent" block strong=true color='secondary'
+        <ion-button [disabled]="!inputNumber || !prefix" *ngIf="!otpSent" block strong=true color='secondary'
           fill='outline' (click)="sendOtp()">Verifica</ion-button>
         <ion-button *ngIf="otpSent" [disabled]="!otp" expand="block" strong=true color='secondary' fill='outline'
           (click)="tryLogin()">Conferma</ion-button>
