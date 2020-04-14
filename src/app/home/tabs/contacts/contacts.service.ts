@@ -46,29 +46,21 @@ export class ContactsService {
           },
           {
             name: 'Paolo',
-            imageUrl: 'assets/Logo.png'
-            userId: 0
-          },
-          {
-            name: 'Fringo',
-            phoneNumber: ['+393483773817', '+39387677788877'],
+            phoneNumber: ['+393483773817'],
             imageUrl: 'assets/Logo.png',
             userId: 0
           },
           {
-            name: 'Chiara',
-            phoneNumber: ['+393496824393'],
-            imageUrl: 'assets/Logo.png'
-          },
-          {
-            name: 'Carlo',
-            phoneNumber: ['+393408552105'],
-            imageUrl: 'assets/dummy.png'
+            name: 'Fringo',
+            phoneNumber: ['+393483773819'],
+            imageUrl: 'assets/Logo.png',
+            userId: 0
           },
           {
             name: 'Pange',
             phoneNumber: ['+393495339159'],
-            imageUrl: 'assets/dummy.png'
+            imageUrl: 'assets/dummy.png',
+            userId: 0
           },
           {
             name: 'Nadia',
@@ -180,7 +172,7 @@ export class ContactsService {
               let tempPhoneNumber = localContacts[i].phoneNumber[counter]
               localContacts[i].phoneNumber = []
               localContacts[i].phoneNumber.push(tempPhoneNumber)
-            localContacts[i].userId = returnedNumbers[x].userId;
+              localContacts[i].userId = returnedNumbers[x].userId;
               contactList.push(localContacts[i]);
               break;
             }
@@ -208,7 +200,7 @@ export class ContactsService {
       .finally(
         () => { this.spinner.dismiss(); }
       );
-}
+  }
 
   // Scioglie il gruppo di cui fa parte l'utente, anche qui in automatico dovrebbe
   // inviare una notifica all'altro partecipante, che viene informato dell'azione fatta
