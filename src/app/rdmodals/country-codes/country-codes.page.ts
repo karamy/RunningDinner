@@ -4,7 +4,7 @@ import { FilterService } from './filter.service';
 import { ModalController } from '@ionic/angular';
 
 @Component({
-  selector: 'app-country-codes',
+  selector: 'rd-country-codes',
   templateUrl: './country-codes.page.html',
   styleUrls: ['./country-codes.page.scss'],
 })
@@ -13,14 +13,14 @@ export class CountryCodesPage implements OnInit {
   countries: any[] = [];
   searchTerm: string = "";
 
-  constructor(private countryService: CountryService, private filterService: FilterService, public modalCtrl: ModalController) { 
-   this.countries = countryService.country
+  constructor(private countryService: CountryService, private filterService: FilterService, public modalCtrl: ModalController) {
+    this.countries = this.countryService.countries;
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   setFilteredItems() {
-  this.countries = this.filterService.filterItems(this.searchTerm);
+    this.countries = this.filterService.filterItems(this.searchTerm);
   }
 
   dismiss(prefix) {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { ModalController } from "@ionic/angular";
-import { ContactsDetailPage } from "./contacts-detail/contacts-detail.page";
-import { ContactsService } from "./contacts.service";
+import { ContactsDetailPage } from "../../../rdmodals/contacts-detail/contacts-detail.page";
+import { ContactsService, RDContact } from "./contacts.service";
 import { RDSpinnerService } from 'src/app/rdspinner.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { RDSpinnerService } from 'src/app/rdspinner.service';
   styleUrls: ["./contacts.page.scss"]
 })
 export class ContactsPage implements OnInit {
-  contactList = [];
+  contactList: RDContact[] = [];
 
   constructor(
     public modalController: ModalController,
@@ -18,12 +18,12 @@ export class ContactsPage implements OnInit {
     private spinner: RDSpinnerService
   ) { }
 
-  async showContact(contactName: string, contactImage) {
+  async showContact(contactName: string, contactImage: string, contactId: number) {
     const modal = await this.modalController.create({
       component: ContactsDetailPage,
       swipeToClose: true,
       backdropDismiss: true,
-      componentProps: { contactName, contactImage },
+      componentProps: { contactName, contactImage, contactId },
       cssClass: "modal-style"
     });
     return await modal.present();

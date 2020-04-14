@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-dinner',
+  selector: 'rd-dinner',
   templateUrl: './dinner.component.html',
   styleUrls: ['./dinner.component.scss'],
 })

@@ -9,7 +9,8 @@ export class RDSpinnerService {
   constructor(private loadingCtrl: LoadingController) { }
 
   // Crea un istanza dello spinner
-  async create(message) {
+  async create(message?: string) {
+    if (!message) message = "";
     const spinner = await this.loadingCtrl.create({
       spinner: null,
       message: `<div class="cssload-container">
@@ -25,10 +26,21 @@ export class RDSpinnerService {
     return spinner;
   }
 
-  // Nasconde lo dello spinner, verificando di chiuderli tutti
+  // Funzioni di utility per gestire la corretta rimozione degli spinner presenti.
+  // Wrapper di setTimeout fatto a promise per gestire l'await
+  private awaitableTimeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  // Nasconde lo spinner, verificando di chiuderli tutti
   async dismiss() {
-    while (await this.loadingCtrl.getTop() !== undefined) {
-      await this.loadingCtrl.dismiss();
+    try {
+      while (await this.loadingCtrl.getTop() !== undefined) {
+        // Per evitare loop infiniti scelto di attendere 200ms ogni volta che provo a rimuovere uno spinner
+        await this.awaitableTimeout(200);
+        await this.loadingCtrl.dismiss();
+      }
+    } catch (e) {
+      console.log("multiple spinner dismiss");
     }
   }
 }

@@ -5,6 +5,7 @@ import { RDConstantsService } from "../rdcostants.service";
 import { tap } from 'rxjs/operators';
 import { ToastController } from '@ionic/angular';
 import { RDSpinnerService } from '../rdspinner.service';
+import { RDParamsService } from '../rdparams.service';
 
 @Injectable({
   providedIn: "root"
@@ -17,7 +18,8 @@ export class AuthService {
     private spinner: RDSpinnerService,
     private rdConstants: RDConstantsService,
     private toastController: ToastController,
-    private navController: NavController
+    private navController: NavController,
+    private rdParams: RDParamsService
   ) {
     this.readUser();
   }
@@ -32,6 +34,7 @@ export class AuthService {
   // Aggiorna lo user in localStorage
   private writeUser(user: AuthenticatedUser) {
     localStorage.setItem("user", JSON.stringify(user));
+    this.readUser();
   }
 
   // Indica se l'utente ha una sessione di login attiva
@@ -56,11 +59,22 @@ export class AuthService {
         .toPromise()
         .then(
           res => {
-            localStorage.setItem("user", JSON.stringify(res));
-            this.readUser();
+            this.writeUser(res as AuthenticatedUser);
             console.log(this._user);
-            this.navController.navigateRoot("/home/tabs/rooms");
-            resolve();
+
+            // Carico i parametri utente prima di risolvere la promise
+            this.rdParams.loadParams().then(
+              () => {
+                this.navController.navigateRoot("/home/tabs/rooms");
+                resolve();
+              },
+              (err) => {
+                this.doLogout();
+                reject(err);
+              }
+            ).finally(() => {
+              this.spinner.dismiss();
+            });
           },
           err => {
             reject(err);
@@ -73,8 +87,9 @@ export class AuthService {
 
   // Effettua il logout cancellando i dati utente
   doLogout() {
-    this._user = null;
     localStorage.setItem("user", null);
+    this.readUser();
+    this.rdParams.clearParams();
     this.navController.navigateRoot("/auth");
   }
 

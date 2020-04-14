@@ -8,8 +8,6 @@ import { tap, switchMap, filter, take, catchError } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-// NB Per come funziona ora l'interceptor, non è previsto ricevere una risposta negativa
-// da rotta /refresh, bisogna gestire la cosa dentro AuthService.refreshToken()
 export class TokenInterceptorService implements HttpInterceptor {
 
   // Variabili utilizzate dal meccanismo di re-login automatico

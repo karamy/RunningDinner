@@ -6,7 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { PhonePageRoutingModule } from './phone-routing.module';
 import { PhonePage } from './phone.page';
 
-// Your web app's Firebase configuration
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDit-Luu9GP7UwpZTaVerP0EsI70DO-45o",
   authDomain: "runningdinnersms.firebaseapp.com",
@@ -29,4 +29,4 @@ firebase.initializeApp(firebaseConfig);
   ],
   declarations: [PhonePage]
 })
-export class PhonePageModule {}
+export class PhonePageModule { }

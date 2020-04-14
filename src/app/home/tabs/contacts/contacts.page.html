@@ -2,9 +2,7 @@
   <ion-toolbar>
     <ion-title>contacts</ion-title>
     <ion-buttons slot="primary">
-      <ion-button routerLink="/home/profile">
-        <ion-icon name="person-circle-outline" slot="icon-only"></ion-icon>
-      </ion-button>
+      <rd-profile></rd-profile>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -14,7 +12,7 @@
     </ion-refresher-content>
   </ion-refresher>
   <ion-list>
-    <ion-item *ngFor="let contact of contactList" (click)="showContact(contact.name, contact.imageUrl)">
+    <ion-item *ngFor="let contact of contactList" (click)="showContact(contact.name, contact.imageUrl, contact.userId)">
       <ion-avatar>
         <img [src]="contact.imageUrl" />
       </ion-avatar>

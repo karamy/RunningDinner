@@ -7,11 +7,10 @@ import { CountryService } from './country.service';
 export class FilterService {
 
   countries: any[];
-   //= this.countryService.getCountry();
 
   constructor(private countryService: CountryService) {
-    this.countries = countryService.country;
-   }
+    this.countries = this.countryService.countries;
+  }
 
   filterItems(searchTerm) {
     return this.countries.filter(item => {

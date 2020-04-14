@@ -5,28 +5,17 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 import { RoomsPage } from './rooms.page';
-import { DinnerComponent } from './dinner/dinner.component';
-
-
-const routes: Routes = [
-  {
-    path: '',
-    component: RoomsPage
-  },
-  {
-    path: 'create-room',
-    loadChildren: () => import('./create-room/create-room.module').then( m => m.CreateRoomPageModule)
-  }
-];
+import { RDComponentsModule } from 'src/app/rdcomponents/rdcomponents.module';
+import { RoomsPageRoutingModule } from './rooms-routing.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RoomsPageRoutingModule,
+    RDComponentsModule
   ],
-  entryComponents: [DinnerComponent],
-  declarations: [RoomsPage, DinnerComponent]
+  declarations: [RoomsPage]
 })
-export class RoomsPageModule {}
+export class RoomsPageModule { }
