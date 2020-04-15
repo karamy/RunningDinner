@@ -44,7 +44,7 @@
         <ion-button [disabled]="!inputNumber || !prefix" *ngIf="!otpSent" block strong=true color='secondary'
           fill='outline' (click)="sendOtp()">Verifica</ion-button>
         <ion-button *ngIf="otpSent" [disabled]="!otp" expand="block" strong=true color='secondary' fill='outline'
-          (click)="tryLogin()">Conferma</ion-button>
+          (click)="verifyNumber()">Conferma</ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>

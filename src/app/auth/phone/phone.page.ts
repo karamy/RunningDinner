@@ -49,7 +49,6 @@ export class PhonePage implements OnInit {
       if (verificationId) {
         this.otpSent = true;
       } else {
-        this.otp = null;
         this.tryLogin()
       }
     })
@@ -58,49 +57,34 @@ export class PhonePage implements OnInit {
       })
   }
 
+  // Verifica il numero ed effettua login su Firebase
+  verifyNumber() {
+    this.phoneService.verifyNumber(this.otp).then(() => {
+      this.tryLogin();
+    })
+      .catch(() => {
+        alert("Si è verificato un errore nella verifica del numero di telefono")
+      })
+  }
+
   // Effettua un tentativo di login, o va alle istruzioni
   tryLogin() {
-    if (this.otp !== null) {
-      this.phoneService.verifyNumber(this.otp).then(() => {
-        const reqBody = {
-          phone_number: this.phoneNumber
-        };
-        this.spinner.create("Effettuo login...");
-        this.userService.existsUser(reqBody).then(data => {
-          this.spinner.dismiss();
-          if (!data) {
-            // Utente non esiste a DB, inizio registrazione
-            this.signupService.setPhoneNumber(this.phoneNumber);
-            this.navController.navigateRoot('/sign-up/instructions');
-          } else {
-            // Effettua il login in automatico
-            this.authService.doLogin(this.phoneNumber);
-          }
-        },
-          () => { this.spinner.dismiss() }
-        );
-      })
-        .catch(() => {
-          alert("Si è verificato un errore nella verifica del numero di telefono")
-        })
-    } else {
-      const reqBody = {
-        phone_number: this.phoneNumber
-      };
-      this.spinner.create("Effettuo login...");
-      this.userService.existsUser(reqBody).then(data => {
-        this.spinner.dismiss();
-        if (!data) {
-          // Utente non esiste a DB, inizio registrazione
-          this.signupService.setPhoneNumber(this.phoneNumber);
-          this.navController.navigateRoot('/sign-up/instructions');
-        } else {
-          // Effettua il login in automatico
-          this.authService.doLogin(this.phoneNumber);
-        }
-      },
-        () => { this.spinner.dismiss() }
-      );
-    }
+    const reqBody = {
+      phone_number: this.phoneNumber
+    };
+    this.spinner.create("Effettuo login...");
+    this.userService.existsUser(reqBody).then(data => {
+      this.spinner.dismiss();
+      if (!data) {
+        // Utente non esiste a DB, inizio registrazione
+        this.signupService.setPhoneNumber(this.phoneNumber);
+        this.navController.navigateRoot('/sign-up/instructions');
+      } else {
+        // Effettua il login in automatico
+        this.authService.doLogin(this.phoneNumber);
+      }
+    },
+      () => { this.spinner.dismiss() }
+    );
   }
 }

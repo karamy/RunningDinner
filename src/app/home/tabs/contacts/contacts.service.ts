@@ -10,7 +10,7 @@ import { RDSpinnerService } from 'src/app/rdspinner.service';
 // Rappresente i dati di un contatto sul telefono
 export class RDContact {
   constructor() { }
-  phoneNumber: string[] = [];
+  phoneNumbers: string[] = [];
 
   name: string;
   imageUrl: SafeUrl;
@@ -40,49 +40,49 @@ export class ContactsService {
         const testContacts: RDContact[] = [ // Contatti di test per il Web
           {
             name: 'Carlo',
-            phoneNumber: ['+393408552105'],
+            phoneNumbers: ['+393408552105'],
             imageUrl: 'assets/dummy.png',
             userId: 0
           },
           {
             name: 'Paolo',
-            phoneNumber: ['+393483773817'],
+            phoneNumbers: ['+393483773817'],
             imageUrl: 'assets/Logo.png',
             userId: 0
           },
           {
             name: 'Fringo',
-            phoneNumber: ['+393483773819'],
+            phoneNumbers: ['+393483773819'],
             imageUrl: 'assets/Logo.png',
             userId: 0
           },
           {
             name: 'Pange',
-            phoneNumber: ['+393495339159'],
+            phoneNumbers: ['+393495339159'],
             imageUrl: 'assets/dummy.png',
             userId: 0
           },
           {
             name: 'Nadia',
-            phoneNumber: ['+393450166161'],
+            phoneNumbers: ['+393450166161'],
             imageUrl: 'assets/dummy.png',
             userId: 0
           },
           {
             name: 'Ale',
-            phoneNumber: ['+393460500674'],
+            phoneNumbers: ['+393460500674'],
             imageUrl: 'assets/dummy.png',
             userId: 0
           },
           {
             name: 'Emulatore',
-            phoneNumber: ['+391234567890'],
+            phoneNumbers: ['+391234567890'],
             imageUrl: 'assets/dummy.png',
             userId: 0
           },
           {
             name: 'Chiara',
-            phoneNumber: ['+393496824393'],
+            phoneNumbers: ['+393496824393'],
             imageUrl: 'assets/Logo.png',
             userId: 0
           }
@@ -117,7 +117,7 @@ export class ContactsService {
                   }
                   for (let x = 0; x < localContacts[i].phoneNumbers.length; x++) {
                     if (localContacts[i].phoneNumbers[x].value.replace(/\s+/g, '') !== userPhone) { //Controllo che non sia il proprio numero
-                      newContact.phoneNumber.push(localContacts[i].phoneNumbers[x].value.replace(/\s+/g, ''))
+                      newContact.phoneNumbers.push(localContacts[i].phoneNumbers[x].value.replace(/\s+/g, ''))
                     }
                   }
                   importedContacts.push(newContact);
@@ -127,9 +127,9 @@ export class ContactsService {
               // Rimuovo eventualmente i duplicati
               if (skipDuplicates) {
                 const uniqueList = Array.from(
-                  new Set(importedContacts.map(a => a.phoneNumber))
-                ).map(phoneNumber => {
-                  return importedContacts.find(a => a.phoneNumber === phoneNumber);
+                  new Set(importedContacts.map(a => a.phoneNumbers))
+                ).map(phoneNumbers => {
+                  return importedContacts.find(a => a.phoneNumbers === phoneNumbers);
                 });
                 resolve(uniqueList);
               } else {
@@ -164,14 +164,14 @@ export class ContactsService {
     let contactList = [];
     for (let counter = 0; counter < 4; counter++) {
       for (let i = 0; i < localContacts.length; i++) {
-        if (localContacts[i].phoneNumber.length > counter) {
+        if (localContacts[i].phoneNumbers.length > counter) {
           for (let x = 0; x < returnedNumbers.length; x++) {
-            if (returnedNumbers[x].phoneNumber === localContacts[i].phoneNumber[counter] && !contactList.find(contact => contact.phoneNumber[0] === localContacts[i].phoneNumber[counter])) { //Match e rimuovo duplicati
+            if (returnedNumbers[x].phoneNumbers === localContacts[i].phoneNumbers[counter] && !contactList.find(contact => contact.phoneNumbers[0] === localContacts[i].phoneNumbers[counter])) { //Match e rimuovo duplicati
               // Assegno immagine dal server al contatto
               localContacts[i].imageUrl = 'data:image/png;base64,' + returnedNumbers[x].imageUrl
-              let tempPhoneNumber = localContacts[i].phoneNumber[counter]
-              localContacts[i].phoneNumber = []
-              localContacts[i].phoneNumber.push(tempPhoneNumber)
+              let tempPhoneNumber = localContacts[i].phoneNumbers[counter]
+              localContacts[i].phoneNumbers = []
+              localContacts[i].phoneNumbers.push(tempPhoneNumber)
               localContacts[i].userId = returnedNumbers[x].userId;
               contactList.push(localContacts[i]);
               break;
