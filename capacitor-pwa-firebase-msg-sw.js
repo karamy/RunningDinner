@@ -10,11 +10,11 @@
   const messaging = firebase.messaging();
 
   self.addEventListener('push', (event) => {
-    event.stopImmediatePropagation();
+    //event.stopImmediatePropagation();
   });
   
   self.addEventListener('pushsubscriptionchange', e => {
-    event.stopImmediatePropagation();
+    //event.stopImmediatePropagation();
   });
 
   messaging.setBackgroundMessageHandler(msgPayload => {
