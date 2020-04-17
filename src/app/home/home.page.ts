@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NotificationsService } from './notifications.service';
 
 @Component({
   selector: 'app-home',
@@ -7,9 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomePage implements OnInit {
 
-  constructor() { }
+  constructor(private notificationsService: NotificationsService) { }
 
   ngOnInit() {
+    this.notificationsService.init(); // Inizializzo notifiche push
   }
 
 }

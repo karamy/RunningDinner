@@ -19,6 +19,16 @@
           "https://www.googleapis.com/auth/drive"
         ]
       }
+    },
+    "PWAFirebaseMsg": {
+      "apiKey": "AIzaSyDit-Luu9GP7UwpZTaVerP0EsI70DO-45o",
+      "authDomain": "runningdinnersms.firebaseapp.com",
+      "databaseURL": "https://runningdinnersms.firebaseio.com",
+      "projectId": "runningdinnersms",
+      "storageBucket": "runningdinnersms.appspot.com",
+      "messagingSenderId": "65032950194",
+      "appId": "1:65032950194:web:8c98c255773e86ab5454ab",
+      "vapidKey": "BDAeoSzHv67Mq-dBuDf6vZg83H8MPRym--zTOFMW8d8iY-Bzp1LH6CYPUNWochBACyCiD_u9WVda-r67IAUI1uI"
     }
   }
 }

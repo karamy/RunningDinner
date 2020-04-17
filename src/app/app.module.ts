@@ -12,6 +12,8 @@ import { TokenInterceptorService } from "./token-interceptor.service";
 import { Diagnostic } from "@ionic-native/diagnostic/ngx";
 import { Contacts } from "@ionic-native/contacts";
 import { RDModalsModule } from './rdmodals/rdmodals.module';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import "capacitor-pwa-firebase-msg";
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,7 +22,8 @@ import { RDModalsModule } from './rdmodals/rdmodals.module';
     IonicModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,
-    RDModalsModule // Importo qui il modulo dei modali per caricare gli entryComponents utilizzati in tutta l'app
+    ServiceWorkerModule.register('capacitor-pwa-firebase-msg-sw.js', { enabled: true }), // Registrazione service-worker per utilizzo plugin push da web
+    RDModalsModule, // Importo qui il modulo dei modali per caricare gli entryComponents utilizzati in tutta l'app
   ],
   providers: [
     StatusBar,
