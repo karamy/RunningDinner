@@ -10,7 +10,7 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "postinstall": "cp -rf ./src/rd_plugins/capacitor-pwa-firebase-msg ./node_modules && npx jetify && npx cap sync",
+    "postinstall": "cp -rf ./rd_plugins/capacitor-pwa-firebase-msg ./node_modules && npx jetify && npx cap sync",
     "gh-pages": "ionic build --prod -- --base-href https://karamy.github.io/RunningDinner/ && npm explore capacitor-pwa-firebase-msg -- npm run precapcopyweb && npx angular-cli-ghpages --dir=www",
     "build-android": "ionic build --prod && npx cap copy android",
     "run-android": "ionic build --prod && npx cap copy android && npx cap open android",
