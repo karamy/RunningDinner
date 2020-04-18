@@ -92,6 +92,8 @@ La cartella rd_plugins è utilizzata per evitare di versionare node_modules dal 
 
 Notifiche Push
 
+- Fare npm install utilizzando come shell di base "git bash" altrimenti non funziona il comando "cp"
+
 Versione base utilizzando Capacitor (funziona solo su device):
 
 - Modificare file build.gradle all'interno di Capacitor (node_modules) con la libreria di Firebase modificando la riga ->  implementation 'com.google.firebase:firebase-messaging:20.1.0'
