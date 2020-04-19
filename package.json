@@ -17,7 +17,7 @@
     "build-ios": "ionic build --prod && npx cap copy ios",
     "run-ios": "ionic build --prod && npx cap copy ios && npx cap open ios",
     "build-web": "ionic build && npm explore capacitor-pwa-firebase-msg -- npm run precapcopyweb",
-    "run-web": "ionic build && npm explore capacitor-pwa-firebase-msg -- npm run precapcopyweb && http-server www -S -C cert.pem -o"
+    "run-web": "ionic build && npm explore capacitor-pwa-firebase-msg -- npm run precapcopyweb && http-server www"
   },
   "resolutions": {
     "@babel/preset-env": "^7.8.7"
