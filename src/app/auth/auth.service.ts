@@ -1,11 +1,12 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { LoadingController, NavController } from "@ionic/angular";
+import { NavController } from "@ionic/angular";
 import { RDConstantsService } from "../rdcostants.service";
 import { tap } from 'rxjs/operators';
 import { ToastController } from '@ionic/angular';
 import { RDSpinnerService } from '../rdspinner.service';
 import { RDParamsService } from '../rdparams.service';
+import { NotificationsService } from '../home/notifications.service';
 
 @Injectable({
   providedIn: "root"
@@ -19,7 +20,8 @@ export class AuthService {
     private rdConstants: RDConstantsService,
     private toastController: ToastController,
     private navController: NavController,
-    private rdParams: RDParamsService
+    private rdParams: RDParamsService,
+    private notificationsService: NotificationsService
   ) {
     this.readUser();
   }
@@ -90,6 +92,7 @@ export class AuthService {
     localStorage.setItem("user", null);
     this.readUser();
     this.rdParams.clearParams();
+    this.notificationsService.clearFirebaseToken();
     this.navController.navigateRoot("/auth");
   }
 

@@ -13,7 +13,6 @@ import { Diagnostic } from "@ionic-native/diagnostic/ngx";
 import { Contacts } from "@ionic-native/contacts";
 import { RDModalsModule } from './rdmodals/rdmodals.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import "capacitor-pwa-firebase-msg";
 
 @NgModule({
   declarations: [AppComponent],
