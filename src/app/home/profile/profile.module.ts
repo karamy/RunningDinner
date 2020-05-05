@@ -5,6 +5,10 @@ import { IonicModule } from "@ionic/angular";
 import { ProfilePageRoutingModule } from "./profile-routing.module";
 import { ProfilePage } from "./profile.page";
 import { RDComponentsModule } from 'src/app/rdcomponents/rdcomponents.module';
+import { RoundProgressModule } from 'angular-svg-round-progressbar';
+import { BadgeFilterPipe } from './badge-filter.pipe';
+import { CategoryFilterPipe } from './category-filter.pipe';
+import { HideHeaderDirective } from './hide-header.directive';
 
 @NgModule({
   imports: [
@@ -12,8 +16,9 @@ import { RDComponentsModule } from 'src/app/rdcomponents/rdcomponents.module';
     FormsModule,
     IonicModule,
     ProfilePageRoutingModule,
-    RDComponentsModule
+    RDComponentsModule,
+    RoundProgressModule
   ],
-  declarations: [ProfilePage]
+  declarations: [ProfilePage, BadgeFilterPipe, CategoryFilterPipe, HideHeaderDirective]
 })
-export class ProfilePageModule {}
+export class ProfilePageModule { }

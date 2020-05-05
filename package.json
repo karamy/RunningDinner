@@ -16,7 +16,7 @@
     "run-android": "ionic build --prod && npx cap copy android && npx cap open android",
     "build-ios": "ionic build --prod && npx cap copy ios",
     "run-ios": "ionic build --prod && npx cap copy ios && npx cap open ios",
-    "build-web": "ionic build && npm explore capacitor-pwa-firebase-msg -- npm run precapcopyweb",
+    "build-web": "ionic build && npm explore capacitor-pwa-firebase-msg --npm run precapcopyweb",
     "run-web": "ionic build && npm explore capacitor-pwa-firebase-msg -- npm run precapcopyweb && http-server www -S -C cert.pem -o"
   },
   "resolutions": {
@@ -43,6 +43,7 @@
     "@ionic/angular": "^5.0.0",
     "@ionic/pwa-elements": "^1.4.2",
     "angular-cli-ghpages": "^0.6.2",
+    "angular-svg-round-progressbar": "^3.0.1",
     "capacitor-firebase-auth": "^0.3.0",
     "capacitor-pwa-firebase-msg": "0.0.1",
     "cordova-plugin-contacts": "^3.0.1",

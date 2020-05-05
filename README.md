@@ -106,4 +106,10 @@ Versione avanzata con utilizzo di plugin e relativo service-worker --> https://w
   per runnare --> http-server www -S -C cert.pem -o
 
 - aprire chrome in modalità developer in modo che non rompa per il certificato non valido:
+macOS
+
   /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --user-data-dir=/tmp/foo --ignore-certificaterrors --unsafely-treat-insecure-origin-as-secure=https://localhost:8080
+
+Windows
+  
+  start chrome --user-data-dir=/tmp/foo --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://localhost:8080

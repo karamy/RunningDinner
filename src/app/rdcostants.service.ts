@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class RDConstantsService {
 
-  private apiUrl = 'https://runningdinnerapi.herokuapp.com/';  // 'http://localhost:1111/'
+  private apiUrl = 'https://runningdinnerapi.herokuapp.com/';  //'http://localhost:1111/'
 
   constructor() { }
 

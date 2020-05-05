@@ -1,7 +1,11 @@
-import { Component, OnInit } from "@angular/core";
-import { AuthService, UserData } from "src/app/auth/auth.service";
+import { Component, OnInit, NgZone } from "@angular/core";
+import { AuthService, UserData, AuthenticatedUser } from "src/app/auth/auth.service";
 import { RDParamsService } from 'src/app/rdparams.service';
 import { ContactsService } from '../tabs/contacts/contacts.service';
+import { ModalController } from '@ionic/angular';
+import { FoodAllergiesPage } from 'src/app/rdmodals/food-allergies/food-allergies.page';
+import { UserService } from 'src/app/auth/user.service';
+import { ProfileService } from './profile.service';
 
 @Component({
   selector: "app-profile",
@@ -11,147 +15,162 @@ import { ContactsService } from '../tabs/contacts/contacts.service';
 export class ProfilePage implements OnInit {
   user: UserData;
   userAge: number;
-
-  // Configurazione slider
-  slideOpts = {
-    on: {
-      beforeInit() {
-        const swiper = this;
-        swiper.classNames.push(`${swiper.params.containerModifierClass}flip`);
-        swiper.classNames.push(`${swiper.params.containerModifierClass}3d`);
-        const overwriteParams = {
-          slidesPerView: 1,
-          slidesPerColumn: 1,
-          slidesPerGroup: 1,
-          watchSlidesProgress: true,
-          spaceBetween: 0,
-          virtualTranslate: true
-        };
-        swiper.params = Object.assign(swiper.params, overwriteParams);
-        swiper.originalParams = Object.assign(
-          swiper.originalParams,
-          overwriteParams
-        );
-      },
-      setTranslate() {
-        const swiper = this;
-        const { $, slides, rtlTranslate: rtl } = swiper;
-        for (let i = 0; i < slides.length; i += 1) {
-          const $slideEl = slides.eq(i);
-          let progress = $slideEl[0].progress;
-          if (swiper.params.flipEffect.limitRotation) {
-            progress = Math.max(Math.min($slideEl[0].progress, 1), -1);
-          }
-          const offset$$1 = $slideEl[0].swiperSlideOffset;
-          const rotate = -180 * progress;
-          let rotateY = rotate;
-          let rotateX = 0;
-          let tx = -offset$$1;
-          let ty = 0;
-          if (!swiper.isHorizontal()) {
-            ty = tx;
-            tx = 0;
-            rotateX = -rotateY;
-            rotateY = 0;
-          } else if (rtl) {
-            rotateY = -rotateY;
-          }
-
-          $slideEl[0].style.zIndex =
-            -Math.abs(Math.round(progress)) + slides.length;
-
-          if (swiper.params.flipEffect.slideShadows) {
-            // Set shadows
-            let shadowBefore = swiper.isHorizontal()
-              ? $slideEl.find(".swiper-slide-shadow-left")
-              : $slideEl.find(".swiper-slide-shadow-top");
-            let shadowAfter = swiper.isHorizontal()
-              ? $slideEl.find(".swiper-slide-shadow-right")
-              : $slideEl.find(".swiper-slide-shadow-bottom");
-            if (shadowBefore.length === 0) {
-              shadowBefore = swiper.$(
-                `<div class="swiper-slide-shadow-${
-                swiper.isHorizontal() ? "left" : "top"
-                }"></div>`
-              );
-              $slideEl.append(shadowBefore);
-            }
-            if (shadowAfter.length === 0) {
-              shadowAfter = swiper.$(
-                `<div class="swiper-slide-shadow-${
-                swiper.isHorizontal() ? "right" : "bottom"
-                }"></div>`
-              );
-              $slideEl.append(shadowAfter);
-            }
-            if (shadowBefore.length) {
-              shadowBefore[0].style.opacity = Math.max(-progress, 0);
-            }
-            if (shadowAfter.length) {
-              shadowAfter[0].style.opacity = Math.max(progress, 0);
-            }
-          }
-          $slideEl.transform(
-            `translate3d(${tx}px, ${ty}px, 0px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
-          );
-        }
-      },
-      setTransition(duration) {
-        const swiper = this;
-        const { slides, activeIndex, $wrapperEl } = swiper;
-        slides
-          .transition(duration)
-          .find(
-            ".swiper-slide-shadow-top, .swiper-slide-shadow-right, .swiper-slide-shadow-bottom, .swiper-slide-shadow-left"
-          )
-          .transition(duration);
-        if (swiper.params.virtualTranslate && duration !== 0) {
-          let eventTriggered = false;
-          // eslint-disable-next-line
-          slides.eq(activeIndex).transitionEnd(function onTransitionEnd() {
-            if (eventTriggered) {
-              return;
-            }
-            if (!swiper || swiper.destroyed) {
-              return;
-            }
-
-            eventTriggered = true;
-            swiper.animating = false;
-            const triggerEvents = ["webkitTransitionEnd", "transitionend"];
-            for (let i = 0; i < triggerEvents.length; i += 1) {
-              $wrapperEl.trigger(triggerEvents[i]);
-            }
-          });
-        }
-      }
-    }
-  };
+  editMode: boolean = false;
+  badgeExpand: boolean = false;
+  foodExpand: boolean = false;
+  foodAllergies = []
+  categories = [];
+  GoogleAutocomplete: google.maps.places.AutocompleteService;
+  autocompleteItems: any[];
 
   constructor(private authService: AuthService,
+    private userService: UserService,
     public paramsService: RDParamsService,
-    private contactsService: ContactsService) { }
+    private contactsService: ContactsService,
+    private profileService: ProfileService,
+    private zone: NgZone,
+    private modalController: ModalController) {
+    this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
+    this.autocompleteItems = [];
+  }
+
+  badges = [
+    {
+      "name": "goldmedal",
+      "image": "assets/goldmedal.png",
+      "descriptionOwned": "Ottenuto per aver ricevuto il miglior voto in una cena",
+      "descriptionNotOwned": "Ottieni il miglior voto in una cena",
+      "owned": true
+    },
+    {
+      "name": "silvermedal",
+      "image": "assets/silvermedal.png",
+      "descriptionOwned": "Ottenuto per aver invitato 10 amici",
+      "descriptionNotOwned": "Invita 10 amici. Amici invitati 4/10",
+      "owned": false
+    },
+    {
+      "name": "dress",
+      "image": "assets/dress.png",
+      "descriptionOwned": "Ottenuto per esser stato il più simpatico in una cena",
+      "descriptionNotOwned": "Ricevi il voto di più simpatico in una cena",
+      "owned": false
+    },
+    {
+      "name": "dummy",
+      "image": "assets/dummy.png",
+      "descriptionOwned": "Ottenuto per esser stato il meno simpatico in una cena",
+      "descriptionNotOwned": "Ricevi il voto di meno simpatico in una cena",
+      "owned": true
+    },
+    {
+      "name": "dress",
+      "image": "assets/dress.png",
+      "descriptionOwned": "Ottenuto per esserti iscritto a RunningDinner",
+      "descriptionNotOwned": "Iscriviti a RunningDinner",
+      "owned": true
+    },
+    {
+      "name": "fish",
+      "image": "assets/fish.png",
+      "descriptionOwned": "Ottenuto per aver fatto la tua prima cena di pesce",
+      "descriptionNotOwned": "Partecipa ad una cena di pesce",
+      "owned": false
+    },
+    {
+      "name": "meat",
+      "image": "assets/meat.png",
+      "descriptionOwned": "Ottenuto per aver fatto la tua prima cena di carne",
+      "descriptionNotOwned": "Partecipa ad una cena di carne",
+      "owned": true
+    },
+  ]
 
   ngOnInit() {
+    this.getUser();
+  }
+
+  slideOpts = {
+    slidesPerView: 5,
+    coverflowEffect: {
+      rotate: 50,
+      stretch: 0,
+      depth: 100,
+      modifier: 1,
+      slideShadows: true,
+    }
+  }
+
+  getUser() {
     this.user = this.authService.getUserData();
     this.user.profile_photo = "assets/Logo.png";
-    this.userAge = this.calcAge(this.user.birth_date);
-    console.log(this.user);
+    this.userAge = this.profileService.calcAge(this.user.birth_date);
   }
 
-  calcAge(userBirthdate) {
-    let today = new Date();
-    let birthDate = new Date(userBirthdate);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    let m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
+  async presentModalFoodAllergies() {
+    const modal = await this.modalController.create({
+      component: FoodAllergiesPage,
+      backdropDismiss: true,
+      cssClass: "modal-style"
+    });
+    modal.onDidDismiss().then(res => {
+      if (res.data !== undefined) {
+        this.foodAllergies = [...this.foodAllergies, res.data]
+        this.foodAllergies.sort((a, b) => (a.category > b.category) ? 1 : ((b.category > a.category) ? -1 : 0));
+        if (!this.categories.includes(res.data.category)) {
+          this.categories = [...this.categories, res.data.category]
+          this.categories.sort();
+        }
+      }
+    });
+    return await modal.present();
+  }
+
+  saveChanges() {
+    this.user.birth_date = this.profileService.changeDateFormat(this.user.birth_date)
+    this.userService.updateUser(this.user.name, this.user.birth_date, this.user.address, this.user.phone_number).then(
+      res => {
+        this.authService.writeUser(res as AuthenticatedUser)
+        this.getUser();
+      },
+      () => {
+        console.log("Errore")
+      }
+    )
+    this.editMode = !this.editMode
+  }
+
+  cancelFood(item: any) {
+    const index = this.foodAllergies.indexOf(item);
+    this.foodAllergies.splice(index, 1);
+    this.foodAllergies = [...this.foodAllergies]
+    if (this.foodAllergies.find(x => x.category === item.category) === undefined) {
+      const indexCategory = this.categories.indexOf(item.category)
+      this.categories.splice(indexCategory, 1);
     }
-    return age;
   }
 
-  showUser() {
-    console.log(this.user.name);
+  updateSearchResults() {
+    if (this.user.address === '') {
+      this.autocompleteItems = [];
+      return;
+    }
+    this.GoogleAutocomplete.getPlacePredictions({ input: this.user.address },
+      (predictions) => {
+        this.autocompleteItems = [];
+        this.zone.run(() => {
+          if (predictions) {
+            predictions.forEach((prediction) => {
+              this.autocompleteItems.push(prediction);
+            });
+          }
+        });
+      });
+  }
+
+  selectSearchResult(item: any) {
+    this.autocompleteItems = [];
+    this.user.address = item.description;
   }
 
   onLogout() {

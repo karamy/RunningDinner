@@ -1,9 +1,8 @@
-<ion-header>
+<ion-header #header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home/tabs/rooms"></ion-back-button>
     </ion-buttons>
-    <ion-title>profile</ion-title>
     <ion-buttons slot="primary">
       <ion-button (click)="onLogout()">
         <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
@@ -12,43 +11,211 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-slides pager="true" [options]="slideOpts" style="height: 100%;">
-    <ion-slide>
+<ion-content [scrollEvents]="true" appHideHeader [header]="header" fullscreen="true" slot="fixed">
+  <div>
+    <div style="height: 130px;">
+      <ion-avatar class="avatar">
+        <img [src]="user.profile_photo">
+      </ion-avatar>
+      <round-progress class="user-level" [current]="80" [max]="100" [color]="'#45ccce'" [background]="'#eaeaea'"
+        [radius]="80" [stroke]="10" [rounded]="true" [clockwise]="true" [responsive]="false" [duration]="800"
+        [animation]="'easeInOutQuart'" [animationDelay]="0"></round-progress>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="user-meta ion-text-center">
+      <h3 class="user-name" *ngIf="!editMode">{{user.name}},
+        <span class="ages">
+          {{userAge}} anni
+        </span>
+      </h3>
       <ion-grid>
-        <ion-row>
-          <ion-col class="ion-align-items-center">
-            <ion-avatar>
-              <img [src]="user.profile_photo" />
-            </ion-avatar>
+        <ion-row *ngIf="editMode" class="no-padding" style="margin-bottom: 10px;margin-top: 16px;">
+          <ion-col style="margin-right: 5%;" class="no-padding">
+            <ion-input class="user-name ion-no-padding ion-text-end" *ngIf="editMode" [(ngModel)]="user.name">
+            </ion-input>
           </ion-col>
-          <ion-col class="ion-align-items-center">
-            <h1>{{user.name}}</h1>
-            <p>{{userAge}} anni</p>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col class="ion-align-items-center">
-            <p>{{user.address}}</p>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col>
-            <rd-badge></rd-badge>
-          </ion-col>
-        </ion-row>
-
-        <!-- Permetto di uscire da un gruppo solo se ancora non partecipo a una cena -->
-        <ion-row *ngIf="paramsService.getParams().groupId && !paramsService.getParams().dinnerId"
-          class="ion-align-items-center">
-          <ion-col class="ion-text-center">
-            <ion-button (click)="onLeaveGroup()">Lascia il gruppo</ion-button>
+          <ion-col class="no-padding">
+            <ion-input class="ages ion-no-padding ion-text-start" *ngIf="editMode" [(ngModel)]="user.birth_date">
+            </ion-input>
           </ion-col>
         </ion-row>
       </ion-grid>
-    </ion-slide>
-    <ion-slide style="background: green;">
-      <h1>Slide 2</h1>
-    </ion-slide>
-  </ion-slides>
+      <h6 *ngIf="!editMode">{{user.address}}</h6>
+      <!-- <ion-input type="text" maxlength="40" text-wrap style="margin-top: 16px;margin-bottom: 10px;"
+        class="ion-text-wrap ion-no-padding" *ngIf="editMode" [(ngModel)]="user.address"
+        (keyup)="updateSearchResults()">
+      </ion-input> -->
+      <ion-textarea rows="1" autoGrow="true" style="margin-top: 16px;margin-bottom: 8px;" class="ion-no-padding"
+        *ngIf="editMode" [(ngModel)]="user.address" (keyup)="updateSearchResults()">
+      </ion-textarea>
+      <ion-list *ngIf="autocompleteItems.length > 0">
+        <div *ngFor="let item of autocompleteItems; let i = index">
+          <ion-item *ngIf="i<3" tappable lines="full" style="padding-bottom: 3%;--inner-padding-bottom: 3%;"
+            (click)="selectSearchResult(item)">
+            {{ item.description }}
+          </ion-item>
+        </div>
+      </ion-list>
+      <ion-button *ngIf="!editMode" fill="outline" color="primary" (click)="this.editMode = !this.editMode">
+        Modifica profilo
+      </ion-button>
+      <ion-button *ngIf="editMode" fill="outline" color="primary" style="margin-top: 3%;margin-bottom: 0%;"
+        (click)="saveChanges()">Salva modifiche</ion-button>
+    </div>
+  </div>
+  <ion-card>
+    <ion-grid>
+      <ion-row style="align-items: center;" class="no-padding">
+        <ion-col style="padding-top: 0%;">
+          <p style="margin: 0%;">Badges</p>
+        </ion-col>
+        <ion-col style="padding-top: 0%;" class="ion-text-end">
+          <ion-button fill=" clear" size="small" style="margin: 0%;font-size: 14px;" *ngIf="!badgeExpand"
+            (click)="badgeExpand = !badgeExpand">
+            Espandi
+          </ion-button>
+          <ion-button fill=" clear" size="small" style="margin: 0%;font-size: 14px;" *ngIf="badgeExpand"
+            (click)="badgeExpand = !badgeExpand">
+            Riduci
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <ion-row style="padding-bottom: 2%;">
+        <ion-col class="no-padding">
+          <ion-slides *ngIf="!badgeExpand" [options]="slideOpts">
+            <ion-slide *ngFor="let badge of badges | badgeFilterPipe:'owned'">
+              <ion-avatar>
+                <img [src]=badge.image />
+              </ion-avatar>
+            </ion-slide>
+          </ion-slides>
+          <div *ngIf="badgeExpand">
+            <ion-card *ngFor="let badge of badges | badgeFilterPipe:'owned'" style="margin: 2.5%;">
+              <ion-grid>
+                <ion-row style="align-items: center;" class="no-padding">
+                  <ion-col size="3">
+                    <ion-avatar>
+                      <img [src]=badge.image />
+                    </ion-avatar>
+                  </ion-col>
+                  <ion-col>
+                    <p>{{badge.descriptionOwned}}</p>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card>
+            <ion-card *ngFor="let badge of badges | badgeFilterPipe:'notOwned'" style="margin: 2.5%;">
+              <ion-grid>
+                <ion-row style="align-items: center;" class="no-padding">
+                  <ion-col size="3">
+                    <ion-avatar>
+                      <img style="filter: grayscale(1);" [src]=badge.image />
+                    </ion-avatar>
+                  </ion-col>
+                  <ion-col>
+                    <p>{{badge.descriptionNotOwned}}</p>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+  <ion-card *ngIf="foodAllergies.length === 0" style="margin-bottom: 2.5%;">
+    <ion-grid>
+      <ion-row style="align-items: center;">
+        <ion-col class="ion-text-center">
+          <h3>Nessuna intolleranza alimentare</h3>
+        </ion-col>
+        <ion-col size="3">
+          <ion-button size="small" shape="round" class="button-add" fill="outline"
+            (click)="presentModalFoodAllergies()">
+            <ion-icon name="add"></ion-icon>
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+  <ion-card *ngIf="categories.length > 0" style="margin-bottom: 2.5%;">
+    <ion-grid>
+      <ion-row style="align-items: center;" class="no-padding">
+        <ion-col style="padding-top: 0%;">
+          <p style="margin: 0%;">Intolleranze Alimentari</p>
+        </ion-col>
+        <ion-col style="padding-top: 0%;" class="ion-text-end">
+          <ion-button fill=" clear" size="small" style="margin: 0%;font-size: 14px;" *ngIf="!foodExpand"
+            (click)="foodExpand = !foodExpand">
+            Espandi
+          </ion-button>
+          <ion-button fill=" clear" size="small" style="margin: 0%;font-size: 14px;" *ngIf="foodExpand"
+            (click)="foodExpand = !foodExpand">
+            Riduci
+          </ion-button>
+        </ion-col>
+      </ion-row>
+      <div *ngIf="!foodExpand">
+        <ion-row style="padding-bottom: 2%;">
+          <ion-col class="no-padding">
+            <ion-slides [options]="slideOpts">
+              <ion-slide *ngFor="let food of foodAllergies">
+                <ion-avatar>
+                  <img [src]=food.image />
+                </ion-avatar>
+              </ion-slide>
+              <ion-slide>
+                <ion-button size="small" shape="round" class="button-add-categories" fill="outline"
+                  (click)="presentModalFoodAllergies()">
+                  <ion-icon name="add"></ion-icon>
+                </ion-button>
+              </ion-slide>
+            </ion-slides>
+          </ion-col>
+        </ion-row>
+      </div>
+      <div *ngIf="foodExpand">
+        <ion-row *ngFor="let category of categories" style="padding: 2%;">
+          <ion-col class="no-padding">
+            <h3 style="margin-top: 2%;text-align: center;">{{category}}</h3>
+            <ion-card *ngFor="let food of foodAllergies | categoryFilter: category">
+              <ion-grid>
+                <ion-row class="no-padding">
+                  <ion-col class="no-padding">
+                    <ion-list>
+                      <ion-item-sliding>
+                        <ion-item-options side="end">
+                          <ion-item-option color="danger" (click)="cancelFood(food)">Elimina</ion-item-option>
+                        </ion-item-options>
+                        <ion-item lines="none">
+                          <ion-avatar>
+                            <img [src]="food.image">
+                          </ion-avatar>
+                          <ion-label style="margin-left: 3%;">{{food.name}}</ion-label>
+                        </ion-item>
+                      </ion-item-sliding>
+                    </ion-list>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+        <ion-row style="padding-top:2%;padding-bottom: 2%;justify-content: center;">
+          <ion-button fill="outline" color="primary" (click)="presentModalFoodAllergies()">Aggiungi</ion-button>
+        </ion-row>
+      </div>
+    </ion-grid>
+  </ion-card>
+  <ion-card>
+    <ion-grid>
+      <ion-row *ngIf=" paramsService.getParams().groupId && !paramsService.getParams().dinnerId"
+        class="ion-align-items-center">
+        <ion-col class="ion-text-center">
+          <ion-button (click)="onLeaveGroup()">Lascia il gruppo</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
 </ion-content>

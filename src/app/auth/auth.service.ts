@@ -29,10 +29,14 @@ export class AuthService {
     this._user = JSON.parse(
       localStorage.getItem("user")
     ) as AuthenticatedUser;
+    if (this._user) {
+      this._user.userData.birth_date = new Date(this._user.userData.birth_date)
+      this._user.userData.birth_date = this._user.userData.birth_date.toLocaleDateString() as unknown as Date
+    }
   }
 
   // Aggiorna lo user in localStorage
-  private writeUser(user: AuthenticatedUser) {
+  public writeUser(user: AuthenticatedUser) {
     localStorage.setItem("user", JSON.stringify(user));
     this.readUser();
   }
