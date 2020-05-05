@@ -188,8 +188,7 @@ export class ContactsService {
     return contactList;
   }
 
-  // Per ora aggiunge direttamente il contatto creando un gruppo, in futuro
-  // dovrà inviare la notifica, e aggiungerlo quando l'altro avrà accettato
+  // Richiede l'invio di notifica lato server al contatto per aggiungerlo al gruppo
   async sendGroupInvite(userId) {
     const addGroupBody = {
       userId: userId

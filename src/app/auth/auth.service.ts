@@ -1,11 +1,12 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { LoadingController, NavController } from "@ionic/angular";
+import { NavController } from "@ionic/angular";
 import { RDConstantsService } from "../rdcostants.service";
 import { tap } from 'rxjs/operators';
 import { ToastController } from '@ionic/angular';
 import { RDSpinnerService } from '../rdspinner.service';
 import { RDParamsService } from '../rdparams.service';
+import { NotificationsService } from '../home/notifications.service';
 
 @Injectable({
   providedIn: "root"
@@ -19,7 +20,8 @@ export class AuthService {
     private rdConstants: RDConstantsService,
     private toastController: ToastController,
     private navController: NavController,
-    private rdParams: RDParamsService
+    private rdParams: RDParamsService,
+    private notificationsService: NotificationsService
   ) {
     this.readUser();
   }
@@ -89,12 +91,29 @@ export class AuthService {
     });
   }
 
-  // Effettua il logout cancellando i dati utente
-  doLogout() {
-    localStorage.setItem("user", null);
-    this.readUser();
-    this.rdParams.clearParams();
-    this.navController.navigateRoot("/auth");
+  // Effettua il logout richiedendo la cancellazione del token
+  // di Firebase e cancellando i dati utente
+  // NB la rotta non è autenticata perchè potrebbe essere scaduto il token,
+  // ma voglio comunque disattivare le notifiche push
+  async doLogout() {
+    await this.spinner.create();
+    this.http.post(this.rdConstants.getApiRoute('logout'), { userId: this.getUserData().userid })
+      .toPromise()
+      .then(
+        () => {
+          localStorage.setItem("user", null);
+          this.readUser();
+          this.rdParams.clearParams();
+          this.notificationsService.clearFirebaseToken();
+          this.navController.navigateRoot("/auth");
+        },
+        (err) => {
+          console.error("Errore logout");
+        }
+      )
+      .finally(
+        () => { this.spinner.dismiss(); }
+      );
   }
 
   // Ritorna l'utente loggato completo
@@ -103,7 +122,7 @@ export class AuthService {
   }
 
   // Ritorna i dati dell'utente loggato
-  getUserData() {
+  getUserData(): UserData {
     return this._user.userData;
   }
 

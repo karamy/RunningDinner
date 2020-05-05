@@ -92,6 +92,8 @@ La cartella rd_plugins è utilizzata per evitare di versionare node_modules dal 
 
 Notifiche Push
 
+- Fare npm install utilizzando come shell di base "git bash" altrimenti non funziona il comando "cp" per sovrascrivere il plugin "firebase-pwa" con il nostro in rd_plugins
+
 Versione base utilizzando Capacitor (funziona solo su device):
 
 - Modificare file build.gradle all'interno di Capacitor (node_modules) con la libreria di Firebase modificando la riga ->  implementation 'com.google.firebase:firebase-messaging:20.1.0'
@@ -101,15 +103,12 @@ Versione avanzata con utilizzo di plugin e relativo service-worker --> https://w
 - installare http-server ->  npm install http-server -g
   per runnare -> http-server www
 
-- runnare in https per abilitare service-worker:
-  per generare chiave (una tantum, chiave versionata) --> openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
+- runnare in https per simulare il run su github-pages:
+  per generare chiave (una tantum, la chiave è versionata) --> openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
   per runnare --> http-server www -S -C cert.pem -o
 
-- aprire chrome in modalità developer in modo che non rompa per il certificato non valido:
-macOS
-
+- aprire chrome in modalità developer in modo che non rompa per il certificato non valido e abiliti il service-worker:
+  OSX:
   /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --user-data-dir=/tmp/foo --ignore-certificaterrors --unsafely-treat-insecure-origin-as-secure=https://localhost:8080
-
-Windows
-  
+  Windows:
   start chrome --user-data-dir=/tmp/foo --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://localhost:8080
