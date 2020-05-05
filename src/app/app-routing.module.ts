@@ -15,9 +15,6 @@ const routes: Routes = [
     path: 'home',
     loadChildren: () => import('./home/home.module').then(m => m.HomePageModule),
     canLoad: [/* AuthGuard */] // Lasciato commentato l'AuthGuard per usi futuri
-  },  {
-    path: 'food-allergies',
-    loadChildren: () => import('./rdmodals/food-allergies/food-allergies.module').then( m => m.FoodAllergiesPageModule)
   }
 
 ];
