@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
-import firebase from "firebase/app";
+import { firebase } from '@firebase/app';
+import '@firebase/auth';
 import { cfaSignInPhone } from "capacitor-firebase-auth";
 import { cfaSignInPhoneOnCodeSent } from "capacitor-firebase-auth";
 import { Platform } from "@ionic/angular";

@@ -26,20 +26,11 @@ export class ContactsDetailPage implements OnInit {
   // Richiede l'invio di notifica lato server al contatto per aggiungerlo al gruppo
   async onAddToGroupRequest() {
     this.contactsService.sendGroupInvite(this.contactId).then(
-      () => { // Gruppo creato, ricarico parametri
-        /* this.paramsService.loadParams().then(
-          () => {
-            this.modalCtrl.dismiss();
-          },
-          () => { // Errore ricaricamento parametri
-            console.warn("Errore caricamento parametri");
-          }
-        ); */
-        this.modalCtrl.dismiss();
-      },
+      () => { },
       (err) => { // Errore creazione gruppo
         console.warn(err);
       }
     );
+    this.modalCtrl.dismiss();
   }
 }

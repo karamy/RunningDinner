@@ -7,6 +7,7 @@ import { AlertController } from '@ionic/angular';
 //NB l'ordine di questi import è fondamentale per utilizzare correttamente il plugin su tutti i platform
 import "capacitor-pwa-firebase-msg";
 import { Plugins, PushNotificationToken, PushNotification, PushNotificationActionPerformed } from '@capacitor/core';
+import { RDParamsService } from '../rdparams.service';
 const { PushNotifications } = Plugins;
 
 @Injectable({
@@ -16,17 +17,9 @@ export class NotificationsService {
   private firebaseToken: string;
 
   constructor(private spinner: RDSpinnerService, private rdConstants: RDConstantsService,
-    private http: HttpClient, private alertController: AlertController) { }
+    private http: HttpClient, private alertController: AlertController,
+    private paramsService: RDParamsService) { }
 
-  async presentAlert() {
-    const alert = await this.alertController.create({
-      header: 'Nuovo invito',
-      message: 'Qualcuno ti ha aggiunta a un gruppo, accetti?',
-      buttons: ['OK']
-    });
-
-    await alert.present();
-  }
   // Inizializza la gestione notifiche push
   init() {
     // Richiedo permission a ricevere notifiche per compatibilità web, su mobile già richiesto in precedenza
@@ -63,17 +56,25 @@ export class NotificationsService {
     PushNotifications.addListener('pushNotificationReceived',
       (notification: PushNotification) => {
         console.log('Push received: ' + JSON.stringify(notification));
-        this.presentAlert();
+        const notificationContent = this.getNotificationContent(notification);
+        this.handleNotification(notificationContent);
       }
     );
 
     // Gestione evento 'pushNotificationActionPerformed' di apertura app per click su notifica
     PushNotifications.addListener('pushNotificationActionPerformed',
-      (notification: PushNotificationActionPerformed) => {
-        console.log('Push action performed: ' + JSON.stringify(notification));
-        this.presentAlert();
+      (notificationAction: PushNotificationActionPerformed) => {
+        console.log('Push action performed: ' + JSON.stringify(notificationAction));
+        const notificationContent = this.getNotificationContent(notificationAction.notification);
+        this.handleNotification(notificationContent);
       }
     );
+  }
+
+  // Deserializza il contenuto della notifica
+  getNotificationContent(notification: PushNotification) {
+    const notifContent = JSON.parse(notification.data.msg);
+    return notifContent;
   }
 
   // Aggiorna il token firebase per l'utente
@@ -98,5 +99,66 @@ export class NotificationsService {
   // Rimuove il token di Firebase precedentemente salvato
   clearFirebaseToken() {
     this.firebaseToken = null;
+  }
+
+  // Gestisce la ricezione di una notifica
+  handleNotification(notificationContent: any) {
+    const notificationType: string = notificationContent.type;
+    switch (notificationType) {
+      case "confirmGroupInvite": // Richiesta di aggiunta a gruppo
+        this.presentAlertAddToGroup(notificationContent.userIdThatInvites as number, notificationContent.userNameThatInvites as string);
+        break;
+      case "updateParams": // Richiesta di ricaricamento parametri
+        this.paramsService.loadParams().then(
+          () => { },
+          () => { // Errore ricaricamento parametri
+            console.warn("Errore caricamento parametri");
+          }
+        );
+        break;
+      default:
+        console.warn("Ricevuta notifica di tipologia non gestita");
+    }
+  }
+
+  // Mostra popup di conferma aggiunta a gruppo a seguito di ricezione notifica
+  async presentAlertAddToGroup(userIdThatInvites: number, userNameThatInvites: string) {
+    const alert = await this.alertController.create({
+      header: 'Nuovo invito',
+      message: userNameThatInvites + ' ti ha aggiunto a un gruppo, accetti?',
+      buttons: [
+        'Cancel',
+        {
+          text: 'Certo!',
+          handler: () => {
+            // Confermo l'aggiunta dell'utente al gruppo
+            this.sendGroupConfirm(userIdThatInvites).then(
+              () => {
+                // Gruppo creato, ricarico parametri
+                this.paramsService.loadParams();
+              },
+              () => {
+                console.warn("Errore conferma aggiunta a gruppo");
+              }
+            );
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  // Conferma la richiesta di partecipazione a un gruppo
+  // Scelto di metterlo qui invece che in ContactsService per evitare dipendenza circolare in fase di build
+  async sendGroupConfirm(userIdThatInvites) {
+    const addGroupConfirmBody = {
+      userId: userIdThatInvites
+    };
+    await this.spinner.create();
+    return this.http.post(this.rdConstants.getApiRoute('inviteGroupConfirm'), addGroupConfirmBody)
+      .toPromise()
+      .finally(
+        () => { this.spinner.dismiss(); }
+      );
   }
 }
