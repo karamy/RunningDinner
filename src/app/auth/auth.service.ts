@@ -3,10 +3,10 @@ import { HttpClient } from "@angular/common/http";
 import { NavController } from "@ionic/angular";
 import { RDConstantsService } from "../rdcostants.service";
 import { tap } from 'rxjs/operators';
-import { ToastController } from '@ionic/angular';
 import { RDSpinnerService } from '../rdspinner.service';
 import { RDParamsService } from '../rdparams.service';
 import { NotificationsService } from '../home/notifications.service';
+import { RDToastService } from '../rdtoast.service';
 
 @Injectable({
   providedIn: "root"
@@ -18,7 +18,7 @@ export class AuthService {
     private http: HttpClient,
     private spinner: RDSpinnerService,
     private rdConstants: RDConstantsService,
-    private toastController: ToastController,
+    private rdToast: RDToastService,
     private navController: NavController,
     private rdParams: RDParamsService,
     private notificationsService: NotificationsService
@@ -150,11 +150,7 @@ export class AuthService {
   }
 
   private async onServerRestart() {
-    const toast = await this.toastController.create({
-      message: 'Server riavviato, effettua nuovamente login',
-      duration: 2000
-    });
-    toast.present();
+    this.rdToast.show('Server riavviato, effettua nuovamente login',2000);
     this.doLogout();
   }
 

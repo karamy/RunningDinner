@@ -15,6 +15,8 @@ const { PushNotifications } = Plugins;
 })
 export class NotificationsService {
   private firebaseToken: string;
+  private lastNotificationTime: Date; // Utilizzato per evitare la gestione multipla della stessa notifica
+  private readonly notificationLatencySec = 1; // Tempo di latenza (in secondi) per cui, se minore, ignoro la notifica
 
   constructor(private spinner: RDSpinnerService, private rdConstants: RDConstantsService,
     private http: HttpClient, private alertController: AlertController,
@@ -40,6 +42,7 @@ export class NotificationsService {
       (token: PushNotificationToken) => {
         console.log("Firebase Token: " + token.value);
         this.firebaseToken = token.value;
+        this.lastNotificationTime = new Date(); // Imposto alla data attuale l'ultima notifica ricevuta
         this.updateFirebaseToken().catch(
           () => { console.error("Errore durante la registrazione del token"); }
         );
@@ -103,14 +106,21 @@ export class NotificationsService {
 
   // Gestisce la ricezione di una notifica
   handleNotification(notificationContent: any) {
+    // Check per evitare di far scattare due volte la gestione notifica, impostato tempo di latenza tra notifiche di 1 secondo
+    if((new Date().getTime() - this.lastNotificationTime.getTime()) / 1000 < this.notificationLatencySec){
+      console.log("Ricevuta notifica doppia, ignoro");
+      return;
+    }
+
+    // Effettiva gestione notifica
+    this.lastNotificationTime = new Date();
     const notificationType: string = notificationContent.type;
     switch (notificationType) {
       case "confirmGroupInvite": // Richiesta di aggiunta a gruppo
         this.presentAlertAddToGroup(notificationContent.userIdThatInvites as number, notificationContent.userNameThatInvites as string);
         break;
       case "updateParams": // Richiesta di ricaricamento parametri
-        this.paramsService.loadParams().then(
-          () => { },
+        this.paramsService.loadParams().catch(
           () => { // Errore ricaricamento parametri
             console.warn("Errore caricamento parametri");
           }
