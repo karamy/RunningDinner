@@ -15,13 +15,14 @@ export class UserService {
       .toPromise();
   }
 
-  async updateUser(name: string, birth_date: Date, address: string, phone_number: number) {
+  async updateUser(name: string, birth_date: Date, address: string, phone_number: number, profile_photo: string) {
     const dataToSend = {
       user: {
         name: name,
         birth_date: birth_date,
         address: address,
-        phone_number: phone_number
+        phone_number: phone_number,
+        profile_photo: profile_photo
       }
     };
 
@@ -34,9 +35,9 @@ export class UserService {
             resolve(res);
           },
           () => {
-            console.log("Errore")
+            reject();
           }
         )
-    )
+    );
   }
 }

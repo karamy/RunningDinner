@@ -21,4 +21,8 @@ export class AuthPage implements OnInit {
     const phoneNumber = "+393496824393";
     this.authService.doLogin(phoneNumber);
   }
+  debugLoginToRoomsPaolo() {
+    const phoneNumber = "+393483773817";
+    this.authService.doLogin(phoneNumber);
+  }
 }

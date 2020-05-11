@@ -29,18 +29,30 @@ export class AuthService {
   // Legge le informazioni utente presenti in localStorage e le carica nel Service
   private readUser() {
     this._user = JSON.parse(
-      localStorage.getItem("user")
+      localStorage.getItem('user')
     ) as AuthenticatedUser;
     if (this._user) {
+      // Trasformo la data in stringa nel formato DD/MM/YYYY
       this._user.userData.birth_date = new Date(this._user.userData.birth_date)
-      this._user.userData.birth_date = this._user.userData.birth_date.toLocaleDateString() as unknown as Date
+      this._user.userData.birth_date = this._user.userData.birth_date.toLocaleDateString() as unknown as Date;
     }
   }
 
   // Aggiorna lo user in localStorage
   public writeUser(user: AuthenticatedUser) {
-    localStorage.setItem("user", JSON.stringify(user));
+    user.userData.profile_photo = 'data:image/jpeg;base64,' + user.userData.profile_photo;
+    localStorage.setItem('user', JSON.stringify(user));
     this.readUser();
+  }
+
+  // Aggiunge ad user i Tokens già esistenti senza aggiornarli
+  public addExistingTokens(user: AuthenticatedUser) {
+    const tempUser = JSON.parse(
+      localStorage.getItem('user')
+    ) as AuthenticatedUser;
+    user.accessToken = tempUser.accessToken;
+    user.refreshToken = tempUser.refreshToken;
+    this.writeUser(user);
   }
 
   // Indica se l'utente ha una sessione di login attiva

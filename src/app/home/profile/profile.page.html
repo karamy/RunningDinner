@@ -4,6 +4,9 @@
       <ion-back-button defaultHref="/home/tabs/rooms"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="primary">
+      <ion-button (click)="createGroup()">
+        <ion-icon name="people-outline" slot="icon-only"></ion-icon>
+      </ion-button>
       <ion-button (click)="onLogout()">
         <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
       </ion-button>
@@ -13,22 +16,35 @@
 
 <ion-content [scrollEvents]="true" appHideHeader [header]="header" fullscreen="true" slot="fixed">
   <div>
-    <div style="height: 130px;">
-      <ion-avatar class="avatar">
+    <div style="height: 130px;position: relative;">
+      <ion-avatar [class.avatar]="!group" [class.avatar-user-group]="group">
         <img [src]="user.profile_photo">
       </ion-avatar>
-      <round-progress class="user-level" [current]="80" [max]="100" [color]="'#45ccce'" [background]="'#eaeaea'"
-        [radius]="80" [stroke]="10" [rounded]="true" [clockwise]="true" [responsive]="false" [duration]="800"
-        [animation]="'easeInOutQuart'" [animationDelay]="0"></round-progress>
+      <ion-avatar *ngIf="group" class="avatar-friend">
+        <img [src]="friend.profile_photo">
+      </ion-avatar>
+      <round-progress [class.user-level]="!group" [class.user-level-group]="group" [current]="80" [max]="100"
+        [color]="'#45ccce'" [background]="'#eaeaea'" [radius]="80" [stroke]="10" [rounded]="true" [clockwise]="true"
+        [responsive]="false" [duration]="800" [animation]="'easeInOutQuart'" [animationDelay]="0">
+      </round-progress>
+      <round-progress *ngIf="group" class="friend-level" [current]="40" [max]="100" [color]="'#8BB4C7'"
+        [background]="'#eaeaea'" [radius]="80" [stroke]="10" [rounded]="true" [clockwise]="true" [responsive]="false"
+        [duration]="800" [animation]="'easeInOutQuart'" [animationDelay]="0">
+      </round-progress>
+      <ion-button *ngIf="editMode" color="light" fill="clear" class="button-edit" (click)="editImage()">
+        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+      </ion-button>
     </div>
   </div>
   <div class="card-body">
     <div class="user-meta ion-text-center">
-      <h3 class="user-name" *ngIf="!editMode">{{user.name}},
+      <h3 class="user-name" *ngIf="!editMode && !group">{{user.name}},
         <span class="ages">
           {{userAge}} anni
         </span>
       </h3>
+      <h3 class="user-name" *ngIf="group">{{user.name}} & {{friend.name}}</h3>
+      <h3 *ngIf="group" class="avg-age">Età media: {{avgAge}} ANNI</h3>
       <ion-grid>
         <ion-row *ngIf="editMode" class="no-padding" style="margin-bottom: 10px;margin-top: 16px;">
           <ion-col style="margin-right: 5%;" class="no-padding">
@@ -41,23 +57,22 @@
           </ion-col>
         </ion-row>
       </ion-grid>
-      <h6 *ngIf="!editMode">{{user.address}}</h6>
-      <!-- <ion-input type="text" maxlength="40" text-wrap style="margin-top: 16px;margin-bottom: 10px;"
-        class="ion-text-wrap ion-no-padding" *ngIf="editMode" [(ngModel)]="user.address"
-        (keyup)="updateSearchResults()">
-      </ion-input> -->
-      <ion-textarea rows="1" autoGrow="true" style="margin-top: 16px;margin-bottom: 8px;" class="ion-no-padding"
-        *ngIf="editMode" [(ngModel)]="user.address" (keyup)="updateSearchResults()">
-      </ion-textarea>
-      <ion-list *ngIf="autocompleteItems.length > 0">
-        <div *ngFor="let item of autocompleteItems; let i = index">
-          <ion-item *ngIf="i<3" tappable lines="full" style="padding-bottom: 3%;--inner-padding-bottom: 3%;"
-            (click)="selectSearchResult(item)">
-            {{ item.description }}
-          </ion-item>
-        </div>
-      </ion-list>
-      <ion-button *ngIf="!editMode" fill="outline" color="primary" (click)="this.editMode = !this.editMode">
+      <div *ngIf="!group">
+        <h6 *ngIf="!editMode">{{user.address}}</h6>
+        <ion-textarea rows="1" autoGrow="true" style="margin-top: 16px;margin-bottom: 8px;" class="ion-no-padding"
+          *ngIf="editMode" [(ngModel)]="user.address" (keyup)="updateSearchResults()">
+        </ion-textarea>
+        <ion-list *ngIf="autocompleteItems.length > 0">
+          <div *ngFor="let item of autocompleteItems; let i = index">
+            <ion-item *ngIf="i<3" tappable lines="full" style="padding-bottom: 3%;--inner-padding-bottom: 3%;"
+              (click)="selectSearchResult(item)">
+              {{ item.description }}
+            </ion-item>
+          </div>
+        </ion-list>
+      </div>
+      <h6 *ngIf="group">A {{groupDistance}} di distanza</h6>
+      <ion-button *ngIf="!editMode && !group" fill="outline" color="primary" (click)="this.editMode = !this.editMode">
         Modifica profilo
       </ion-button>
       <ion-button *ngIf="editMode" fill="outline" color="primary" style="margin-top: 3%;margin-bottom: 0%;"
@@ -210,7 +225,7 @@
   </ion-card>
   <ion-card>
     <ion-grid>
-      <ion-row *ngIf=" paramsService.getParams().groupId && !paramsService.getParams().dinnerId"
+      <ion-row *ngIf="paramsService.getParams().groupId && !paramsService.getParams().dinnerId"
         class="ion-align-items-center">
         <ion-col class="ion-text-center">
           <ion-button (click)="onLeaveGroup()">Lascia il gruppo</ion-button>

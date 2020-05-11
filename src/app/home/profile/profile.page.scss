@@ -46,10 +46,52 @@ ion-button.button-small {
   background-color: #fff;
 }
 
+.avatar-user-group {
+  width: 160px;
+  height: 160px;
+  margin: 0 auto;
+  display: block;
+  border-radius: 50%;
+  border: 8px solid  #575757;
+  background-color: #fff;
+  position: absolute;
+  left: 10%;
+  top: 32%;
+}
+
+.avatar-friend {
+  width: 160px;
+  height: 160px;
+  margin: 0 auto;
+  display: block;
+  border-radius: 50%;
+  border: 8px solid  #575757;
+  background-color: #fff;
+  position: absolute;
+  right: 10%;
+  top: 32%;
+  z-index: 1;
+}
+
 .user-level {
   display: block;
   bottom: 120px;
   left: 108px;
+}
+
+.user-level-group{
+  display: block;
+  top: 32%;
+  left: 10%;
+  position: absolute;
+}
+
+.friend-level {
+  display: block;
+  top: 32%;
+  right: 10%;
+  position: absolute;
+  z-index: 1;
 }
 
 .card-body {
@@ -79,7 +121,21 @@ ion-button.button-small {
           text-transform: uppercase;
           margin: 0 auto;
       }
+
+      .avg-age {
+        font-size: 21.5px;
+        font-weight: 600;
+        color: #949ea6;
+        margin: 0 auto;
+    }
   }  
+}
+
+.button-edit {
+  position: absolute;
+  left: 43%;
+  top: 106%;
+  margin: auto;
 }
 
 .button-add {
