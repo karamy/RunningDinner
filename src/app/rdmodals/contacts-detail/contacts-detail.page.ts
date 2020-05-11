@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from "@angular/core";
 import { ModalController } from "@ionic/angular";
 import { ContactsService } from '../../home/tabs/contacts/contacts.service';
+import { RDToastService } from 'src/app/rdtoast.service';
 import { RDParamsService } from 'src/app/rdparams.service';
 
 @Component({
@@ -15,7 +16,9 @@ export class ContactsDetailPage implements OnInit {
 
   constructor(private modalCtrl: ModalController,
     private contactsService: ContactsService,
-    public paramsService: RDParamsService) { }
+    private rdToast: RDToastService,
+    public paramsService: RDParamsService // Utilizzato nell'html della pagina, non rimuovere
+    ) { }
 
   ngOnInit() { }
 
@@ -26,20 +29,12 @@ export class ContactsDetailPage implements OnInit {
   // Richiede l'invio di notifica lato server al contatto per aggiungerlo al gruppo
   async onAddToGroupRequest() {
     this.contactsService.sendGroupInvite(this.contactId).then(
-      () => { // Gruppo creato, ricarico parametri
-        /* this.paramsService.loadParams().then(
-          () => {
-            this.modalCtrl.dismiss();
-          },
-          () => { // Errore ricaricamento parametri
-            console.warn("Errore caricamento parametri");
-          }
-        ); */
-        this.modalCtrl.dismiss();
-      },
+      () => { },
       (err) => { // Errore creazione gruppo
+        this.rdToast.show(err.error);
         console.warn(err);
       }
     );
+    this.modalCtrl.dismiss();
   }
 }
