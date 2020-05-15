@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
-import firebase from "firebase/app";
+import { firebase } from '@firebase/app';
+import '@firebase/auth';
 import { cfaSignInPhone } from "capacitor-firebase-auth";
 import { cfaSignInPhoneOnCodeSent } from "capacitor-firebase-auth";
 import { Platform } from "@ionic/angular";
@@ -12,20 +13,32 @@ export class PhoneService {
 
   constructor(private platform: Platform) { }
 
-  sendOtp(phoneNumber: string) {
+  sendOtp(phoneNumber: string): Promise<string> {
     return new Promise(resolve => {
       if (!this.platform.is("cordova")) {
         //Per test su web imposta un verificationId casuale
         this.verificationId = "test";
-        resolve();
+        resolve(this.verificationId);
       } else {
         //Ottiene provider ID
-        cfaSignInPhone(phoneNumber).subscribe();
+        cfaSignInPhone(phoneNumber).subscribe(() => {
+          resolve();
+        },
+          (err) => {
+            if (err.message === "Invalid phone number.") {
+              alert("Numero di telefono non valido, deve avere tra le 9 e le 10 cifre")
+            } else {
+              alert("Si è verificato un errore nella verifica del numero")
+            }
+          })
         //Ottiene verificationId
         cfaSignInPhoneOnCodeSent().subscribe(verificationId => {
           this.verificationId = verificationId;
-          resolve();
-        });
+          resolve(this.verificationId);
+        },
+          () => {
+            alert("Si è verificato un errore nella verifica del numero")
+          });
       }
     });
   }
@@ -52,11 +65,11 @@ export class PhoneService {
           .catch(error => {
             const errorCode = error.code;
             if (errorCode === "auth/invalid-verification-code") {
-              alert("Invalid verification code");
+              alert("Codice di verifica OTP non valido");
             } else if (errorCode === "auth/invalid-verification-id") {
-              alert("Invalid verification ID");
+              alert("ID di verifica non valido");
             } else {
-              console.error(error);
+              alert(error);
             }
           });
       }

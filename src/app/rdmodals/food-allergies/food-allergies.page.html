@@ -1,0 +1,49 @@
+<ion-content>
+  <ion-grid style="height: 100%;">
+    <ion-row style="height: 100%; align-items: center" class="ion-text-center">
+      <ion-col>
+        <ion-card>
+          <ion-grid>
+            <ion-row>
+              <ion-col>
+                <ion-item>
+                  <ion-label>Categoria Alimento</ion-label>
+                  <ion-select okText="Conferma" cancelText="Annulla" [(ngModel)]="category" selectedText=" ">
+                    <ion-select-option *ngFor="let foodAllergy of foodAllergyCategories">
+                      {{foodAllergy.name}}
+                    </ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <h6 *ngIf="!category">Scegli una categoria dalla lista</h6>
+                <h6 *ngIf="category">{{category}}</h6>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <h6>Alimento</h6>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-input [(ngModel)]="food" placeholder="Inserisci alimento" style="font-size: 20px;color: black;">
+                </ion-input>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-button [disabled]="!category || !food" (click)="onConfirm()">Conferma</ion-button>
+              </ion-col>
+              <ion-col>
+                <ion-button (click)="onModalDismiss()">Annulla</ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

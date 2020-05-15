@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { ModalController } from "@ionic/angular";
-import { ContactsDetailPage } from "./contacts-detail/contacts-detail.page";
+import { ContactsDetailPage } from "../../../rdmodals/contacts-detail/contacts-detail.page";
 import { ContactsService, RDContact } from "./contacts.service";
 import { RDSpinnerService } from 'src/app/rdspinner.service';
 

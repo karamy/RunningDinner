@@ -10,12 +10,14 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "postinstall": "npx jetify && npx cap sync",
-    "gh-pages": "ionic build --prod -- --base-href https://karamy.github.io/RunningDinner/ && npx angular-cli-ghpages --dir=www",
+    "postinstall": "cp -rf ./rd_plugins/capacitor-pwa-firebase-msg ./node_modules && npx jetify && npx cap sync",
+    "gh-pages": "ionic build --prod -- --base-href https://karamy.github.io/RunningDinner/ && npm explore capacitor-pwa-firebase-msg -- npm run precapcopyweb && npx angular-cli-ghpages --dir=www",
     "build-android": "ionic build --prod && npx cap copy android",
     "run-android": "ionic build --prod && npx cap copy android && npx cap open android",
     "build-ios": "ionic build --prod && npx cap copy ios",
-    "run-ios": "ionic build --prod && npx cap copy ios && npx cap open ios"
+    "run-ios": "ionic build --prod && npx cap copy ios && npx cap open ios",
+    "build-web": "ionic build && npm explore capacitor-pwa-firebase-msg --npm run precapcopyweb",
+    "run-web": "ionic build && npm explore capacitor-pwa-firebase-msg -- npm run precapcopyweb && http-server www"
   },
   "resolutions": {
     "@babel/preset-env": "^7.8.7"
@@ -28,6 +30,7 @@
     "@angular/platform-browser": "~8.1.2",
     "@angular/platform-browser-dynamic": "~8.1.2",
     "@angular/router": "~8.1.2",
+    "@angular/service-worker": "^8.1.2",
     "@capacitor/android": "^1.5.0",
     "@capacitor/core": "^1.5.0",
     "@capacitor/ios": "^1.5.0",
@@ -40,7 +43,9 @@
     "@ionic/angular": "^5.0.0",
     "@ionic/pwa-elements": "^1.4.2",
     "angular-cli-ghpages": "^0.6.2",
+    "angular-svg-round-progressbar": "^3.0.1",
     "capacitor-firebase-auth": "^0.3.0",
+    "capacitor-pwa-firebase-msg": "0.0.1",
     "cordova-plugin-contacts": "^3.0.1",
     "cordova.plugins.diagnostic": "^5.0.1",
     "core-js": "^2.5.4",

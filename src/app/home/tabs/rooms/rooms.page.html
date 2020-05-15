@@ -3,9 +3,8 @@
     <ion-title>Dinners</ion-title>
 
     <ion-buttons slot="primary">
-      <ion-button routerLink="/home/profile">
-        <ion-icon name="person-circle-outline" slot="icon-only"></ion-icon>
-      </ion-button>
+      <rd-profile></rd-profile>
+      
       <!-- Permetto di creare una cena solo se già non partecipo ad una -->
       <ion-button *ngIf="paramsService.getParams().groupId && !paramsService.getParams().dinnerId" routerLink="/home/tabs/rooms/create-room">
         <ion-icon name="add" slot="icon-only"></ion-icon>
@@ -16,6 +15,6 @@
 </ion-header>
 
 <ion-content class="padding">
-  <app-dinner></app-dinner>
-  <app-dinner></app-dinner>
+  <rd-dinner></rd-dinner>
+  <rd-dinner></rd-dinner>
 </ion-content>

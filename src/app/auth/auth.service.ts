@@ -1,11 +1,12 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { LoadingController, NavController } from "@ionic/angular";
+import { NavController } from "@ionic/angular";
 import { RDConstantsService } from "../rdcostants.service";
 import { tap } from 'rxjs/operators';
-import { ToastController } from '@ionic/angular';
 import { RDSpinnerService } from '../rdspinner.service';
 import { RDParamsService } from '../rdparams.service';
+import { NotificationsService } from '../home/notifications.service';
+import { RDToastService } from '../rdtoast.service';
 
 @Injectable({
   providedIn: "root"
@@ -17,9 +18,10 @@ export class AuthService {
     private http: HttpClient,
     private spinner: RDSpinnerService,
     private rdConstants: RDConstantsService,
-    private toastController: ToastController,
+    private rdToast: RDToastService,
     private navController: NavController,
-    private rdParams: RDParamsService
+    private rdParams: RDParamsService,
+    private notificationsService: NotificationsService
   ) {
     this.readUser();
   }
@@ -27,14 +29,30 @@ export class AuthService {
   // Legge le informazioni utente presenti in localStorage e le carica nel Service
   private readUser() {
     this._user = JSON.parse(
-      localStorage.getItem("user")
+      localStorage.getItem('user')
     ) as AuthenticatedUser;
+    if (this._user) {
+      // Trasformo la data in stringa nel formato DD/MM/YYYY
+      this._user.userData.birth_date = new Date(this._user.userData.birth_date)
+      this._user.userData.birth_date = this._user.userData.birth_date.toLocaleDateString() as unknown as Date;
+    }
   }
 
   // Aggiorna lo user in localStorage
-  private writeUser(user: AuthenticatedUser) {
-    localStorage.setItem("user", JSON.stringify(user));
+  public writeUser(user: AuthenticatedUser) {
+    user.userData.profile_photo = 'data:image/jpeg;base64,' + user.userData.profile_photo;
+    localStorage.setItem('user', JSON.stringify(user));
     this.readUser();
+  }
+
+  // Aggiunge ad user i Tokens già esistenti senza aggiornarli
+  public addExistingTokens(user: AuthenticatedUser) {
+    const tempUser = JSON.parse(
+      localStorage.getItem('user')
+    ) as AuthenticatedUser;
+    user.accessToken = tempUser.accessToken;
+    user.refreshToken = tempUser.refreshToken;
+    this.writeUser(user);
   }
 
   // Indica se l'utente ha una sessione di login attiva
@@ -85,12 +103,29 @@ export class AuthService {
     });
   }
 
-  // Effettua il logout cancellando i dati utente
-  doLogout() {
-    localStorage.setItem("user", null);
-    this.readUser();
-    this.rdParams.clearParams();
-    this.navController.navigateRoot("/auth");
+  // Effettua il logout richiedendo la cancellazione del token
+  // di Firebase e cancellando i dati utente
+  // NB la rotta non è autenticata perchè potrebbe essere scaduto il token,
+  // ma voglio comunque disattivare le notifiche push
+  async doLogout() {
+    await this.spinner.create();
+    this.http.post(this.rdConstants.getApiRoute('logout'), { userId: this.getUserData().userid })
+      .toPromise()
+      .then(
+        () => {
+          localStorage.setItem("user", null);
+          this.readUser();
+          this.rdParams.clearParams();
+          this.notificationsService.clearFirebaseToken();
+          this.navController.navigateRoot("/auth");
+        },
+        (err) => {
+          console.error("Errore logout");
+        }
+      )
+      .finally(
+        () => { this.spinner.dismiss(); }
+      );
   }
 
   // Ritorna l'utente loggato completo
@@ -99,7 +134,7 @@ export class AuthService {
   }
 
   // Ritorna i dati dell'utente loggato
-  getUserData() {
+  getUserData(): UserData {
     return this._user.userData;
   }
 
@@ -127,11 +162,7 @@ export class AuthService {
   }
 
   private async onServerRestart() {
-    const toast = await this.toastController.create({
-      message: 'Server riavviato, effettua nuovamente login',
-      duration: 2000
-    });
-    toast.present();
+    this.rdToast.show('Server riavviato, effettua nuovamente login',2000);
     this.doLogout();
   }
 

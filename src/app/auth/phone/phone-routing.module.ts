@@ -7,10 +7,6 @@ const routes: Routes = [
   {
     path: '',
     component: PhonePage
-  },
-  {
-    path: 'country-codes',
-    loadChildren: () => import('./country-codes/country-codes.module').then( m => m.CountryCodesPageModule)
   }
 ];
 

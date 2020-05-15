@@ -44,12 +44,12 @@ Problemi Ionic Build --prod
 
 Se durante la build l'app da un errore del tipo "Could not find plugin "proposal-numeric-separator". Ensure there is an entry in ./available-plugins.js for it" occorre fare i seguenti step:
 
-delete node_modules and package-lock.json
+delete node_modules and package-lock.json (consigliato usare comando 'rm -rf ./node_modules')
 add "resolutions": { "@babel/preset-env": "^7.8.7" } to package.json
 npm install npm-force-resolutions --save-dev
 npm install
 npx npm-force-resolutions
-npm install again
+npm install (seconda volta)
 npm run build
 
 ----------------------------------------------------------------------------------------------------
@@ -80,3 +80,35 @@ Plugin: https://github.com/dpa99c/cordova-diagnostic-plugin
 
 ----------------------------------------------------------------------------------------------------
 
+Suddivisione logica progetto
+
+Il progetto si basa su una struttura gerarchica derivata da come i moduli vengono caricati tramite lazy loading (da app.routing.module in giu).
+Sono presenti le cartelle rdcomponents e rdmodals dove inserire rispettivamente i component e le pagine caricate nei modali. 
+Il motivo è che il lazy loading non è attivo per i component, dunque scelto di aggiungerli ad un unico modulo da importare nelle pagine dove serve.
+Per quanto riguarda i modali, è stato creato il modulo rdmodals per raggrupparli, ma vengono caricati all'avvio dall'app.module in quanto per utilizzarli bisogna dichiararli negli entryComponents, che per definizione li carica all'avvio dell'app.
+La cartella rd_plugins è utilizzata per evitare di versionare node_modules dal momento che è stato modificato un plugin normalmente scaricato via npm
+
+----------------------------------------------------------------------------------------------------
+
+Notifiche Push
+
+- Fare npm install utilizzando come shell di base "git bash" altrimenti non funziona il comando "cp" per sovrascrivere il plugin "firebase-pwa" con il nostro in rd_plugins
+
+Versione base utilizzando Capacitor (funziona solo su device):
+
+- Modificare file build.gradle all'interno di Capacitor (node_modules) con la libreria di Firebase modificando la riga ->  implementation 'com.google.firebase:firebase-messaging:20.1.0'
+
+Versione avanzata con utilizzo di plugin e relativo service-worker --> https://www.npmjs.com/package/capacitor-pwa-firebase-msg
+
+- installare http-server ->  npm install http-server -g
+  per runnare -> http-server www
+
+- runnare in https per simulare il run su github-pages:
+  per generare chiave (una tantum, la chiave è versionata) --> openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
+  per runnare --> http-server www -S -C cert.pem -o
+
+- aprire chrome in modalità developer in modo che non rompa per il certificato non valido e abiliti il service-worker:
+  OSX:
+  /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --user-data-dir=/tmp/foo --ignore-certificaterrors --unsafely-treat-insecure-origin-as-secure=https://localhost:8080
+  Windows:
+  start chrome --user-data-dir=/tmp/foo --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://localhost:8080
