@@ -2,38 +2,38 @@ import { Injectable } from '@angular/core';
 import { firebase } from '@firebase/app';
 import '@firebase/database';
 import { Observable, BehaviorSubject } from 'rxjs';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDit-Luu9GP7UwpZTaVerP0EsI70DO-45o",
-  authDomain: "runningdinnersms.firebaseapp.com",
-  databaseURL: "https://runningdinnersms.firebaseio.com",
-  projectId: "runningdinnersms",
-  storageBucket: "runningdinnersms.appspot.com",
-  messagingSenderId: "65032950194",
-  appId: "1:65032950194:web:8c98c255773e86ab5454ab"
-};
-
-// Inizializzazione Firebase, verificando che non sia già stato fatto in precedenza (altrimenti con Service Worker per notifiche va in errore)
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  user;
-  fireuserchats = firebase.database().ref('/allmsg/dinner1');
+  fireuserchats: any;
   allmsgs: string[];
   http: any;
-  public allmsg: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
+  public allMsgObservable: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
 
-  constructor() { }
+  constructor(private authService: AuthService) {
+    const firebaseConfig = {
+      apiKey: "AIzaSyDit-Luu9GP7UwpZTaVerP0EsI70DO-45o",
+      authDomain: "runningdinnersms.firebaseapp.com",
+      databaseURL: "https://runningdinnersms.firebaseio.com",
+      projectId: "runningdinnersms",
+      storageBucket: "runningdinnersms.appspot.com",
+      messagingSenderId: "65032950194",
+      appId: "1:65032950194:web:8c98c255773e86ab5454ab"
+    };
 
-  initializeuser(user) {
-    this.user = user;
+    // Inizializzazione Firebase, verificando che non sia già stato fatto in precedenza
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    // Valorizzo il riferimento alla chat della cena a cui fa parte l'utente
+    this.fireuserchats = firebase.database().ref('/allmsg/dinner1');
   }
 
+  // Effettua la formattazione di un'orario scrivendo am/pm
   formatAMPM(date) {
     let hours = date.getHours();
     let minutes = date.getMinutes();
@@ -44,6 +44,8 @@ export class ChatService {
     let strTime = hours + ':' + minutes + ' ' + ampm;
     return strTime;
   }
+
+  // Effettua la formattazione di una data con gg/MM/yyyy
   formatDate(date) {
     let dd = date.getDate();
     let mm = date.getMonth() + 1;
@@ -57,40 +59,43 @@ export class ChatService {
     return dd + '/' + mm + '/' + yyyy;
   }
 
-  addnewmessage(msg) {
-    let time = this.formatAMPM(new Date());
-    let date = this.formatDate(new Date());
+  // Invia un nuovo messaggio, ritornando la Promise di firebase
+  addNewMessage(msgText) {
+    const time = this.formatAMPM(new Date());
+    const date = this.formatDate(new Date());
     console.log('date>>>', date);
 
-    if (this.user) {
-      var promise = new Promise((resolve, reject) => {
-        this.fireuserchats.push({
-          sentby: this.user.name,
-          message: msg,
-          timestamp: firebase.database.ServerValue.TIMESTAMP,
-          timeofmsg: time,
-          dateofmsg: date
-        }).then(() => {
-          resolve(true);
-        })
-          .catch((err) => {
-            reject(err);
-          })
-      });
-      return promise;
-    }
+    const msgToSend: ChatMsg = {
+      sentby: this.authService.getUserData().name,
+      message: msgText,
+      timestamp: firebase.database.ServerValue.TIMESTAMP,
+      timeofmsg: time,
+      dateofmsg: date
+    };
+    return this.fireuserchats.push(msgToSend);
   }
-  getdinnermessages(): Observable<any[]> {
-    let temp;
-    let allmsgs = [];
+
+  // Ottiene l'observable su cui effettuo la subscribe per ottenere i messaggi
+  getDinnerMessagesObservable(): Observable<any[]> {
+    let snapshotValue;
+    let newMsgs = [];
     this.fireuserchats.on('value', (snapshot) => {
-      temp = snapshot.val();
-      console.log('counter Message ', temp)
-      for (let tempkey in temp) {
-        allmsgs.push(temp[tempkey]);
+      snapshotValue = snapshot.val();
+      console.log('counter Message ', snapshotValue)
+      for (let tempkey in snapshotValue) {
+        newMsgs.push(snapshotValue[tempkey]);
       }
-      this.allmsg.next(allmsgs);
+      this.allMsgObservable.next(newMsgs);
     });
-    return this.allmsg;
+    return this.allMsgObservable;
   }
+}
+
+// Rappresente un messaggio della chat 
+export interface ChatMsg {
+  sentby: string, // Indica il nome dell'utente che ha inviato il messaggio
+  message: string, // Testo del messaggio
+  timestamp: any, // Timestamp di invio messaggio di firebase
+  timeofmsg: string, // Datetime di invio messaggio
+  dateofmsg: string // Data di invio messaggio
 }

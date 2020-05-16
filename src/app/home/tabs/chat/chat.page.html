@@ -2,9 +2,7 @@
   <ion-toolbar>
     <ion-title>chat</ion-title>
     <ion-buttons slot="primary">
-      <ion-button routerLink="/home/profile">
-        <ion-icon name="person-circle-outline" slot="icon-only"></ion-icon>
-      </ion-button>
+      <rd-profile></rd-profile>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -33,7 +31,7 @@
   <ion-footer>
     <form >
     <ion-toolbar >
-      <ion-input [(ngModel)]="newmsg" name= "newmessage" class="newmsg" placeholder="Write your message ..."></ion-input>
+      <ion-input [(ngModel)]="newMsgText" name= "newmessage" class="newmsg" placeholder="Write your message ..."></ion-input>
       <ion-button class="footer-button">
         <ion-icon name="camera-outline" slot="icon-only"></ion-icon>
       </ion-button>
