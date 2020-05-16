@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
+import { HttpClient } from '@angular/common/http';
+import { RDConstantsService } from 'src/app/rdcostants.service';
 
 @Component({
   selector: 'app-food-allergies',
@@ -8,37 +10,70 @@ import { ModalController } from '@ionic/angular';
 })
 export class FoodAllergiesPage implements OnInit {
 
-  foodAllergyCategories = [
-    {
-      "name": "Cereali contenenti Glutine",
-      "image": "assets/wheat.png"
-    },
-    {
-      "name": "Lattosio",
-      "image": "assets/milk.png"
-    },
-    {
-      "name": "Frutta secca e sementi",
-      "image": "assets/dried-fruit.png"
-    }]
+  foodAllergies: FoodAllergy[];
+  selectedCategory: string;
+  selectedFood: string;
 
-  category: string;
-  food: string;
-
-  constructor(private modalCtrl: ModalController) { }
+  constructor(
+    private modalCtrl: ModalController,
+    private http: HttpClient,
+    private rdConstants: RDConstantsService) { }
 
   ngOnInit() {
+    this.getFoodAllergies();
   }
+
+  // Carica le foodAllergies dal DB
+  async getFoodAllergies() {
+    return new Promise(() => {
+      this.http
+        .get(this.rdConstants.getApiRoute('getFoodAllergies'))
+        .toPromise()
+        .then(
+          res => {
+            this.foodAllergies = res as FoodAllergy[];
+            console.log(this.foodAllergies);
+          },
+          () => {
+            console.log('Errore nel caricamento delle intolleranze');
+          }
+        );
+    });
+  }
+
+  // Post food allergy //TODO
+  // async getFoodAllergies() {
+  //   return new Promise(() => {
+  //     this.http
+  //       .get(this.rdConstants.getApiRoute('getFoodAllergies'))
+  //       .toPromise()
+  //       .then(
+  //         res => {
+  //           this.foodAllergies = res as FoodAllergy[]
+  //           console.log(this.foodAllergies)
+  //         },
+  //         () => {
+  //           console.log("Errore nel caricamento delle intolleranze")
+  //         }
+  //       )
+  //   });
+  // }
 
   onModalDismiss() {
     this.modalCtrl.dismiss();
   }
 
-  onConfirm() {
-    this.category = this.category.trim()
-    const value = this.foodAllergyCategories.find(x => x.name === this.category.trim())
-    const image = value.image
-    const foodAllergy = { "category": this.category, "image": image, "name": this.food }
-    this.modalCtrl.dismiss(foodAllergy);
+  onConfirm() { // Da sistemare
+    const value = this.foodAllergies.find(x => x.category === this.selectedCategory.trim());
+    // postFoodAllergy();
+    const image = value.allergy_photo;
+    // const foodAllergy = { "category": this.category, "image": image, "name": this.food }
+    // this.modalCtrl.dismiss(foodAllergy);
+    this.modalCtrl.dismiss();
   }
+}
+
+export interface FoodAllergy {
+  category: string;
+  allergy_photo: string;
 }

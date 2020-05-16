@@ -1,18 +1,19 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { NavController } from "@ionic/angular";
-import { RDConstantsService } from "../rdcostants.service";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { NavController } from '@ionic/angular';
+import { RDConstantsService } from '../rdcostants.service';
 import { tap } from 'rxjs/operators';
 import { RDSpinnerService } from '../rdspinner.service';
 import { RDParamsService } from '../rdparams.service';
-import { NotificationsService } from '../home/notifications.service';
 import { RDToastService } from '../rdtoast.service';
+import { ProfileService } from '../home/profile/profile.service';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class AuthService {
   private _user: AuthenticatedUser;
+  private firebaseToken: string;
 
   constructor(
     private http: HttpClient,
@@ -21,7 +22,7 @@ export class AuthService {
     private rdToast: RDToastService,
     private navController: NavController,
     private rdParams: RDParamsService,
-    private notificationsService: NotificationsService
+    private profileService: ProfileService
   ) {
     this.readUser();
   }
@@ -33,7 +34,7 @@ export class AuthService {
     ) as AuthenticatedUser;
     if (this._user) {
       // Trasformo la data in stringa nel formato DD/MM/YYYY
-      this._user.userData.birth_date = new Date(this._user.userData.birth_date)
+      this._user.userData.birth_date = new Date(this._user.userData.birth_date);
       this._user.userData.birth_date = this._user.userData.birth_date.toLocaleDateString() as unknown as Date;
     }
   }
@@ -70,10 +71,10 @@ export class AuthService {
       phone_number: phoneNumber
     };
 
-    this.spinner.create("Effettuo login...");
+    this.spinner.create('Effettuo login...');
     return new Promise((resolve, reject) =>
       this.http
-        .post(this.rdConstants.getApiRoute("login"), dataToSend)
+        .post(this.rdConstants.getApiRoute('login'), dataToSend)
         .toPromise()
         .then(
           res => {
@@ -83,8 +84,20 @@ export class AuthService {
             // Carico i parametri utente prima di risolvere la promise
             this.rdParams.loadParams().then(
               () => {
-                this.navController.navigateRoot("/home/tabs/rooms");
-                resolve();
+                if (this.rdParams.getParams().groupId) {
+                  this.profileService.getPartnerData(this.getUserData()).then(() => {
+                    this.navController.navigateRoot('/home/tabs/rooms');
+                    resolve();
+                  },
+                    (err) => {
+                      console.log('Errore getPartnerData');
+                      this.navController.navigateRoot('/home/tabs/rooms');
+                      resolve();
+                    });
+                } else {
+                  this.navController.navigateRoot('/home/tabs/rooms');
+                  resolve();
+                }
               },
               (err) => {
                 this.doLogout();
@@ -113,14 +126,15 @@ export class AuthService {
       .toPromise()
       .then(
         () => {
-          localStorage.setItem("user", null);
+          localStorage.setItem('user', null);
           this.readUser();
+          this.profileService.clearPartner();
           this.rdParams.clearParams();
-          this.notificationsService.clearFirebaseToken();
-          this.navController.navigateRoot("/auth");
+          this.clearFirebaseToken();
+          this.navController.navigateRoot('/auth');
         },
         (err) => {
-          console.error("Errore logout");
+          console.error('Errore logout');
         }
       )
       .finally(
@@ -149,7 +163,7 @@ export class AuthService {
       refreshToken: this.getRefreshToken()
     };
 
-    var httpPost = this.http.post(this.rdConstants.getApiRoute("refreshToken"), dataToSend)
+    const httpPost = this.http.post(this.rdConstants.getApiRoute('refreshToken'), dataToSend);
     return httpPost.pipe(
       tap((res) => {
         this._user.accessToken = JSON.stringify(res['accessToken']);
@@ -158,16 +172,41 @@ export class AuthService {
         // Se la procedura di refresh ritorna errore (di solito per riavvio server torno a login)
         this.onServerRestart();
       })
-    )
+    );
   }
 
   private async onServerRestart() {
-    this.rdToast.show('Server riavviato, effettua nuovamente login',2000);
+    this.rdToast.show('Server riavviato, effettua nuovamente login', 2000);
     this.doLogout();
   }
 
   private getRefreshToken() {
     return this.isUserAuthenticated() ? this._user.refreshToken : null;
+  }
+
+  // Aggiorna il token firebase per l'utente
+  async updateFirebaseToken(firebaseToken: string): Promise<any> {
+    this.firebaseToken = firebaseToken;
+    const updateFirebaseTokenBody = {
+      firebaseToken: this.firebaseToken
+    };
+
+    await this.spinner.create();
+    return this.http.post(this.rdConstants.getApiRoute('updateFirebaseToken'), updateFirebaseTokenBody)
+      .toPromise()
+      .finally(
+        () => { this.spinner.dismiss(); }
+      );
+  }
+
+  // Ritorna il token di Firebase precedentemente salvato
+  getFirebaseToken() {
+    return this.firebaseToken;
+  }
+
+  // Rimuove il token di Firebase precedentemente salvato
+  clearFirebaseToken() {
+    this.firebaseToken = null;
   }
 }
 

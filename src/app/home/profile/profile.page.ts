@@ -1,5 +1,5 @@
-import { Component, OnInit, NgZone } from "@angular/core";
-import { AuthService, UserData, AuthenticatedUser } from "src/app/auth/auth.service";
+import { Component, OnInit, NgZone } from '@angular/core';
+import { AuthService, UserData, AuthenticatedUser } from 'src/app/auth/auth.service';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { ContactsService } from '../tabs/contacts/contacts.service';
@@ -9,48 +9,50 @@ import { UserService } from 'src/app/auth/user.service';
 import { ProfileService } from './profile.service';
 import { PhotoService } from 'src/app/sign-up/profile-photo/photo.service';
 import { RDSpinnerService } from 'src/app/rdspinner.service';
+import { BadgesService } from './badges.service';
 
 @Component({
-  selector: "app-profile",
-  templateUrl: "./profile.page.html",
-  styleUrls: ["./profile.page.scss"]
+  selector: 'app-profile',
+  templateUrl: './profile.page.html',
+  styleUrls: ['./profile.page.scss']
 })
 export class ProfilePage implements OnInit {
   user: UserData;
   userAge: number;
-  group: boolean = false;
-  friend: UserData = {
-    userid: null,
-    name: null,
-    profile_photo: null,
-    birth_date: null,
-    address: null,
-    phone_number: null
-  }
-  avgAge: number;
-  editMode: boolean = false;
-  badgeExpand: boolean = false;
-  foodExpand: boolean = false;
-  foodAllergies = []
+  badgesDb: any;
+  editMode = false;
+  badgeExpand = false;
+  foodExpand = false;
+  foodAllergies = [];
   categories = [];
   GoogleAutocomplete: google.maps.places.AutocompleteService;
   autocompleteItems: any[];
-  directionsService: google.maps.DirectionsService;
-  groupDistance: string;
+
+  // Impostazioni ion-slides
+  slideOpts = {
+    slidesPerView: 5,
+    coverflowEffect: {
+      rotate: 50,
+      stretch: 0,
+      depth: 100,
+      modifier: 1,
+      slideShadows: true,
+    }
+  };
 
   constructor(private authService: AuthService,
     private userService: UserService,
     private spinner: RDSpinnerService,
     public paramsService: RDParamsService,
     private contactsService: ContactsService,
-    private profileService: ProfileService,
+    public profileService: ProfileService,
     private photoService: PhotoService,
+    private badgesService: BadgesService,
     private zone: NgZone,
     private modalController: ModalController) {
     defineCustomElements(window);
     this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
     this.autocompleteItems = [];
-    this.directionsService = new google.maps.DirectionsService();
   }
 
   badges = [
@@ -107,18 +109,10 @@ export class ProfilePage implements OnInit {
 
   ngOnInit() {
     this.getUser();
-  }
-
-  // Impostazioni ion-slides
-  slideOpts = {
-    slidesPerView: 5,
-    coverflowEffect: {
-      rotate: 50,
-      stretch: 0,
-      depth: 100,
-      modifier: 1,
-      slideShadows: true,
-    }
+    this.badgesService.getBadges().then(res => {
+      this.badgesDb = res;
+      console.log(this.badgesDb);
+    });
   }
 
   getUser() {
@@ -135,11 +129,11 @@ export class ProfilePage implements OnInit {
     modal.onDidDismiss().then(res => {
       if (res.data !== undefined) {
         // Aggiungo l'intolleranza alla lista e la ordino in base alla categoria
-        this.foodAllergies = [...this.foodAllergies, res.data]
+        this.foodAllergies = [...this.foodAllergies, res.data];
         this.foodAllergies.sort((a, b) => (a.category > b.category) ? 1 : ((b.category > a.category) ? -1 : 0));
         if (!this.categories.includes(res.data.category)) {
           // Aggiungo la categoria alla lista e la ordino
-          this.categories = [...this.categories, res.data.category]
+          this.categories = [...this.categories, res.data.category];
           this.categories.sort();
         }
       }
@@ -163,7 +157,7 @@ export class ProfilePage implements OnInit {
   }
 
   saveChanges() {
-    this.spinner.create("Aggiorno informazioni...");
+    this.spinner.create('Aggiorno informazioni...');
     this.user.birth_date = this.profileService.changeDateFormat(this.user.birth_date); // Rendo la data in formato YYYY/MM/DD
     const profilePhoto = this.user.profile_photo.replace('data:image/jpeg;base64,', ''); // Converto l'immagine in base64
     this.userService.updateUser(this.user.name, this.user.birth_date, this.user.address, this.user.phone_number, profilePhoto).then(
@@ -183,7 +177,7 @@ export class ProfilePage implements OnInit {
   cancelFood(item: any) {
     const index = this.foodAllergies.indexOf(item);
     this.foodAllergies.splice(index, 1);
-    this.foodAllergies = [...this.foodAllergies]
+    this.foodAllergies = [...this.foodAllergies];
     if (this.foodAllergies.find(x => x.category === item.category) === undefined) {
       const indexCategory = this.categories.indexOf(item.category);
       this.categories.splice(indexCategory, 1);
@@ -213,41 +207,6 @@ export class ProfilePage implements OnInit {
     this.user.address = item.description;
   }
 
-  // Calcolo distanza tra user e friend
-  calcDistance(): Promise<string> {
-    return new Promise((res, rej) => {
-      this.directionsService.route({
-        origin: this.user.address,
-        destination: this.friend.address,
-        travelMode: google.maps.TravelMode['DRIVING']
-      }, (response, status) => {
-        if (status === 'OK') {
-          const distance = response.routes[0].legs[0].distance.text;
-          res(distance);
-        } else {
-          window.alert('Directions request failed due to ' + status);
-          rej();
-        }
-      });
-    });
-  }
-
-  // Metodo provvisorio in attesa della possibilità di creare gruppi reali
-  createGroup() {
-    this.profileService.getFriend().then(res => {
-      this.friend.name = res[0].name;
-      this.friend.profile_photo = 'data:image/jpeg;base64,' + res[0].profile_photo;
-      this.friend.address = res[0].address;
-      this.friend.birth_date = new Date(res[0].birth_date)
-      this.friend.birth_date = this.friend.birth_date.toLocaleDateString() as unknown as Date;
-      this.avgAge = this.profileService.calcAvgAge(this.userAge, this.friend.birth_date);
-      this.calcDistance().then(res => {
-        this.groupDistance = res;
-        this.group = !this.group;
-      });
-    });
-  }
-
   onLogout() {
     this.authService.doLogout();
   }
@@ -257,6 +216,7 @@ export class ProfilePage implements OnInit {
     this.contactsService.leaveGroup(this.paramsService.getParams().groupId).then(
       () => { // Gruppo abbandonato, ricarico parametri
         this.paramsService.loadParams();
+        this.profileService.clearPartner();
       },
       (err) => { // Errore abbandono gruppo
         console.warn(err);

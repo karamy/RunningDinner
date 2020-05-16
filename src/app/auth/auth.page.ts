@@ -25,4 +25,8 @@ export class AuthPage implements OnInit {
     const phoneNumber = "+393483773817";
     this.authService.doLogin(phoneNumber);
   }
+  debugLoginToRoomsNadia() {
+    const phoneNumber = "+393450166161";
+    this.authService.doLogin(phoneNumber);
+  }
 }

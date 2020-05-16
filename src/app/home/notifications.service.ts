@@ -3,6 +3,9 @@ import { RDSpinnerService } from '../rdspinner.service';
 import { RDConstantsService } from '../rdcostants.service';
 import { HttpClient } from '@angular/common/http';
 import { AlertController } from '@ionic/angular';
+import { ProfileService } from './profile/profile.service';
+import { RDToastService } from '../rdtoast.service';
+import { AuthService } from '../auth/auth.service';
 
 //NB l'ordine di questi import è fondamentale per utilizzare correttamente il plugin su tutti i platform
 import "capacitor-pwa-firebase-msg";
@@ -14,13 +17,15 @@ const { PushNotifications } = Plugins;
   providedIn: 'root'
 })
 export class NotificationsService {
-  private firebaseToken: string;
   private lastNotificationTime: Date; // Utilizzato per evitare la gestione multipla della stessa notifica
   private readonly notificationLatencySec = 1; // Tempo di latenza (in secondi) per cui, se minore, ignoro la notifica
 
   constructor(private spinner: RDSpinnerService, private rdConstants: RDConstantsService,
     private http: HttpClient, private alertController: AlertController,
-    private paramsService: RDParamsService) { }
+    private paramsService: RDParamsService,
+    private profileService: ProfileService,
+    private authService: AuthService,
+    private rdToast: RDToastService) { }
 
   // Inizializza la gestione notifiche push
   init() {
@@ -41,9 +46,8 @@ export class NotificationsService {
     PushNotifications.addListener('registration',
       (token: PushNotificationToken) => {
         console.log("Firebase Token: " + token.value);
-        this.firebaseToken = token.value;
         this.lastNotificationTime = new Date(); // Imposto alla data attuale l'ultima notifica ricevuta
-        this.updateFirebaseToken().catch(
+        this.authService.updateFirebaseToken(token.value).catch(
           () => { console.error("Errore durante la registrazione del token"); }
         );
       });
@@ -80,34 +84,10 @@ export class NotificationsService {
     return notifContent;
   }
 
-  // Aggiorna il token firebase per l'utente
-  async updateFirebaseToken(): Promise<any> {
-    const updateFirebaseTokenBody = {
-      firebaseToken: this.firebaseToken
-    };
-
-    await this.spinner.create();
-    return this.http.post(this.rdConstants.getApiRoute('updateFirebaseToken'), updateFirebaseTokenBody)
-      .toPromise()
-      .finally(
-        () => { this.spinner.dismiss(); }
-      );
-  }
-
-  // Ritorna il token di Firebase precedentemente salvato
-  getFirebaseToken() {
-    return this.firebaseToken;
-  }
-
-  // Rimuove il token di Firebase precedentemente salvato
-  clearFirebaseToken() {
-    this.firebaseToken = null;
-  }
-
   // Gestisce la ricezione di una notifica
   handleNotification(notificationContent: any) {
     // Check per evitare di far scattare due volte la gestione notifica, impostato tempo di latenza tra notifiche di 1 secondo
-    if((new Date().getTime() - this.lastNotificationTime.getTime()) / 1000 < this.notificationLatencySec){
+    if ((new Date().getTime() - this.lastNotificationTime.getTime()) / 1000 < this.notificationLatencySec) {
       console.log("Ricevuta notifica doppia, ignoro");
       return;
     }
@@ -120,11 +100,20 @@ export class NotificationsService {
         this.presentAlertAddToGroup(notificationContent.userIdThatInvites as number, notificationContent.userNameThatInvites as string);
         break;
       case "updateParams": // Richiesta di ricaricamento parametri
-        this.paramsService.loadParams().catch(
-          () => { // Errore ricaricamento parametri
-            console.warn("Errore caricamento parametri");
-          }
-        );
+        this.paramsService.loadParams()
+          .then(() => {
+            if (this.paramsService.getParams().groupId) {
+              this.profileService.getPartnerData(this.authService.getUserData());
+            } else {
+              this.profileService.clearPartner();
+              this.rdToast.show('Il gruppo è stato sciolto', 2000);
+            }
+          })
+          .catch(
+            () => { // Errore ricaricamento parametri
+              console.warn("Errore caricamento parametri");
+            }
+          );
         break;
       default:
         console.warn("Ricevuta notifica di tipologia non gestita");
@@ -144,8 +133,10 @@ export class NotificationsService {
             // Confermo l'aggiunta dell'utente al gruppo
             this.sendGroupConfirm(userIdThatInvites).then(
               () => {
-                // Gruppo creato, ricarico parametri
-                this.paramsService.loadParams();
+                // Gruppo creato, ricarico parametri e carico i dati del partner
+                this.paramsService.loadParams().then(() => {
+                  this.profileService.getPartnerData(this.authService.getUserData());
+                })
               },
               () => {
                 console.warn("Errore conferma aggiunta a gruppo");
