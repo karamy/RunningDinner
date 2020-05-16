@@ -56,20 +56,24 @@ export class PWAFirebaseMsgWeb extends WebPlugin {
     }
     initializeFirebase(config) {
         return __awaiter(this, void 0, void 0, function* () {
-            firebase.initializeApp(config);
+            // Inizializzazione Firebase, verificando che non sia già stato fatto in precedenza
+            if (!firebase.apps.length) {
+                firebase.initializeApp(config);
+            }
+
             if (!firebase.messaging.isSupported())
                 throw new Error('Firebase messaging is not supported');
             else {
                 const registration = yield navigator.serviceWorker.ready;
                 console.log("RD - Collegamento Plugin Firebase PWA a ServiceWorker");
-                
+
                 this.firebaseMessaging = firebase.messaging();
                 this.firebaseMessaging.useServiceWorker(registration); // Indico a Firebase di appoggiarsi al service-worker eventualmente presente
-                
+
                 yield Notification.requestPermission(); // Richiesta permessi per il web
-                
+
                 this.firebaseMessaging.usePublicVapidKey(config.vapidKey); // Configuro la chiave per gestione notifiche web
-                
+
                 this.firebaseMessaging.onMessage((payload) => {
                     console.log("RD - OnMessage");
                     const pushNotification = {

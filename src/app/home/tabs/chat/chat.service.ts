@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import firebase from 'firebase';
+import { firebase } from '@firebase/app';
+import '@firebase/database';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 const firebaseConfig = {
@@ -12,8 +13,10 @@ const firebaseConfig = {
   appId: "1:65032950194:web:8c98c255773e86ab5454ab"
 };
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+// Inizializzazione Firebase, verificando che non sia già stato fatto in precedenza (altrimenti con Service Worker per notifiche va in errore)
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 @Injectable({
   providedIn: 'root'
@@ -41,14 +44,14 @@ export class ChatService {
     let strTime = hours + ':' + minutes + ' ' + ampm;
     return strTime;
   }
-  formatDate(date){
+  formatDate(date) {
     let dd = date.getDate();
     let mm = date.getMonth() + 1;
     let yyyy = date.getFullYear();
-    if ( dd < 10 ){
+    if (dd < 10) {
       dd = '0' + dd;
     }
-    if ( mm < 10) {
+    if (mm < 10) {
       mm = '0' + mm;
     }
     return dd + '/' + mm + '/' + yyyy;
@@ -69,7 +72,7 @@ export class ChatService {
           dateofmsg: date
         }).then(() => {
           resolve(true);
-          })
+        })
           .catch((err) => {
             reject(err);
           })
@@ -77,7 +80,7 @@ export class ChatService {
       return promise;
     }
   }
-  getdinnermessages() : Observable<any[]>{
+  getdinnermessages(): Observable<any[]> {
     let temp;
     let allmsgs = [];
     this.fireuserchats.on('value', (snapshot) => {

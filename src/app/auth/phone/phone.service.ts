@@ -11,7 +11,23 @@ import { Platform } from "@ionic/angular";
 export class PhoneService {
   verificationId: string;
 
-  constructor(private platform: Platform) { }
+  constructor(private platform: Platform) {
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDit-Luu9GP7UwpZTaVerP0EsI70DO-45o",
+      authDomain: "runningdinnersms.firebaseapp.com",
+      databaseURL: "https://runningdinnersms.firebaseio.com",
+      projectId: "runningdinnersms",
+      storageBucket: "runningdinnersms.appspot.com",
+      messagingSenderId: "65032950194",
+      appId: "1:65032950194:web:8c98c255773e86ab5454ab"
+    };
+
+    // Inizializzazione Firebase, verificando che non sia già stato fatto in precedenza (altrimenti con Service Worker per notifiche va in errore)
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+  }
 
   sendOtp(phoneNumber: string): Promise<string> {
     return new Promise(resolve => {
@@ -64,6 +80,8 @@ export class PhoneService {
           })
           .catch(error => {
             const errorCode = error.code;
+            console.log(error)
+
             if (errorCode === "auth/invalid-verification-code") {
               alert("Codice di verifica OTP non valido");
             } else if (errorCode === "auth/invalid-verification-id") {
