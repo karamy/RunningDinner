@@ -7,6 +7,38 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <h1>Work in progress :D</h1>
-</ion-content>
+<ion-content #content>
+  <div>
+    <ion-list lines="none">
+      <ion-item *ngFor = "let item of dinnermessages" text-wrap>
+        <div *ngIf="item.sentby != user.name" class="talk-bubble tri-right round border left-top">
+          <div class="talktext">
+            <p>{{item.message}}</p>
+            <p class="msg-time">{{item.timeofmsg}}</p>
+          </div>
+        </div>
+
+        <div *ngIf="item.sentby === user.name" class="talk-bubble tri-right round border right-top">
+          <div class="talktext">
+            <p>{{item.message}}</p>
+            <p class="msg-time">{{item.timeofmsg}}</p>
+          </div>
+        </div>
+      </ion-item>
+    </ion-list>
+  </div>
+  </ion-content>
+  <ion-footer>
+    <form >
+    <ion-toolbar >
+      <ion-input [(ngModel)]="newMsgText" name= "newmessage" class="newmsg" placeholder="Write your message ..."></ion-input>
+      <ion-button class="footer-button">
+        <ion-icon name="camera-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button (click)="sendMsg()" class="footer-button">
+        <ion-icon  name="send-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+     </ion-toolbar>
+   </form>
+ </ion-footer>
+ 
