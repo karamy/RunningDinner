@@ -78,14 +78,17 @@ export class ChatService {
   // Ottiene l'observable su cui effettuo la subscribe per ottenere i messaggi
   getDinnerMessagesObservable(): Observable<any[]> {
     let snapshotValue;
-    let newMsgs = [];
+    let firebaseMessages = [];
     this.fireuserchats.on('value', (snapshot) => {
       snapshotValue = snapshot.val();
-      console.log('counter Message ', snapshotValue)
-      for (let tempkey in snapshotValue) {
-        newMsgs.push(snapshotValue[tempkey]);
+      if (snapshotValue) {
+        console.log('Messaggi ricevuti: ', Object.keys(snapshotValue).length)
+        for (let msgKey in snapshotValue) { // Dal momento che lo snapshot è un oggetto, mi passo tutte le chiavi per creare l'array di messaggi
+          firebaseMessages.push(snapshotValue[msgKey]);
+        }
+        this.allMsgObservable.next(firebaseMessages); // Informo chi si è sottoscritto dell'arrivo di nuovi messaggi, fornendoglieli
+        firebaseMessages = [];
       }
-      this.allMsgObservable.next(newMsgs);
     });
     return this.allMsgObservable;
   }

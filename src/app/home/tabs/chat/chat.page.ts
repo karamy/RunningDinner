@@ -20,8 +20,8 @@ export class ChatPage implements OnInit {
   ngOnInit() {
     // Inizializzazione chat e caricamento messaggi
     this.user = this.authService.getUserData();
-    this.chatService.getDinnerMessagesObservable().subscribe((data) => {
-      this.dinnermessages = this.dinnermessages.concat(data);
+    this.chatService.getDinnerMessagesObservable().subscribe((firebaseMessages) => {
+      this.dinnermessages = this.dinnermessages = firebaseMessages;
     });
   }
 
