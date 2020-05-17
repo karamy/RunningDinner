@@ -12,21 +12,8 @@ export class AuthPage implements OnInit {
 
   ngOnInit() { }
 
-  // Funzioni di test per effettuare login di prova
-  debugLoginToRoomsCarlo() {
-    const phoneNumber = "+393408552105";
-    this.authService.doLogin(phoneNumber);
-  }
-  debugLoginToRoomsChiara() {
-    const phoneNumber = "+393496824393";
-    this.authService.doLogin(phoneNumber);
-  }
-  debugLoginToRoomsPaolo() {
-    const phoneNumber = "+393483773817";
-    this.authService.doLogin(phoneNumber);
-  }
-  debugLoginToRoomsNadia() {
-    const phoneNumber = "+393450166161";
+  // Funzione di test per effettuare login di prova
+  debugLoginToRooms(phoneNumber: string) {
     this.authService.doLogin(phoneNumber);
   }
 }
