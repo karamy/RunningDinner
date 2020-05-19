@@ -10,6 +10,7 @@ import { ProfileService } from './profile.service';
 import { PhotoService } from 'src/app/sign-up/profile-photo/photo.service';
 import { RDSpinnerService } from 'src/app/rdspinner.service';
 import { BadgesService } from './badges.service';
+import { NotificationsService } from '../notifications.service';
 
 @Component({
   selector: 'app-profile',
@@ -49,7 +50,8 @@ export class ProfilePage implements OnInit {
     private photoService: PhotoService,
     private badgesService: BadgesService,
     private zone: NgZone,
-    private modalController: ModalController) {
+    private modalController: ModalController,
+    private notificationService: NotificationsService) {
     defineCustomElements(window);
     this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
     this.autocompleteItems = [];
@@ -215,8 +217,13 @@ export class ProfilePage implements OnInit {
   onLeaveGroup() {
     this.contactsService.leaveGroup(this.paramsService.getParams().groupId).then(
       () => { // Gruppo abbandonato, ricarico parametri
-        this.paramsService.loadParams();
-        this.profileService.clearPartner();
+        this.paramsService.loadParams().then(() => {
+          this.profileService.clearPartner();
+          
+          // Emetto l'evento di ricaricamento parametri anche se attualmente essendo
+          // utilizzato solo nella chat, è inutile ricaricarla dopo la creazione gruppo
+          this.notificationService.fireUpdateParamsEvent();
+        });
       },
       (err) => { // Errore abbandono gruppo
         console.warn(err);

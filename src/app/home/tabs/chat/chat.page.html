@@ -10,7 +10,7 @@
 <ion-content #chatContent>
   <div>
     <ion-list lines="none">
-      <ion-item *ngFor = "let item of dinnermessages" text-wrap>
+      <ion-item *ngFor = "let item of dinnerMessages" text-wrap>
         <div *ngIf="item.sentby != user.name" class="talk-bubble tri-right round border left-top">
           <div class="talktext">
             <p>{{item.message}}</p>
@@ -31,11 +31,8 @@
   <ion-footer>
     <form >
     <ion-toolbar >
-      <ion-input [(ngModel)]="newMsgText" name= "newmessage" class="newmsg" placeholder="Write your message ..."></ion-input>
-      <ion-button class="footer-button">
-        <ion-icon name="camera-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-      <ion-button (click)="sendMsg()" class="footer-button">
+      <ion-input [(ngModel)]="newMsgText" name= "newmessage" class="newmsg" placeholder="Write your message ..." #newmsg (keyup.enter)="sendMsg(newmsg.value)"></ion-input>
+      <ion-button (click)="sendMsg()" [hidden]="!newMsgText" class="footer-button">
         <ion-icon  name="send-outline" slot="icon-only"></ion-icon>
       </ion-button>
      </ion-toolbar>
