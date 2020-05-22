@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { AuthService } from './auth/auth.service';
-import { tap, switchMap, filter, take, catchError } from 'rxjs/operators';
-
+import { switchMap, filter, take, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'

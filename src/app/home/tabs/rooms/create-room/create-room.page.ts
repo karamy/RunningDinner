@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DinnerService } from '../dinner.service';
 import { AlertController, NavController } from '@ionic/angular';
 import { RDParamsService } from 'src/app/rdparams.service';
+import { NotificationsService } from 'src/app/home/notifications.service';
 
 
 @Component({
@@ -28,7 +29,8 @@ export class CreateRoomPage implements OnInit {
   constructor(private dinnerService: DinnerService,
     private alertController: AlertController,
     private paramsService: RDParamsService,
-    private navController: NavController) { }
+    private navController: NavController,
+    private notificationService: NotificationsService) { }
 
   ngOnInit() {
     this.customActionSheetOptions = {
@@ -90,7 +92,9 @@ export class CreateRoomPage implements OnInit {
       () => {
         // Ricarico parametri e vado in /dinners effettuando
         // reset della history per ricaricare in automatico le cene
-        this.paramsService.loadParams();
+        this.paramsService.loadParams().then(() => {
+          this.notificationService.fireUpdateParamsEvent();
+        });
         this.navController.navigateRoot('/home');
       },
       (err) => {

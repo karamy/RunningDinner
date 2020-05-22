@@ -1,19 +1,18 @@
 import { Injectable } from '@angular/core';
 import { firebase } from '@firebase/app';
 import '@firebase/database';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
+import { RDParamsService } from 'src/app/rdparams.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  fireuserchats: any;
-  allmsgs: string[];
-  http: any;
-  public allMsgObservable: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
+  firebaseReference: any;
+  allMsgObservable: Observable<any>
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService, private paramsService: RDParamsService) {
     const firebaseConfig = {
       apiKey: "AIzaSyDit-Luu9GP7UwpZTaVerP0EsI70DO-45o",
       authDomain: "runningdinnersms.firebaseapp.com",
@@ -28,9 +27,28 @@ export class ChatService {
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
+  }
 
-    // Valorizzo il riferimento alla chat della cena a cui fa parte l'utente
-    this.fireuserchats = firebase.database().ref('/allmsg/dinner1');
+  // Inizializza il service, ritornando l'observable su cui effettuo la subscribe
+  // per ottenere i messaggi
+  init(): Observable<any[]> {
+    // Valorizzo il riferimento alla chat della cena a cui fa parte l'utente, oppure a quella generale 'noDinner'
+    this.firebaseReference = firebase.database().ref('/chat/' + (this.paramsService.getParams().dinnerId ? this.paramsService.getParams().dinnerId.toString() : 'noDinner'));
+
+    this.allMsgObservable = new Observable((observer) => {
+      let receivedMsg = {};
+      let firebaseMessages = [];
+      this.firebaseReference.on('child_added', (res) => {
+        receivedMsg = res.val();
+        if (receivedMsg) {
+          console.log('Messaggio ricevuto: ', JSON.stringify(receivedMsg));
+          firebaseMessages.push(receivedMsg);
+          observer.next(firebaseMessages); // Informo chi si è sottoscritto dell'arrivo di nuovi messaggi, fornendoglieli
+          firebaseMessages = [];
+        }
+      });
+    });
+    return this.allMsgObservable;
   }
 
   // Effettua la formattazione di un'orario scrivendo am/pm
@@ -63,8 +81,6 @@ export class ChatService {
   addNewMessage(msgText) {
     const time = this.formatAMPM(new Date());
     const date = this.formatDate(new Date());
-    console.log('date>>>', date);
-
     const msgToSend: ChatMsg = {
       sentby: this.authService.getUserData().name,
       message: msgText,
@@ -72,25 +88,8 @@ export class ChatService {
       timeofmsg: time,
       dateofmsg: date
     };
-    return this.fireuserchats.push(msgToSend);
-  }
 
-  // Ottiene l'observable su cui effettuo la subscribe per ottenere i messaggi
-  getDinnerMessagesObservable(): Observable<any[]> {
-    let snapshotValue;
-    let firebaseMessages = [];
-    this.fireuserchats.on('value', (snapshot) => {
-      snapshotValue = snapshot.val();
-      if (snapshotValue) {
-        console.log('Messaggi ricevuti: ', Object.keys(snapshotValue).length)
-        for (let msgKey in snapshotValue) { // Dal momento che lo snapshot è un oggetto, mi passo tutte le chiavi per creare l'array di messaggi
-          firebaseMessages.push(snapshotValue[msgKey]);
-        }
-        this.allMsgObservable.next(firebaseMessages); // Informo chi si è sottoscritto dell'arrivo di nuovi messaggi, fornendoglieli
-        firebaseMessages = [];
-      }
-    });
-    return this.allMsgObservable;
+    return this.firebaseReference.push(msgToSend);
   }
 }
 

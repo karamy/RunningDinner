@@ -13,5 +13,4 @@ export class HomePage implements OnInit {
   ngOnInit() {
     this.notificationsService.init(); // Inizializzo notifiche push
   }
-
 }

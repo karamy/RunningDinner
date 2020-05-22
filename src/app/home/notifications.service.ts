@@ -12,6 +12,7 @@ import "capacitor-pwa-firebase-msg";
 import { Plugins, PushNotificationToken, PushNotification, PushNotificationActionPerformed } from '@capacitor/core';
 import { RDParamsService } from '../rdparams.service';
 import { FoodAllergiesService } from '../rdmodals/food-allergies/food-allergies.service';
+import { Observable, Subscriber } from 'rxjs';
 const { PushNotifications } = Plugins;
 
 @Injectable({
@@ -19,7 +20,9 @@ const { PushNotifications } = Plugins;
 })
 export class NotificationsService {
   private lastNotificationTime: Date; // Utilizzato per evitare la gestione multipla della stessa notifica
-  private readonly notificationLatencySec = 1; // Tempo di latenza (in secondi) per cui, se minore, ignoro la notifica
+  private readonly notificationLatencySec: number = 1; // Tempo di latenza (in secondi) per cui, se minore, ignoro la notifica
+  private updateParamsObserver: Subscriber<any>;
+  updateParamsObservable: Observable<any>; // Observable utilizzato per gestire l'evento 'updateParams' nelle videate 
 
   constructor(private spinner: RDSpinnerService, private rdConstants: RDConstantsService,
     private http: HttpClient, private alertController: AlertController,
@@ -28,6 +31,12 @@ export class NotificationsService {
     private authService: AuthService,
     private foodAllergiesService: FoodAllergiesService,
     private rdToast: RDToastService) { }
+
+    // Inizializzo l'observable per gestire evento di ricaricamento parametri
+    this.updateParamsObservable = new Observable((observer) => {
+      this.updateParamsObserver = observer;
+    });
+  }
 
   // Inizializza la gestione notifiche push
   init() {
@@ -116,6 +125,7 @@ export class NotificationsService {
               this.foodAllergiesService.clearGroupFoodAllergies();
               this.rdToast.show('Il gruppo è stato sciolto', 2000);
             }
+            this.fireUpdateParamsEvent();
           })
           .catch(
             () => { // Errore ricaricamento parametri
@@ -126,6 +136,18 @@ export class NotificationsService {
       default:
         console.warn("Ricevuta notifica di tipologia non gestita");
     }
+  }
+
+  // Scateno evento di ricaricamento parametri (undefined se non ci sono sottoscrizioni)
+  fireUpdateParamsEvent() {
+    if (this.updateParamsObserver) {
+      this.updateParamsObserver.next();
+    }
+  }
+
+  // Ritorna l'observable per gestire ricaricamento parametri in videate
+  getUpdateParamsObservable(): Observable<any> {
+    return this.updateParamsObservable;
   }
 
   // Mostra popup di conferma aggiunta a gruppo a seguito di ricezione notifica
@@ -145,6 +167,11 @@ export class NotificationsService {
                 this.paramsService.loadParams().then(() => {
                   this.profileService.getPartnerData(this.authService.getUserData()).then(() => {
                     this.foodAllergiesService.getPartnerFoodAllergies(this.authService.getUserData().userid);
+
+                  // Emetto l'evento di ricaricamento parametri anche se attualmente essendo
+                  // utilizzato solo nella chat, è inutile ricaricarla dopo la creazione gruppo
+                  this.fireUpdateParamsEvent();
+                })
                   },
                     () => {
                       console.log('Errore getPartnerData');

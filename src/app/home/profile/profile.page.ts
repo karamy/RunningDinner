@@ -12,6 +12,7 @@ import { RDSpinnerService } from 'src/app/rdspinner.service';
 import { BadgesService } from './badges.service';
 import { FoodAllergiesService } from 'src/app/rdmodals/food-allergies/food-allergies.service';
 import { RDToastService } from 'src/app/rdtoast.service';
+import { NotificationsService } from '../notifications.service';
 
 @Component({
   selector: 'app-profile',
@@ -51,7 +52,8 @@ export class ProfilePage implements OnInit {
     private badgesService: BadgesService,
     private rdToast: RDToastService,
     private zone: NgZone,
-    private modalController: ModalController) {
+    private modalController: ModalController,
+    private notificationService: NotificationsService) {
     defineCustomElements(window);
     this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
     this.autocompleteItems = [];
@@ -218,9 +220,14 @@ export class ProfilePage implements OnInit {
   onLeaveGroup() {
     this.contactsService.leaveGroup(this.paramsService.getParams().groupId).then(
       () => { // Gruppo abbandonato, ricarico parametri
-        this.paramsService.loadParams();
+        this.paramsService.loadParams().then(() => {
         this.profileService.clearPartner();
         this.foodAllergiesService.clearGroupFoodAllergies();
+          
+          // Emetto l'evento di ricaricamento parametri anche se attualmente essendo
+          // utilizzato solo nella chat, è inutile ricaricarla dopo la creazione gruppo
+          this.notificationService.fireUpdateParamsEvent();
+        });
       },
       (err) => { // Errore abbandono gruppo
         console.warn(err);
