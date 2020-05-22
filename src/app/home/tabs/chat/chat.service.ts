@@ -10,8 +10,6 @@ import { RDParamsService } from 'src/app/rdparams.service';
 })
 export class ChatService {
   firebaseReference: any;
-  allmsgs: string[];
-  http: any;
   allMsgObservable: Observable<any>
 
   constructor(private authService: AuthService, private paramsService: RDParamsService) {
