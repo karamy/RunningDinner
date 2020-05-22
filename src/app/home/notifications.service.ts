@@ -30,7 +30,7 @@ export class NotificationsService {
     private profileService: ProfileService,
     private authService: AuthService,
     private foodAllergiesService: FoodAllergiesService,
-    private rdToast: RDToastService) { }
+    private rdToast: RDToastService) {
 
     // Inizializzo l'observable per gestire evento di ricaricamento parametri
     this.updateParamsObservable = new Observable((observer) => {
@@ -165,14 +165,14 @@ export class NotificationsService {
               () => {
                 // Gruppo creato, ricarico parametri e carico i dati del partner
                 this.paramsService.loadParams().then(() => {
-                  this.profileService.getPartnerData(this.authService.getUserData()).then(() => {
-                    this.foodAllergiesService.getPartnerFoodAllergies(this.authService.getUserData().userid);
+                  this.profileService.getPartnerData(this.authService.getUserData()).then(
+                    () => {
+                      this.foodAllergiesService.getPartnerFoodAllergies(this.authService.getUserData().userid);
 
-                  // Emetto l'evento di ricaricamento parametri anche se attualmente essendo
-                  // utilizzato solo nella chat, è inutile ricaricarla dopo la creazione gruppo
-                  this.fireUpdateParamsEvent();
-                })
-                  },
+                      // Emetto l'evento di ricaricamento parametri anche se attualmente essendo
+                      // utilizzato solo nella chat, è inutile ricaricarla dopo la creazione gruppo
+                      this.fireUpdateParamsEvent();
+                    },
                     () => {
                       console.log('Errore getPartnerData');
                     });

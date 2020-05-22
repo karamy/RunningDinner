@@ -6,7 +6,7 @@
       <rd-profile></rd-profile>
       
       <!-- Permetto di creare una cena solo se già non partecipo ad una -->
-      <ion-button *ngIf="paramsService.getParams().groupId && !paramsService.getParams().dinnerId" routerLink="/home/tabs/rooms/create-room">
+      <ion-button *ngIf="paramsService.getParams().groupId && !paramsService.getParams().dinnerId" routerLink="/home/tabs/dinners/create-dinner">
         <ion-icon name="add" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>

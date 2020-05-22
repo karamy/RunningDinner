@@ -13,7 +13,7 @@ export class AuthPage implements OnInit {
   ngOnInit() { }
 
   // Funzione di test per effettuare login di prova
-  debugLoginToRooms(phoneNumber: string) {
+  debugLoginToDinners(phoneNumber: string) {
     this.authService.doLogin(phoneNumber);
   }
 }

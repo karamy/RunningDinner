@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { DinnerService } from '../dinner.service';
+import { DinnersService, DinnerType } from '../dinners.service';
 import { AlertController, NavController } from '@ionic/angular';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { NotificationsService } from 'src/app/home/notifications.service';
 
 
 @Component({
-  selector: 'app-create-room',
-  templateUrl: './create-room.page.html',
-  styleUrls: ['./create-room.page.scss'],
+  selector: 'app-create-dinner',
+  templateUrl: './create-dinner.page.html',
+  styleUrls: ['./create-dinner.page.scss'],
 })
-export class CreateRoomPage implements OnInit {
+export class CreateDinnerPage implements OnInit {
   dinnerDescription: string;
   dinnerType: number;
 
@@ -24,9 +24,9 @@ export class CreateRoomPage implements OnInit {
   }
 
   customActionSheetOptions: any; // Descrive le property della select fatta tramite actionSheet
-  dinnerTypes: any[]; //TODO fare interfaccia
+  dinnerTypes: DinnerType[];
 
-  constructor(private dinnerService: DinnerService,
+  constructor(private dinnersService: DinnersService,
     private alertController: AlertController,
     private paramsService: RDParamsService,
     private navController: NavController,
@@ -88,7 +88,7 @@ export class CreateRoomPage implements OnInit {
       dinnerDate: this.dinnerDate,
       groupId: this.paramsService.getParams().groupId
     };
-    this.dinnerService.createDinner(createDinnerBody).then(
+    this.dinnersService.createDinner(createDinnerBody).then(
       () => {
         // Ricarico parametri e vado in /dinners effettuando
         // reset della history per ricaricare in automatico le cene

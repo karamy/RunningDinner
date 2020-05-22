@@ -7,7 +7,7 @@ import { RDConstantsService } from 'src/app/rdcostants.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { RDSpinnerService } from 'src/app/rdspinner.service';
 
-// Rappresente i dati di un contatto sul telefono
+// Rappresenta i dati di un contatto sul telefono
 export class RDContact {
   constructor() { }
   phoneNumbers: string[] = [];

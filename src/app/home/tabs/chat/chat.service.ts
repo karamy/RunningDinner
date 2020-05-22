@@ -93,7 +93,7 @@ export class ChatService {
   }
 }
 
-// Rappresente un messaggio della chat 
+// Rappresenta un messaggio della chat 
 export interface ChatMsg {
   sentby: string, // Indica il nome dell'utente che ha inviato il messaggio
   message: string, // Testo del messaggio

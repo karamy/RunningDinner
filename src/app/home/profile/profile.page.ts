@@ -221,9 +221,9 @@ export class ProfilePage implements OnInit {
     this.contactsService.leaveGroup(this.paramsService.getParams().groupId).then(
       () => { // Gruppo abbandonato, ricarico parametri
         this.paramsService.loadParams().then(() => {
-        this.profileService.clearPartner();
-        this.foodAllergiesService.clearGroupFoodAllergies();
-          
+          this.profileService.clearPartner();
+          this.foodAllergiesService.clearGroupFoodAllergies();
+
           // Emetto l'evento di ricaricamento parametri anche se attualmente essendo
           // utilizzato solo nella chat, è inutile ricaricarla dopo la creazione gruppo
           this.notificationService.fireUpdateParamsEvent();

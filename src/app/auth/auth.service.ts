@@ -86,32 +86,31 @@ export class AuthService {
             // Carico i parametri utente prima di risolvere la promise
             this.rdParams.loadParams().then(
               () => {
-                console.log(this.getUserData().userid);
                 // Carico la lista di tutte le intolleranze e le intolleranze dell'utente
                 this.foodAllergiesService.getAllFoodAllergiesData().then(() => {
                   this.foodAllergiesService.getUserFoodAllergiesData(this.getUserData().userid).then(() => {
                     if (this.rdParams.getParams().groupId) {
                       this.profileService.getPartnerData(this.getUserData()).then(() => {
                         this.foodAllergiesService.getPartnerFoodAllergies(this.getUserData().userid).then(() => {
-                          this.navController.navigateRoot('/home/tabs/rooms');
+                          this.navController.navigateRoot('/home/tabs/dinners');
                           resolve();
                         },
                           () => {
                             console.log('Errore getPartnerFoodAllergies');
-                            this.navController.navigateRoot('/home/tabs/rooms');
+                            this.navController.navigateRoot('/home/tabs/dinners');
                             resolve();
                           });
                       },
                         () => {
                           console.log('Errore getPartnerData');
-                          this.navController.navigateRoot('/home/tabs/rooms');
+                          this.navController.navigateRoot('/home/tabs/dinners');
                           resolve();
                         });
                     } else {
                       // Imposto groupFoodAllergies vuoto in maniera da evitare errori
                       localStorage.setItem('groupFoodAllergies', '[]');
                       this.foodAllergiesService.readGroupFoodAllergies();
-                      this.navController.navigateRoot('/home/tabs/rooms');
+                      this.navController.navigateRoot('/home/tabs/dinners');
                       resolve();
                     }
                   },
@@ -244,7 +243,7 @@ export interface AuthenticatedUser {
   accessToken: string; // Token utilizzato per effettuare chiamate autenticate
 }
 
-// Rappresente i dati di un utente loggato
+// Rappresenta i dati di un utente loggato
 export interface UserData {
   userid: number;
   name: string;

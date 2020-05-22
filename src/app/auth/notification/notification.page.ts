@@ -79,7 +79,7 @@ export class NotificationPage {
   // o entrare direttamente (caso in cui un utente a posteriori disabilita le autorizzazioni)
   endPermissionCheck() {
     if (this.authService.isUserAuthenticated()) {
-      this.navController.navigateRoot('/home/tabs/rooms');
+      this.navController.navigateRoot('/home/tabs/dinners');
     } else {
       this.navController.navigateRoot('/sign-up/username');
     }

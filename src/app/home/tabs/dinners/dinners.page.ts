@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { RDParamsService } from 'src/app/rdparams.service';
 
 @Component({
-  selector: 'app-rooms',
-  templateUrl: './rooms.page.html',
-  styleUrls: ['./rooms.page.scss']
+  selector: 'app-dinners',
+  templateUrl: './dinners.page.html',
+  styleUrls: ['./dinners.page.scss']
 })
-export class RoomsPage implements OnInit {
+export class DinnersPage implements OnInit {
 
   constructor(public paramsService: RDParamsService) { }
 

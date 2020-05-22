@@ -6,7 +6,7 @@ import { RDSpinnerService } from 'src/app/rdspinner.service';
 @Injectable({
   providedIn: 'root'
 })
-export class DinnerService {
+export class DinnersService {
 
   constructor(private http: HttpClient, private rdConstants: RDConstantsService, private spinner: RDSpinnerService) { }
 
@@ -19,4 +19,11 @@ export class DinnerService {
         () => { this.spinner.dismiss(); }
       );
   }
+}
+
+// Rappresenta una tipologia di cena 
+export interface DinnerType {
+  code: number;
+  description: string;
+  background?: string; //TODO aggiungere gestione backgound della card in base alla tipologia di cena
 }

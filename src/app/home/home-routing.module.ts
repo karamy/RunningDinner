@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { HomePage } from './home.page';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'tabs/rooms', pathMatch: 'full' },
+  { path: '', redirectTo: 'tabs/dinners', pathMatch: 'full' },
   {
     path: 'tabs',
     component: HomePage,
@@ -13,8 +13,8 @@ const routes: Routes = [
         loadChildren: () => import('./tabs/contacts/contacts.module').then(m => m.ContactsPageModule)
       },
       {
-        path: 'rooms',
-        loadChildren: () => import('./tabs/rooms/rooms.module').then(m => m.RoomsPageModule),
+        path: 'dinners',
+        loadChildren: () => import('./tabs/dinners/dinners.module').then(m => m.DinnersPageModule),
       },
       {
         path: 'chat',

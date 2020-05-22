@@ -1,21 +1,19 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
-
 import { IonicModule } from '@ionic/angular';
-import { RoomsPage } from './rooms.page';
+import { DinnersPage } from './dinners.page';
 import { RDComponentsModule } from 'src/app/rdcomponents/rdcomponents.module';
-import { RoomsPageRoutingModule } from './rooms-routing.module';
+import { DinnersPageRoutingModule } from './dinners-routing.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    RoomsPageRoutingModule,
+    DinnersPageRoutingModule,
     RDComponentsModule
   ],
-  declarations: [RoomsPage]
+  declarations: [DinnersPage]
 })
-export class RoomsPageModule { }
+export class DinnersPageModule { }

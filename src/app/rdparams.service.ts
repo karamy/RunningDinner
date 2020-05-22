@@ -63,7 +63,7 @@ export class RDParamsService {
   }
 }
 
-// Rappresente i parametri 
+// Rappresenta i parametri 
 export interface RDParams {
   groupId: number; // Gruppo di cui fa eventualmente parte l'utente
   dinnerId: number; // Cena a cui è attualmente iscritto l'utente
