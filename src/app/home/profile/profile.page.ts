@@ -4,12 +4,14 @@ import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { ContactsService } from '../tabs/contacts/contacts.service';
 import { ModalController } from '@ionic/angular';
-import { FoodAllergiesPage } from 'src/app/rdmodals/food-allergies/food-allergies.page';
+import { FoodAllergiesPage, FoodAllergy, UserAllergy } from 'src/app/rdmodals/food-allergies/food-allergies.page';
 import { UserService } from 'src/app/auth/user.service';
 import { ProfileService } from './profile.service';
 import { PhotoService } from 'src/app/sign-up/profile-photo/photo.service';
 import { RDSpinnerService } from 'src/app/rdspinner.service';
 import { BadgesService } from './badges.service';
+import { FoodAllergiesService } from 'src/app/rdmodals/food-allergies/food-allergies.service';
+import { RDToastService } from 'src/app/rdtoast.service';
 
 @Component({
   selector: 'app-profile',
@@ -23,8 +25,6 @@ export class ProfilePage implements OnInit {
   editMode = false;
   badgeExpand = false;
   foodExpand = false;
-  foodAllergies = [];
-  categories = [];
   GoogleAutocomplete: google.maps.places.AutocompleteService;
   autocompleteItems: any[];
 
@@ -46,8 +46,10 @@ export class ProfilePage implements OnInit {
     public paramsService: RDParamsService,
     private contactsService: ContactsService,
     public profileService: ProfileService,
+    public foodAllergiesService: FoodAllergiesService,
     private photoService: PhotoService,
     private badgesService: BadgesService,
+    private rdToast: RDToastService,
     private zone: NgZone,
     private modalController: ModalController) {
     defineCustomElements(window);
@@ -113,6 +115,17 @@ export class ProfilePage implements OnInit {
       this.badgesDb = res;
       console.log(this.badgesDb);
     });
+    if (this.paramsService.getParams().groupId) {
+      // Per evitare errori se refresh della pagina
+      this.profileService.readPartner();
+      this.foodAllergiesService.readUserFoodAllergies();
+      this.foodAllergiesService.readGroupFoodAllergies();
+    } else {
+      this.foodAllergiesService.readUserFoodAllergies();
+      // Valorizzo groupFoodAllergies per evitare errori se refresh della pagina
+      localStorage.setItem('groupFoodAllergies', '[]');
+      this.foodAllergiesService.readGroupFoodAllergies();
+    }
   }
 
   getUser() {
@@ -124,21 +137,10 @@ export class ProfilePage implements OnInit {
     const modal = await this.modalController.create({
       component: FoodAllergiesPage,
       backdropDismiss: true,
+      componentProps: { 'foodAllergies': this.foodAllergiesService.getAllFoodAllergies(), 'userFoodAllergies': this.foodAllergiesService.getUserFoodAllergies() },
       cssClass: 'modal-style'
     });
-    modal.onDidDismiss().then(res => {
-      if (res.data !== undefined) {
-        // Aggiungo l'intolleranza alla lista e la ordino in base alla categoria
-        this.foodAllergies = [...this.foodAllergies, res.data];
-        this.foodAllergies.sort((a, b) => (a.category > b.category) ? 1 : ((b.category > a.category) ? -1 : 0));
-        if (!this.categories.includes(res.data.category)) {
-          // Aggiungo la categoria alla lista e la ordino
-          this.categories = [...this.categories, res.data.category];
-          this.categories.sort();
-        }
-      }
-    });
-    return await modal.present();
+    await modal.present();
   }
 
   async editImage() {
@@ -174,14 +176,15 @@ export class ProfilePage implements OnInit {
     this.editMode = !this.editMode;
   }
 
-  cancelFood(item: any) {
-    const index = this.foodAllergies.indexOf(item);
-    this.foodAllergies.splice(index, 1);
-    this.foodAllergies = [...this.foodAllergies];
-    if (this.foodAllergies.find(x => x.category === item.category) === undefined) {
-      const indexCategory = this.categories.indexOf(item.category);
-      this.categories.splice(indexCategory, 1);
-    }
+  deleteFoodAllergy(item: UserAllergy) {
+    this.foodAllergiesService.deleteUserFoodAllergies(item.allergy_id, item.allergy_name, this.authService.getUserData().userid).then(() => {
+      this.foodAllergiesService.getUserFoodAllergiesData(this.authService.getUserData().userid).then(() => {
+        this.rdToast.show('Intolleranza ' + item.allergy_name + ' eliminata', 2000);
+      });
+    },
+      () => {
+        console.log('Errore deleteFoodAllergy');
+      });
   }
 
   updateSearchResults() {
@@ -217,6 +220,7 @@ export class ProfilePage implements OnInit {
       () => { // Gruppo abbandonato, ricarico parametri
         this.paramsService.loadParams();
         this.profileService.clearPartner();
+        this.foodAllergiesService.clearGroupFoodAllergies();
       },
       (err) => { // Errore abbandono gruppo
         console.warn(err);

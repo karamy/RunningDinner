@@ -9,13 +9,14 @@ export class RDToastService {
   constructor(private toastController: ToastController) { }
 
   // Crea un istanza del toast
-  async show(message: string, duration?: number) {
+  async show(message: string, duration?: number, color?: string) {
     if (!duration) {
       duration = 2000; // Se non impostata la durata è 2 secondi
     }
     const toast = await this.toastController.create({
       message: message,
-      duration: duration
+      duration: duration,
+      color: color
     });
     toast.present();
     return toast;

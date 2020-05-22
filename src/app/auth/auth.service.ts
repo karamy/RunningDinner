@@ -7,6 +7,7 @@ import { RDSpinnerService } from '../rdspinner.service';
 import { RDParamsService } from '../rdparams.service';
 import { RDToastService } from '../rdtoast.service';
 import { ProfileService } from '../home/profile/profile.service';
+import { FoodAllergiesService } from '../rdmodals/food-allergies/food-allergies.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,8 @@ export class AuthService {
     private rdToast: RDToastService,
     private navController: NavController,
     private rdParams: RDParamsService,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private foodAllergiesService: FoodAllergiesService
   ) {
     this.readUser();
   }
@@ -84,20 +86,42 @@ export class AuthService {
             // Carico i parametri utente prima di risolvere la promise
             this.rdParams.loadParams().then(
               () => {
-                if (this.rdParams.getParams().groupId) {
-                  this.profileService.getPartnerData(this.getUserData()).then(() => {
-                    this.navController.navigateRoot('/home/tabs/rooms');
-                    resolve();
-                  },
-                    (err) => {
-                      console.log('Errore getPartnerData');
+                console.log(this.getUserData().userid);
+                // Carico la lista di tutte le intolleranze e le intolleranze dell'utente
+                this.foodAllergiesService.getAllFoodAllergiesData().then(() => {
+                  this.foodAllergiesService.getUserFoodAllergiesData(this.getUserData().userid).then(() => {
+                    if (this.rdParams.getParams().groupId) {
+                      this.profileService.getPartnerData(this.getUserData()).then(() => {
+                        this.foodAllergiesService.getPartnerFoodAllergies(this.getUserData().userid).then(() => {
+                          this.navController.navigateRoot('/home/tabs/rooms');
+                          resolve();
+                        },
+                          () => {
+                            console.log('Errore getPartnerFoodAllergies');
+                            this.navController.navigateRoot('/home/tabs/rooms');
+                            resolve();
+                          });
+                      },
+                        () => {
+                          console.log('Errore getPartnerData');
+                          this.navController.navigateRoot('/home/tabs/rooms');
+                          resolve();
+                        });
+                    } else {
+                      // Imposto groupFoodAllergies vuoto in maniera da evitare errori
+                      localStorage.setItem('groupFoodAllergies', '[]');
+                      this.foodAllergiesService.readGroupFoodAllergies();
                       this.navController.navigateRoot('/home/tabs/rooms');
                       resolve();
+                    }
+                  },
+                    () => {
+                      console.log('Errore getUserFoodAllergiesData');
                     });
-                } else {
-                  this.navController.navigateRoot('/home/tabs/rooms');
-                  resolve();
-                }
+                },
+                  () => {
+                    console.log('Errore getAllFoodAllergiesData');
+                  });
               },
               (err) => {
                 this.doLogout();
@@ -129,6 +153,9 @@ export class AuthService {
           localStorage.setItem('user', null);
           this.readUser();
           this.profileService.clearPartner();
+          this.foodAllergiesService.clearUserFoodAllergies();
+          this.foodAllergiesService.clearAllFoodAllergies();
+          this.foodAllergiesService.clearGroupFoodAllergies();
           this.rdParams.clearParams();
           this.clearFirebaseToken();
           this.navController.navigateRoot('/auth');

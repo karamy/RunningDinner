@@ -79,7 +79,7 @@ export class ProfileService {
   }
 
   // Legge i parametri partner presenti in localStorage e le carica nel Service
-  private readPartner() {
+  readPartner() {
     this._partner = JSON.parse(
       localStorage.getItem('partner')
     ) as PartnerData;

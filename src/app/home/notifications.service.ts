@@ -11,6 +11,7 @@ import { AuthService } from '../auth/auth.service';
 import "capacitor-pwa-firebase-msg";
 import { Plugins, PushNotificationToken, PushNotification, PushNotificationActionPerformed } from '@capacitor/core';
 import { RDParamsService } from '../rdparams.service';
+import { FoodAllergiesService } from '../rdmodals/food-allergies/food-allergies.service';
 const { PushNotifications } = Plugins;
 
 @Injectable({
@@ -25,6 +26,7 @@ export class NotificationsService {
     private paramsService: RDParamsService,
     private profileService: ProfileService,
     private authService: AuthService,
+    private foodAllergiesService: FoodAllergiesService,
     private rdToast: RDToastService) { }
 
   // Inizializza la gestione notifiche push
@@ -103,9 +105,15 @@ export class NotificationsService {
         this.paramsService.loadParams()
           .then(() => {
             if (this.paramsService.getParams().groupId) {
-              this.profileService.getPartnerData(this.authService.getUserData());
+              this.profileService.getPartnerData(this.authService.getUserData()).then(() => {
+                this.foodAllergiesService.getPartnerFoodAllergies(this.authService.getUserData().userid);
+              },
+                () => {
+                  console.log("Errore getPartnerData")
+                })
             } else {
               this.profileService.clearPartner();
+              this.foodAllergiesService.clearGroupFoodAllergies();
               this.rdToast.show('Il gruppo è stato sciolto', 2000);
             }
           })
@@ -135,11 +143,16 @@ export class NotificationsService {
               () => {
                 // Gruppo creato, ricarico parametri e carico i dati del partner
                 this.paramsService.loadParams().then(() => {
-                  this.profileService.getPartnerData(this.authService.getUserData());
-                })
+                  this.profileService.getPartnerData(this.authService.getUserData()).then(() => {
+                    this.foodAllergiesService.getPartnerFoodAllergies(this.authService.getUserData().userid);
+                  },
+                    () => {
+                      console.log('Errore getPartnerData');
+                    });
+                });
               },
               () => {
-                console.warn("Errore conferma aggiunta a gruppo");
+                console.warn('Errore conferma aggiunta a gruppo');
               }
             );
           }
