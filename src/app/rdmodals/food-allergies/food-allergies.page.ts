@@ -44,27 +44,29 @@ export class FoodAllergiesPage implements OnInit {
     }
   }
 
+  // Controllo che in userFoodAllergies non esista già un elemento con stesso nome e stessa categoria scelti
   isAllergyUnique() {
-    // Controllo che in userFoodAllergies non esista già un elemento con stesso nome e stessa categoria scelti
     if (this.userFoodAllergies.find(x => x.allergy_name.toLowerCase() === this.selectedFood.trim().toLowerCase()) !== undefined) {
       const allergyToControl = this.userFoodAllergies.find(x => x.allergy_name.toLowerCase() === this.selectedFood.trim().toLowerCase())
       if (allergyToControl.category === this.selectedCategory.trim()) {
-        return false
+        return false;
       } else {
-        return true
+        return true;
       }
     } else {
-      return true
+      return true;
     }
   }
 }
 
+// Rappresenta un'intolleranza
 export interface FoodAllergy {
   allergy_id: number;
   category: string;
   allergy_photo: string;
 }
 
+// Rappresenta un'intolleranza dell'utente
 export interface UserAllergy extends FoodAllergy {
   allergy_name?: string;
   user_id?: number;
