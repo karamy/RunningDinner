@@ -143,7 +143,7 @@ export class FoodAllergiesService {
   }
 
   // Post dell'intolleranza aggiunta dall'utente
-  async updateUserFoodAllergies(allergyId: number, food: string, userId: number) {
+  async insertUserFoodAllergies(allergyId: number, food: string, userId: number) {
     const dataToSend = {
       userAllergy: {
         allergyId: allergyId,
@@ -153,7 +153,7 @@ export class FoodAllergiesService {
     };
     return new Promise((resolve, reject) =>
       this.http
-        .post(this.rdConstants.getApiRoute('updateFoodAllergies'), dataToSend)
+        .post(this.rdConstants.getApiRoute('insertFoodAllergies'), dataToSend)
         .toPromise()
         .then(
           () => {
@@ -220,7 +220,18 @@ export class FoodAllergiesService {
     ) as UserAllergy[];
     // Converto le immagini delle FoodAllergies del partner in Jpeg
     partnerFoodAllergies = this.convertImagesToJpeg(partnerFoodAllergies);
-    let groupFoodAllergies = userFoodAllergies.concat(partnerFoodAllergies);
+    let groupFoodAllergies = [...userFoodAllergies]
+    // Controllo che in groupFoodAllergies non siano presenti elementi con stesso nome e stessa categoria di quelli in partnerFoodAllergies
+    for (let i = 0; i < partnerFoodAllergies.length; i++) {
+      if (groupFoodAllergies.find(x => x.allergy_name.toLowerCase() === partnerFoodAllergies[i].allergy_name.toLowerCase()) !== undefined) {
+        const allergyToControl = groupFoodAllergies.find(x => x.allergy_name.toLowerCase() === partnerFoodAllergies[i].allergy_name.toLowerCase())
+        if (allergyToControl.category !== partnerFoodAllergies[i].category) {
+          groupFoodAllergies.push(partnerFoodAllergies[i])
+        }
+      } else {
+        groupFoodAllergies.push(partnerFoodAllergies[i])
+      }
+    }
     groupFoodAllergies = this.orderFoodAllergies(groupFoodAllergies);
     localStorage.setItem('groupFoodAllergies', JSON.stringify(groupFoodAllergies));
     localStorage.setItem('groupFoodAllergiesCategories', JSON.stringify(this.createCategoryArray(groupFoodAllergies)));
