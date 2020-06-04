@@ -22,7 +22,6 @@ import { NotificationsService } from '../notifications.service';
 export class ProfilePage implements OnInit {
   user: UserData;
   userAge: number;
-  badgesDb: any;
   editMode = false;
   badgeExpand = false;
   foodExpand = false;
@@ -49,7 +48,7 @@ export class ProfilePage implements OnInit {
     public profileService: ProfileService,
     public foodAllergiesService: FoodAllergiesService,
     private photoService: PhotoService,
-    private badgesService: BadgesService,
+    public badgesService: BadgesService,
     private rdToast: RDToastService,
     private zone: NgZone,
     private modalController: ModalController,
@@ -59,74 +58,21 @@ export class ProfilePage implements OnInit {
     this.autocompleteItems = [];
   }
 
-  badges = [
-    {
-      "name": "goldmedal",
-      "image": "assets/goldmedal.png",
-      "descriptionOwned": "Ottenuto per aver ricevuto il miglior voto in una cena",
-      "descriptionNotOwned": "Ottieni il miglior voto in una cena",
-      "owned": true
-    },
-    {
-      "name": "silvermedal",
-      "image": "assets/silvermedal.png",
-      "descriptionOwned": "Ottenuto per aver invitato 10 amici",
-      "descriptionNotOwned": "Invita 10 amici. Amici invitati 4/10",
-      "owned": false
-    },
-    {
-      "name": "dress",
-      "image": "assets/dress.png",
-      "descriptionOwned": "Ottenuto per esser stato il più simpatico in una cena",
-      "descriptionNotOwned": "Ricevi il voto di più simpatico in una cena",
-      "owned": false
-    },
-    {
-      "name": "dummy",
-      "image": "assets/dummy.png",
-      "descriptionOwned": "Ottenuto per esser stato il meno simpatico in una cena",
-      "descriptionNotOwned": "Ricevi il voto di meno simpatico in una cena",
-      "owned": true
-    },
-    {
-      "name": "dress",
-      "image": "assets/dress.png",
-      "descriptionOwned": "Ottenuto per esserti iscritto a RunningDinner",
-      "descriptionNotOwned": "Iscriviti a RunningDinner",
-      "owned": true
-    },
-    {
-      "name": "fish",
-      "image": "assets/fish.png",
-      "descriptionOwned": "Ottenuto per aver fatto la tua prima cena di pesce",
-      "descriptionNotOwned": "Partecipa ad una cena di pesce",
-      "owned": false
-    },
-    {
-      "name": "meat",
-      "image": "assets/meat.png",
-      "descriptionOwned": "Ottenuto per aver fatto la tua prima cena di carne",
-      "descriptionNotOwned": "Partecipa ad una cena di carne",
-      "owned": true
-    },
-  ]
-
   ngOnInit() {
     this.getUser();
-    this.badgesService.getBadges().then(res => {
-      this.badgesDb = res;
-      console.log(this.badgesDb);
-    });
     if (this.paramsService.getParams().groupId) {
       // Per evitare errori se refresh della pagina
       this.profileService.readPartner();
-      this.foodAllergiesService.readUserFoodAllergies();
       this.foodAllergiesService.readGroupFoodAllergies();
+      this.badgesService.readGroupBadges();
     } else {
+      this.badgesService.readUserBadges();
       this.foodAllergiesService.readUserFoodAllergies();
-      // Valorizzo groupFoodAllergies per evitare errori se refresh della pagina
+      // Valorizzo groupFoodAllergies e groupBadges per evitare errori se refresh della pagina
       localStorage.setItem('groupFoodAllergies', '[]');
       this.foodAllergiesService.readGroupFoodAllergies();
+      localStorage.setItem('groupBadges', '[]');
+      this.badgesService.readGroupBadges();
     }
   }
 
@@ -223,6 +169,7 @@ export class ProfilePage implements OnInit {
         this.paramsService.loadParams().then(() => {
           this.profileService.clearPartner();
           this.foodAllergiesService.clearGroupFoodAllergies();
+          this.badgesService.clearGroupBadges();
 
           // Emetto l'evento di ricaricamento parametri anche se attualmente essendo
           // utilizzato solo nella chat, è inutile ricaricarla dopo la creazione gruppo

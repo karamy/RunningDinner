@@ -6,22 +6,21 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class BadgeFilterPipe implements PipeTransform {
 
   transform(badges: any[], arg: string): any {
-    let filtered = []
-    if (arg === "owned") {
+    const filtered = [];
+    if (arg === 'owned') {
       for (let i = 0; i < badges.length; i++) {
-        if (badges[i].owned === true) {
-          filtered.push(badges[i])
+        if (badges[i].phase !== null) {
+          filtered.push(badges[i]);
         }
       }
-      return filtered
+      return filtered;
     } else {
       for (let i = 0; i < badges.length; i++) {
-        if (badges[i].owned === false) {
-          filtered.push(badges[i])
+        if (badges[i].phase === null) {
+          filtered.push(badges[i]);
         }
       }
-      return filtered
+      return filtered;
     }
   }
-
 }

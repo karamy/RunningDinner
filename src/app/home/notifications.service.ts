@@ -13,6 +13,7 @@ import { Plugins, PushNotificationToken, PushNotification, PushNotificationActio
 import { RDParamsService } from '../rdparams.service';
 import { FoodAllergiesService } from '../rdmodals/food-allergies/food-allergies.service';
 import { Observable, Subscriber } from 'rxjs';
+import { BadgesService } from './profile/badges.service';
 const { PushNotifications } = Plugins;
 
 @Injectable({
@@ -30,6 +31,7 @@ export class NotificationsService {
     private profileService: ProfileService,
     private authService: AuthService,
     private foodAllergiesService: FoodAllergiesService,
+    private badgesService: BadgesService,
     private rdToast: RDToastService) {
 
     // Inizializzo l'observable per gestire evento di ricaricamento parametri
@@ -116,6 +118,7 @@ export class NotificationsService {
             if (this.paramsService.getParams().groupId) {
               this.profileService.getPartnerData(this.authService.getUserData()).then(() => {
                 this.foodAllergiesService.getPartnerFoodAllergies(this.authService.getUserData().userid);
+                this.badgesService.getPartnerBadges(this.authService.getUserData().userid);
               },
                 () => {
                   console.log("Errore getPartnerData")
@@ -123,6 +126,7 @@ export class NotificationsService {
             } else {
               this.profileService.clearPartner();
               this.foodAllergiesService.clearGroupFoodAllergies();
+              this.badgesService.clearGroupBadges();
               this.rdToast.show('Il gruppo è stato sciolto', 2000);
             }
             this.fireUpdateParamsEvent();
@@ -168,6 +172,7 @@ export class NotificationsService {
                   this.profileService.getPartnerData(this.authService.getUserData()).then(
                     () => {
                       this.foodAllergiesService.getPartnerFoodAllergies(this.authService.getUserData().userid);
+                      this.badgesService.getPartnerBadges(this.authService.getUserData().userid);
 
                       // Emetto l'evento di ricaricamento parametri anche se attualmente essendo
                       // utilizzato solo nella chat, è inutile ricaricarla dopo la creazione gruppo

@@ -8,6 +8,7 @@ import { RDParamsService } from '../rdparams.service';
 import { RDToastService } from '../rdtoast.service';
 import { ProfileService } from '../home/profile/profile.service';
 import { FoodAllergiesService } from '../rdmodals/food-allergies/food-allergies.service';
+import { BadgesService } from '../home/profile/badges.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,8 @@ export class AuthService {
     private navController: NavController,
     private rdParams: RDParamsService,
     private profileService: ProfileService,
-    private foodAllergiesService: FoodAllergiesService
+    private foodAllergiesService: FoodAllergiesService,
+    private badgesService: BadgesService
   ) {
     this.readUser();
   }
@@ -89,30 +91,45 @@ export class AuthService {
                 // Carico la lista di tutte le intolleranze e le intolleranze dell'utente
                 this.foodAllergiesService.getAllFoodAllergiesData().then(() => {
                   this.foodAllergiesService.getUserFoodAllergiesData(this.getUserData().userid).then(() => {
-                    if (this.rdParams.getParams().groupId) {
-                      this.profileService.getPartnerData(this.getUserData()).then(() => {
-                        this.foodAllergiesService.getPartnerFoodAllergies(this.getUserData().userid).then(() => {
-                          this.navController.navigateRoot('/home/tabs/dinners');
-                          resolve();
+                    this.badgesService.getUserBadges(this.getUserData().userid).then(() => {
+                      if (this.rdParams.getParams().groupId) {
+                        this.profileService.getPartnerData(this.getUserData()).then(() => {
+                          this.foodAllergiesService.getPartnerFoodAllergies(this.getUserData().userid).then(() => {
+                            this.badgesService.getPartnerBadges(this.getUserData().userid).then(() => {
+                              this.navController.navigateRoot('/home/tabs/dinners');
+                              resolve();
+                            },
+                              () => {
+                                console.log('Errore getPartnerBadges');
+                                this.navController.navigateRoot('/home/tabs/dinners');
+                                resolve();
+                              });
+                          },
+                            () => {
+                              console.log('Errore getPartnerFoodAllergies');
+                              this.navController.navigateRoot('/home/tabs/dinners');
+                              resolve();
+                            });
                         },
                           () => {
-                            console.log('Errore getPartnerFoodAllergies');
+                            console.log('Errore getPartnerData');
                             this.navController.navigateRoot('/home/tabs/dinners');
                             resolve();
                           });
-                      },
-                        () => {
-                          console.log('Errore getPartnerData');
-                          this.navController.navigateRoot('/home/tabs/dinners');
-                          resolve();
-                        });
-                    } else {
-                      // Imposto groupFoodAllergies vuoto in maniera da evitare errori
-                      localStorage.setItem('groupFoodAllergies', '[]');
-                      this.foodAllergiesService.readGroupFoodAllergies();
-                      this.navController.navigateRoot('/home/tabs/dinners');
-                      resolve();
-                    }
+                      } else {
+                        // Imposto groupFoodAllergies vuoto in maniera da evitare errori
+                        localStorage.setItem('groupFoodAllergies', '[]');
+                        this.foodAllergiesService.readGroupFoodAllergies();
+                        // Imposto groupBadges vuoto per evitare errore badgeFilter.pipe
+                        localStorage.setItem('groupBadges', '[]');
+                        this.badgesService.readGroupBadges();
+                        this.navController.navigateRoot('/home/tabs/dinners');
+                        resolve();
+                      }
+                    },
+                      () => {
+                        console.log('Errore getUserBadges');
+                      });
                   },
                     () => {
                       console.log('Errore getUserFoodAllergiesData');
@@ -155,6 +172,8 @@ export class AuthService {
           this.foodAllergiesService.clearUserFoodAllergies();
           this.foodAllergiesService.clearAllFoodAllergies();
           this.foodAllergiesService.clearGroupFoodAllergies();
+          this.badgesService.clearUserBadges();
+          this.badgesService.clearGroupBadges();
           this.rdParams.clearParams();
           this.clearFirebaseToken();
           this.navController.navigateRoot('/auth');
