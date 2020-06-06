@@ -11,6 +11,7 @@ import { RDSpinnerService } from 'src/app/rdspinner.service';
 })
 export class ContactsPage implements OnInit {
   contactList: RDContact[] = [];
+  modalOpen = false;
 
   constructor(
     public modalController: ModalController,
@@ -19,12 +20,16 @@ export class ContactsPage implements OnInit {
   ) { }
 
   async showContact(contactName: string, contactImage: string, contactId: number) {
+    this.modalOpen = true;
     const modal = await this.modalController.create({
       component: ContactsDetailPage,
       swipeToClose: true,
       backdropDismiss: true,
       componentProps: { contactName, contactImage, contactId },
       cssClass: "modal-style"
+    });
+    modal.onWillDismiss().then(() => {
+      this.modalOpen = false;
     });
     return await modal.present();
   }

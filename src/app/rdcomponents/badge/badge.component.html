@@ -1,42 +1,20 @@
 <ion-card>
   <ion-grid>
-    <ion-row class="ion-align-items-start no-padding">
-      <ion-col class="ion-text-center no-padding">
-        <h1>Badge posseduti</h1>
+    <ion-row style="align-items: center;" class="no-padding" *ngIf="contactBadges.length > 0">
+      <ion-col>
+        <p style="margin: 0%;">Badges</p>
       </ion-col>
     </ion-row>
-    <ion-row class="ion-align-items-center">
-      <ion-col class="ion-text-center">
-        <ion-avatar>
-          <img class="badge" src="assets/goldmedal.png" />
-        </ion-avatar>
-      </ion-col>
-      <ion-col class="ion-text-center">
-        <ion-avatar>
-          <img class="badge" src="assets/silvermedal.png" />
-        </ion-avatar>
-      </ion-col>
-      <ion-col class="ion-text-center">
-        <ion-avatar>
-          <img class="badge" src="assets/fish.png" />
-        </ion-avatar>
-      </ion-col>
-    </ion-row>
-    <ion-row class="ion-align-items-center">
-      <ion-col class="ion-text-center">
-        <ion-avatar>
-          <img class="badge" src="assets/meat.png" />
-        </ion-avatar>
-      </ion-col>
-      <ion-col class="ion-text-center">
-        <ion-avatar>
-          <img class="badge" src="assets/dress.png" />
-        </ion-avatar>
-      </ion-col>
-      <ion-col class="ion-text-center">
-        <ion-avatar>
-          <img class="badge" src="assets/Logo.png" />
-        </ion-avatar>
+    <ion-row style="padding-bottom: 2%;">
+      <ion-col class="no-padding">
+        <ion-slides [options]="slideOpts" *ngIf="contactBadges.length > 0">
+          <ion-slide *ngFor="let badge of contactBadges">
+            <ion-avatar>
+              <img [src]=badge.badge_photo />
+            </ion-avatar>
+          </ion-slide>
+        </ion-slides>
+        <h3 *ngIf="contactBadges.length === 0" style="text-align: center;">Nessun Badge posseduto</h3>
       </ion-col>
     </ion-row>
   </ion-grid>

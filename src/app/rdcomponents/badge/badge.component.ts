@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { UserBadge } from 'src/app/home/profile/badges.service';
 
 @Component({
   selector: 'rd-badge',
@@ -7,8 +8,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class BadgeComponent implements OnInit {
 
+  @Input() contactBadges: UserBadge[];
+
+  // Impostazioni ion-slides
+  slideOpts = {
+    slidesPerView: 5,
+    coverflowEffect: {
+      rotate: 50,
+      stretch: 0,
+      depth: 100,
+      modifier: 1,
+      slideShadows: true,
+    }
+  };
+
   constructor() { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
 }

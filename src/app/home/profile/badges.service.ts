@@ -161,6 +161,24 @@ export class BadgesService {
     localStorage.setItem('groupBadges', '[]');
     this.readGroupBadges();
   }
+
+  // Carica le i badges del contatto selezionato da DB
+  async getContactBadges(userId: number): Promise<UserBadge[]> {
+    return new Promise((resolve, reject) => {
+      this.http
+        .post(this.rdConstants.getApiRoute('getContactBadges'), { userId })
+        .toPromise()
+        .then(
+          res => {
+            this.convertImagesToJpeg(res as UserBadge[]);
+            resolve(res as UserBadge[]);
+          },
+          err => {
+            reject(err);
+          }
+        );
+    });
+  }
 }
 
 export interface UserBadge {
