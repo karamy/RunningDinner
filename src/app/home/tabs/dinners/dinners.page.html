@@ -1,20 +1,39 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Dinners</ion-title>
-
+    <ion-title>Elenco Cene</ion-title>
     <ion-buttons slot="primary">
       <rd-profile></rd-profile>
-      
+
       <!-- Permetto di creare una cena solo se già non partecipo ad una -->
-      <ion-button *ngIf="paramsService.getParams().groupId && !paramsService.getParams().dinnerId" routerLink="/home/tabs/dinners/create-dinner">
+      <ion-button *ngIf="paramsService.getParams().groupId && !paramsService.getParams().dinnerId"
+        routerLink="/home/tabs/dinners/create-dinner">
         <ion-icon name="add" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-
 </ion-header>
 
 <ion-content class="padding">
-  <rd-dinner></rd-dinner>
-  <rd-dinner></rd-dinner>
+  <ion-refresher slot="fixed" (ionRefresh)="loadDinners($event)">
+    <ion-refresher-content pullingIcon="lines" refreshingSpinner="lines">
+    </ion-refresher-content>
+  </ion-refresher>
+  <div *ngIf="!myDinner">
+    <ion-card>
+      Scegli la tua prossima RunningDinner :D!
+    </ion-card>
+  </div>
+  <div *ngIf="myDinner">
+    <rd-my-dinner (click)="goToDinnerDetail(myDinner)" [dinner]="myDinner"></rd-my-dinner>
+  </div>
+  <ion-list *ngIf="dinnerList && dinnerList.length > 0">
+    <div *ngFor="let dinner of dinnerList" (click)="goToDinnerDetail(dinner)">
+      <rd-dinner [dinner]="dinner"></rd-dinner>
+    </div>
+  </ion-list>
+  <div *ngIf="!dinnerList || !dinnerList.length">
+    <ion-card>
+      Non sono presenti cene a cui partecipare =(
+    </ion-card>
+  </div>
 </ion-content>

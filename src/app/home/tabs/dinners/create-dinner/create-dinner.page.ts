@@ -11,6 +11,7 @@ import { NotificationsService } from 'src/app/home/notifications.service';
   styleUrls: ['./create-dinner.page.scss'],
 })
 export class CreateDinnerPage implements OnInit {
+  dinnerTitle: string;
   dinnerDescription: string;
   dinnerType: number;
 
@@ -40,18 +41,22 @@ export class CreateDinnerPage implements OnInit {
     this.dinnerTypes = [
       {
         code: 1,
-        description: "Generica"
+        description: "Italiano"
       },
       {
         code: 2,
-        description: "Piemontese"
+        description: "Sushi"
       },
       {
         code: 3,
-        description: "Sushi"
+        description: "Vegan"
+      },
+      {
+        code: 4,
+        description: "Flash Dinner"
       }
     ];
-    this.dinnerType = 1; // Pre-seleziono tipologia generica
+    this.dinnerType = 1; // Pre-seleziono tipologia italiano
     this.dinnerDate = new Date(); // Pre-seleziono oggi
   }
 
@@ -83,6 +88,7 @@ export class CreateDinnerPage implements OnInit {
   // Effettua chiamata http e gestisce il risultato
   sendRequest() {
     const createDinnerBody = {
+      dinnerTitle: this.dinnerTitle,
       dinnerDescription: this.dinnerDescription,
       dinnerType: this.dinnerType,
       dinnerDate: this.dinnerDate,

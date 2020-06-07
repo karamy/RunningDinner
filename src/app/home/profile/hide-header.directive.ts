@@ -8,10 +8,11 @@ import { Directive, Input, ElementRef, Renderer } from '@angular/core';
 })
 
 export class HideHeaderDirective {
-
   @Input("header") header: any;
+
   constructor(public element: ElementRef, public renderer: Renderer) {
   }
+  
   ngOnInit() {
     this.renderer.setElementStyle(this.header.el, 'webkitTransition', 'top 700ms');
   }

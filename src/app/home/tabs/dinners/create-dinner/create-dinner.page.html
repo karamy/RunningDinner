@@ -9,6 +9,10 @@
 
 <ion-content class="padding">
   <ion-item>
+    <ion-label position="floating">Titolo</ion-label>
+    <ion-input [(ngModel)]="dinnerTitle"></ion-input>
+  </ion-item>
+  <ion-item>
     <ion-label position="floating">Descrizione</ion-label>
     <ion-input [(ngModel)]="dinnerDescription"></ion-input>
   </ion-item>
@@ -23,6 +27,7 @@
     <ion-datetime [(ngModel)]="dinnerDateStr" displayFormat="DD/MM/YYYY" placeholder="Data"></ion-datetime>
   </ion-item>
 </ion-content>
+
 <ion-footer class="ion-no-border">
   <ion-button [disabled]="!dinnerDescription" expand="block" strong=true color='secondary'
     fill='outline' (click)=onCreateDinner()>Crea Cena</ion-button>

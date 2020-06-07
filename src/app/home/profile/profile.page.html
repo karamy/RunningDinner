@@ -193,7 +193,7 @@
     </ion-grid>
   </ion-card>
   <ion-card
-    *ngIf="foodAllergiesService.getUserFoodAllergies().length === 0 && foodAllergiesService.getGroupFoodAllergies().length === 0 "
+    *ngIf="!foodAllergiesService.getUserFoodAllergies() || (foodAllergiesService.getUserFoodAllergies().length === 0 && foodAllergiesService.getGroupFoodAllergies().length === 0)"
     style="margin-bottom: 2.5%;">
     <ion-grid>
       <ion-row style="align-items: center;">
@@ -210,7 +210,7 @@
     </ion-grid>
   </ion-card>
   <ion-card
-    *ngIf="foodAllergiesService.getUserFoodAllergies().length > 0 || foodAllergiesService.getGroupFoodAllergies().length > 0"
+    *ngIf="foodAllergiesService.getUserFoodAllergies() && (foodAllergiesService.getUserFoodAllergies().length > 0 || foodAllergiesService.getGroupFoodAllergies().length > 0)"
     style="margin-bottom: 2.5%;">
     <ion-grid>
       <ion-row style="align-items: center;" class="no-padding">

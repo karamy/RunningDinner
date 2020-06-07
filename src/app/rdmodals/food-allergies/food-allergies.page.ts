@@ -10,7 +10,6 @@ import { AuthService } from 'src/app/auth/auth.service';
   styleUrls: ['./food-allergies.page.scss'],
 })
 export class FoodAllergiesPage implements OnInit {
-
   @Input() foodAllergies: FoodAllergy[];
   @Input() userFoodAllergies: UserAllergy[];
 

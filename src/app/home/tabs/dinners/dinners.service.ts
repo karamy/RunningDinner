@@ -19,11 +19,31 @@ export class DinnersService {
         () => { this.spinner.dismiss(); }
       );
   }
+
+  // Ottiene l'elenco delle cene (e dell'eventuale cena a cui partecipo)
+  async getDinners(): Promise<object> {
+    await this.spinner.create();
+    return this.http.get(this.rdConstants.getApiRoute('dinners'))
+      .toPromise()
+      .finally(
+        () => { this.spinner.dismiss(); }
+      );
+  }
 }
 
 // Rappresenta una tipologia di cena 
 export interface DinnerType {
-  code: number;
+  code: number; //1: italiano, 2: sushi, 3: vegan, 4: flash dinner
   description: string;
   background?: string; //TODO aggiungere gestione backgound della card in base alla tipologia di cena
+}
+
+// Rappresenta una cena 
+export interface Dinner {
+  id: number;
+  title: string;
+  description: string;
+  type: number; // rappresenta la tipologia di cena
+  date: Date;
+  administrator: number; // rappresenta l'id del gruppo amministratore della cena
 }
