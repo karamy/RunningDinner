@@ -31,7 +31,7 @@ export class CreateDinnerPage implements OnInit {
     private alertController: AlertController,
     private paramsService: RDParamsService,
     private navController: NavController,
-    private notificationService: NotificationsService) { }
+    private notificationsService: NotificationsService) { }
 
   ngOnInit() {
     this.customActionSheetOptions = {
@@ -57,7 +57,8 @@ export class CreateDinnerPage implements OnInit {
       }
     ];
     this.dinnerType = 1; // Pre-seleziono tipologia italiano
-    this.dinnerDate = new Date(); // Pre-seleziono oggi
+    this.dinnerDate = new Date();
+    this.dinnerDate.setDate(this.dinnerDate.getDate() + 1); // Pre-seleziono domani
   }
 
   // Creazione cena
@@ -76,7 +77,7 @@ export class CreateDinnerPage implements OnInit {
         }, {
           text: 'Certo!',
           handler: () => {
-            this.sendRequest();
+            this.sendRequestCreateDinner();
           }
         }
       ]
@@ -86,7 +87,7 @@ export class CreateDinnerPage implements OnInit {
   }
 
   // Effettua chiamata http e gestisce il risultato
-  sendRequest() {
+  sendRequestCreateDinner() {
     const createDinnerBody = {
       dinnerTitle: this.dinnerTitle,
       dinnerDescription: this.dinnerDescription,
@@ -99,7 +100,7 @@ export class CreateDinnerPage implements OnInit {
         // Ricarico parametri e vado in /dinners effettuando
         // reset della history per ricaricare in automatico le cene
         this.paramsService.loadParams().then(() => {
-          this.notificationService.fireUpdateParamsEvent();
+          this.notificationsService.fireUpdateParamsEvent();
         });
         this.navController.navigateRoot('/home');
       },

@@ -4,6 +4,11 @@
       <ion-back-button defaultHref="/home/tabs/dinners"></ion-back-button>
     </ion-buttons>
     <ion-title>{{dinner.title}}</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button (click)="onLeaveDinner()" *ngIf="isMyDinner()">
+        <ion-icon name="person-remove" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -11,4 +16,6 @@
   <ion-card>
     cena: {{dinner.id}}
   </ion-card>
+  <ion-button color="success" *ngIf="!paramsService.getParams().dinnerId" (click)="onJoinDinner()">Partecipa
+  </ion-button>
 </ion-content>

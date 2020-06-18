@@ -11,9 +11,9 @@ export class DinnersService {
   constructor(private http: HttpClient, private rdConstants: RDConstantsService, private spinner: RDSpinnerService) { }
 
   // Registra nuova cena a DB, e aggiunge il mio gruppo in automatico
-  async createDinner(dinnerBody): Promise<object> {
+  async createDinner(createDinnerBody): Promise<object> {
     await this.spinner.create();
-    return this.http.post(this.rdConstants.getApiRoute('dinners'), dinnerBody)
+    return this.http.post(this.rdConstants.getApiRoute('dinners'), createDinnerBody)
       .toPromise()
       .finally(
         () => { this.spinner.dismiss(); }
@@ -24,6 +24,26 @@ export class DinnersService {
   async getDinners(): Promise<object> {
     await this.spinner.create();
     return this.http.get(this.rdConstants.getApiRoute('dinners'))
+      .toPromise()
+      .finally(
+        () => { this.spinner.dismiss(); }
+      );
+  }
+
+  // Abbandona cena, eliminandola se sono l'unico partecipante
+  async leaveDinner(leaveDinnerBody): Promise<object> {
+    await this.spinner.create();
+    return this.http.post(this.rdConstants.getApiRoute('leaveDinner'), leaveDinnerBody)
+      .toPromise()
+      .finally(
+        () => { this.spinner.dismiss(); }
+      );
+  }
+
+  // Partecipa a cena
+  async joinDinner(joinDinnerBody): Promise<object> {
+    await this.spinner.create();
+    return this.http.post(this.rdConstants.getApiRoute('joinDinner'), joinDinnerBody)
       .toPromise()
       .finally(
         () => { this.spinner.dismiss(); }

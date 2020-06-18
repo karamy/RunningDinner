@@ -52,7 +52,7 @@ export class ProfilePage implements OnInit {
     private rdToast: RDToastService,
     private zone: NgZone,
     private modalController: ModalController,
-    private notificationService: NotificationsService) {
+    private notificationsService: NotificationsService) {
     defineCustomElements(window);
     this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
     this.autocompleteItems = [];
@@ -173,7 +173,7 @@ export class ProfilePage implements OnInit {
 
           // Emetto l'evento di ricaricamento parametri anche se attualmente essendo
           // utilizzato solo nella chat, è inutile ricaricarla dopo la creazione gruppo
-          this.notificationService.fireUpdateParamsEvent();
+          this.notificationsService.fireUpdateParamsEvent();
         });
       },
       (err) => { // Errore abbandono gruppo
