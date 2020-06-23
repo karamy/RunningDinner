@@ -83,9 +83,9 @@ export class DinnersService {
   }
 
   // Registra nuova cena a DB, e aggiunge il mio gruppo in automatico
-  async createDinner(dinnerBody): Promise<object> {
+  async createDinner(createDinnerBody): Promise<object> {
     await this.spinner.create();
-    return this.http.post(this.rdConstants.getApiRoute('dinners'), dinnerBody)
+    return this.http.post(this.rdConstants.getApiRoute('dinners'), createDinnerBody)
       .toPromise()
       .finally(
         () => { this.spinner.dismiss(); }
@@ -96,6 +96,16 @@ export class DinnersService {
   async getDinners(): Promise<object> {
     await this.spinner.create();
     return this.http.get(this.rdConstants.getApiRoute('dinners'))
+      .toPromise()
+      .finally(
+        () => { this.spinner.dismiss(); }
+      );
+  }
+
+  // Abbandona cena, eliminandola se sono l'unico partecipante
+  async leaveDinner(leaveDinnerBody): Promise<object> {
+    await this.spinner.create();
+    return this.http.post(this.rdConstants.getApiRoute('leaveDinner'), leaveDinnerBody)
       .toPromise()
       .finally(
         () => { this.spinner.dismiss(); }
@@ -214,7 +224,7 @@ export class DinnersService {
     }
   }
 
-  // Calcolo età utente
+  // Calcolo et� utente
   calcAge(userBirthdate: any) {
     const today = new Date();
     const dateArray = userBirthdate.split('/');
@@ -235,7 +245,7 @@ export class DinnersService {
     const dinnerTime = hours + "." + minutes;
 
     // Converto la data in formato nomeGiorno DD nomeMese YYYY 
-    const days = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"]
+    const days = ["Domenica", "Luned�", "Marted�", "Mercoled�", "Gioved�", "Venerd�", "Sabato"]
     const months = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
     const dinnerDate = days[date.getDay()] + ' ' + date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
     return [dinnerDate, dinnerTime];
@@ -279,6 +289,26 @@ export class DinnersService {
         }
       });
     });
+  }
+
+  // Partecipa a cena
+  async joinDinner(joinDinnerBody): Promise<object> {
+    await this.spinner.create();
+    return this.http.post(this.rdConstants.getApiRoute('joinDinner'), joinDinnerBody)
+      .toPromise()
+      .finally(
+        () => { this.spinner.dismiss(); }
+      );
+  }
+
+  // Aggiorna una cena se ne sono l'amministratore
+  async updateDinner(updateDinnerBody): Promise<object> {
+    await this.spinner.create();
+    return this.http.put(this.rdConstants.getApiRoute('dinners'), updateDinnerBody)
+      .toPromise()
+      .finally(
+        () => { this.spinner.dismiss(); }
+      );
   }
 }
 

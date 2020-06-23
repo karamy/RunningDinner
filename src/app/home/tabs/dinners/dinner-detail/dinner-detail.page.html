@@ -3,6 +3,17 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home/tabs/dinners"></ion-back-button>
     </ion-buttons>
+    <ion-buttons slot="primary">
+      <ion-button (click)="onLeaveDinner()" *ngIf="isMyDinner()">
+        <ion-icon name="person-remove" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button (click)="onEditDinner()" *ngIf="isAdministrator() && !isEdit">
+        <ion-icon name="create-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button (click)="onSaveDinner()" *ngIf="isEdit">
+        <ion-icon name="save-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -39,12 +50,12 @@
           </ion-col>
           <ion-col class="ion-text-start" style="padding-left: 2%;">
             <div *ngIf="dinnerDetails.minMaxAges.length > 0">
-              <h6 *ngIf="dinnerDetails.minMaxAges[0] !== dinnerDetails.minMaxAges[1]" class="dinner-info">Et√†
+              <h6 *ngIf="dinnerDetails.minMaxAges[0] !== dinnerDetails.minMaxAges[1]" class="dinner-info">Et‡
                 partecipanti
                 dai
                 {{dinnerDetails.minMaxAges[0]}} ai
                 {{dinnerDetails.minMaxAges[1]}} anni</h6>
-              <h6 *ngIf="dinnerDetails.minMaxAges[0] === dinnerDetails.minMaxAges[1]" class="dinner-info">Et√†
+              <h6 *ngIf="dinnerDetails.minMaxAges[0] === dinnerDetails.minMaxAges[1]" class="dinner-info">Et‡
                 partecipanti
                 {{dinnerDetails.minMaxAges[0]}} anni</h6>
             </div>
@@ -72,4 +83,18 @@
         [descriptionVoid]="'Nessuna intolleranza presente'"></rd-slider>
     </div>
   </div>
+
+  <h3 *ngIf="isEdit">Titolo</h3>
+  <ion-input *ngIf="isEdit" [(ngModel)]="_newTitle">
+  </ion-input>
+  <h3 *ngIf="isEdit">Descrizione</h3>
+  <ion-input *ngIf="isEdit" [(ngModel)]="_newDescription">
+  </ion-input>
+
+  <ion-button color="success" *ngIf="!paramsService.getParams().dinnerId" (click)="onJoinDinner()">Partecipa
+  </ion-button>
+
+  <!-- <ion-button color="success" (click)="runCombinazioni()">TEST
+  </ion-button> -->
+
 </ion-content>
