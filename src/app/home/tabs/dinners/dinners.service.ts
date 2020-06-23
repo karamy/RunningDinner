@@ -49,6 +49,16 @@ export class DinnersService {
         () => { this.spinner.dismiss(); }
       );
   }
+
+  // Aggiorna una cena se ne sono l'amministratore
+  async updateDinner(updateDinnerBody): Promise<object> {
+    await this.spinner.create();
+    return this.http.put(this.rdConstants.getApiRoute('dinners'), updateDinnerBody)
+      .toPromise()
+      .finally(
+        () => { this.spinner.dismiss(); }
+      );
+  }
 }
 
 // Rappresenta una tipologia di cena 
