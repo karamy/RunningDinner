@@ -6,13 +6,13 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class CategoryFilterPipe implements PipeTransform {
 
   transform(food: any[], arg: string): unknown {
-    let filtered = []
+    const filtered = [];
     for (let i = 0; i < food.length; i++) {
       if (food[i].category === arg) {
-        filtered.push(food[i])
+        filtered.push(food[i]);
       }
     }
-    return filtered
+    return filtered;
   }
 
 }

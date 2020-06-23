@@ -4,7 +4,7 @@ import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { ContactsService } from '../tabs/contacts/contacts.service';
 import { ModalController } from '@ionic/angular';
-import { FoodAllergiesPage, FoodAllergy, UserAllergy } from 'src/app/rdmodals/food-allergies/food-allergies.page';
+import { FoodAllergiesPage, UserAllergy } from 'src/app/rdmodals/food-allergies/food-allergies.page';
 import { UserService } from 'src/app/auth/user.service';
 import { ProfileService } from './profile.service';
 import { PhotoService } from 'src/app/sign-up/profile-photo/photo.service';

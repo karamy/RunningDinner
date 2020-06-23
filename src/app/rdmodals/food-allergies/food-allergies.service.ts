@@ -81,7 +81,7 @@ export class FoodAllergiesService {
     });
   }
 
-  private convertImagesToJpeg(userFoodAllergies: FoodAllergy[]) {
+  public convertImagesToJpeg(userFoodAllergies: FoodAllergy[]) {
     for (let i = 0; i < userFoodAllergies.length; i++) {
       userFoodAllergies[i].allergy_photo = 'data:image/jpeg;base64,' + userFoodAllergies[i].allergy_photo;
     }
@@ -89,13 +89,13 @@ export class FoodAllergiesService {
   }
 
   // Ritorna le intolleranze ordinate alfabeticamente
-  private orderFoodAllergies(userFoodAllergies: FoodAllergy[]) {
+  public orderFoodAllergies(userFoodAllergies: FoodAllergy[]) {
     userFoodAllergies.sort((a, b) => (a.category > b.category) ? 1 : ((b.category > a.category) ? -1 : 0));
     return userFoodAllergies;
   }
 
   // Creo un array contenente solo le categorie (una sola copia) delle intolleranze, ordinandolo
-  private createCategoryArray(userFoodAllergies: FoodAllergy[]) {
+  public createCategoryArray(userFoodAllergies: FoodAllergy[]) {
     let categories: string[] = [];
     for (let i = 0; i < userFoodAllergies.length; i++) {
       categories.push(userFoodAllergies[i].category);

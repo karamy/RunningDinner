@@ -38,24 +38,7 @@ export class CreateDinnerPage implements OnInit {
       header: 'Tipologia',
       subHeader: 'Seleziona la tipologia di cena'
     };
-    this.dinnerTypes = [
-      {
-        code: 1,
-        description: "Italiano"
-      },
-      {
-        code: 2,
-        description: "Sushi"
-      },
-      {
-        code: 3,
-        description: "Vegan"
-      },
-      {
-        code: 4,
-        description: "Flash Dinner"
-      }
-    ];
+    this.dinnerTypes = this.dinnersService.getDinnerTypes();
     this.dinnerType = 1; // Pre-seleziono tipologia italiano
     this.dinnerDate = new Date(); // Pre-seleziono oggi
   }
