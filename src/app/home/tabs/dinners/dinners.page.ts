@@ -34,9 +34,11 @@ export class DinnersPage implements OnInit {
         console.log(response);
         this.myDinner = response.myDinner;
         this.dinnerList = response.otherDinners;
-        const myDinnerDateTime = this.dinnersService.formatDate(this.myDinner.date)
-        this.myDinner.dateString = myDinnerDateTime[0]
-        this.myDinner.time = myDinnerDateTime[1]
+        if (this.myDinner) {
+          const myDinnerDateTime = this.dinnersService.formatDate(this.myDinner.date)
+          this.myDinner.dateString = myDinnerDateTime[0]
+          this.myDinner.time = myDinnerDateTime[1]
+        }
         for (let i = 0; i < this.dinnerList.length; i++) {
           const dinnerDateTime = this.dinnersService.formatDate(this.dinnerList[i].date)
           this.dinnerList[i].dateString = dinnerDateTime[0]
