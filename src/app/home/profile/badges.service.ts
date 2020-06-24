@@ -35,7 +35,7 @@ export class BadgesService {
     });
   }
 
-  private convertImagesToJpeg(badges: UserBadge[]) {
+  public convertImagesToJpeg(badges: UserBadge[]) {
     for (let i = 0; i < badges.length; i++) {
       badges[i].badge_photo = 'data:image/jpeg;base64,' + badges[i].badge_photo;
     }
@@ -43,7 +43,7 @@ export class BadgesService {
   }
 
   // Sostituisce il carattere |n| con l'attuale progress del badge
-  private setDescriptionProgress(badges: UserBadge[]) {
+  public setDescriptionProgress(badges: UserBadge[]) {
     for (let i = 0; i < badges.length; i++) {
       if (badges[i].description.includes('|n|')) {
         if (badges[i].progress === null) {
@@ -185,6 +185,7 @@ export interface UserBadge {
   badge_id: number;
   description: string;
   badge_photo: string;
-  phase: number;
+  phase?: number;
   progress: number;
+  group_id?: number;
 }

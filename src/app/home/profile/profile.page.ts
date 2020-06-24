@@ -4,7 +4,7 @@ import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { ContactsService } from '../tabs/contacts/contacts.service';
 import { ModalController } from '@ionic/angular';
-import { FoodAllergiesPage, FoodAllergy, UserAllergy } from 'src/app/rdmodals/food-allergies/food-allergies.page';
+import { FoodAllergiesPage, UserAllergy } from 'src/app/rdmodals/food-allergies/food-allergies.page';
 import { UserService } from 'src/app/auth/user.service';
 import { ProfileService } from './profile.service';
 import { PhotoService } from 'src/app/sign-up/profile-photo/photo.service';
@@ -52,7 +52,7 @@ export class ProfilePage implements OnInit {
     private rdToast: RDToastService,
     private zone: NgZone,
     private modalController: ModalController,
-    private notificationService: NotificationsService) {
+    private notificationsService: NotificationsService) {
     defineCustomElements(window);
     this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
     this.autocompleteItems = [];
@@ -173,7 +173,7 @@ export class ProfilePage implements OnInit {
 
           // Emetto l'evento di ricaricamento parametri anche se attualmente essendo
           // utilizzato solo nella chat, è inutile ricaricarla dopo la creazione gruppo
-          this.notificationService.fireUpdateParamsEvent();
+          this.notificationsService.fireUpdateParamsEvent();
         });
       },
       (err) => { // Errore abbandono gruppo

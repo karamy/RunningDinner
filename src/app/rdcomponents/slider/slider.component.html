@@ -1,0 +1,82 @@
+<ion-card>
+  <ion-grid>
+    <ion-row style="align-items: center;" class="no-padding" *ngIf="objectsArray.length > 0">
+      <ion-col>
+        <p *ngIf="type === 'badge'" style="margin: 0%;">Badges</p>
+        <p *ngIf="type === 'foodAllergy'" style="margin: 0%;">Intolleranze Alimentari</p>
+      </ion-col>
+      <ion-col *ngIf="expandable" style="padding-top: 0%;" class="ion-text-end">
+        <ion-button fill=" clear" size="small" style="margin: 0%;font-size: 14px;" *ngIf="!expand"
+          (click)="expand = !expand">
+          Espandi
+        </ion-button>
+        <ion-button fill=" clear" size="small" style="margin: 0%;font-size: 14px;" *ngIf="expand"
+          (click)="expand = !expand">
+          Riduci
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="!expand" style="padding-bottom: 2%;">
+      <ion-col class="no-padding">
+        <ion-slides [options]="slideOpts" *ngIf="objectsArray.length > 0">
+          <ion-slide *ngFor="let badge of objectsArray">
+            <ion-avatar>
+              <img *ngIf="type === 'badge'" [src]=badge.badge_photo />
+              <img *ngIf="type === 'foodAllergy'" [src]=badge.allergy_photo />
+            </ion-avatar>
+          </ion-slide>
+        </ion-slides>
+        <h3 *ngIf="objectsArray.length === 0 && type === 'badge'" style="text-align: center;">{{descriptionVoid}}</h3>
+        <h3 *ngIf="objectsArray.length === 0 && type === 'foodAllergy'" style="text-align: center;">{{descriptionVoid}}
+        </h3>
+      </ion-col>
+    </ion-row>
+    <div *ngIf="expand">
+      <div *ngIf="type === 'foodAllergy'">
+        <ion-row *ngFor="let category of categories" style="padding: 2%;">
+          <ion-col class="no-padding">
+            <h3 style="margin-top: 2%;text-align: center;">{{category}}</h3>
+            <ion-card *ngFor="let food of objectsArray | categoryFilter: category">
+              <ion-grid>
+                <ion-row class="no-padding">
+                  <ion-col class="no-padding">
+                    <ion-list>
+                      <ion-item lines="none">
+                        <ion-avatar>
+                          <img [src]="food.allergy_photo">
+                        </ion-avatar>
+                        <ion-label style="margin-left: 3%;">{{food.allergy_name}}</ion-label>
+                      </ion-item>
+                    </ion-list>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </div>
+      <div *ngIf="type === 'badge'">
+        <ion-row>
+          <ion-col class="no-padding">
+            <ion-card *ngFor="let badge of objectsArray">
+              <ion-grid>
+                <ion-row class="no-padding">
+                  <ion-col class="no-padding">
+                    <ion-list>
+                      <ion-item lines="none">
+                        <ion-avatar>
+                          <img [src]="badge.badge_photo">
+                        </ion-avatar>
+                        <ion-label style="margin-left: 3%;">{{badge.description}}</ion-label>
+                      </ion-item>
+                    </ion-list>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </div>
+    </div>
+  </ion-grid>
+</ion-card>

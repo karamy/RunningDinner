@@ -10,7 +10,7 @@
     <h3 class="user-name">{{contactName}}</h3>
   </div>
 </div>
-<rd-badge [contactBadges]="contactBadges"></rd-badge>
+<rd-slider [objectsArray]="contactBadges" [type]="'badge'" [descriptionVoid]="'Nessun badge posseduto'"></rd-slider>
 <ion-card *ngIf="!paramsService.getParams().groupId" style="margin-bottom: 2.5%;">
   <ion-grid>
     <ion-row class="ion-align-items-center">

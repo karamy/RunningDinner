@@ -32,7 +32,7 @@ export class ChatPage implements OnInit {
     this.messagesSubscription = this.chatService.init().subscribe((receivedMessages) => {
       this.handleNewMessages(receivedMessages);
     });
-    this.notificationService.getUpdateParamsObservable().subscribe(() => {
+    this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log("Chat - Ricarico parametri e messaggi");
       this.dinnerMessages = [];
       this.messagesSubscription.unsubscribe();

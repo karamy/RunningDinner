@@ -267,7 +267,7 @@ export interface UserData {
   userid: number;
   name: string;
   address: string;
-  phone_number: number;
+  phone_number?: number;
   birth_date: Date;
   profile_photo: string;
 }
