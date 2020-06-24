@@ -112,7 +112,7 @@ export class DinnersService {
       );
   }
 
-  // Registra nuova cena a DB, e aggiunge il mio gruppo in automatico
+  // Ottiene i dettagli della cena
   async getDinnerDetails(dinner: Dinner): Promise<DinnerDetails> {
     const dinnerId = dinner.id;
     const userId = this.authService.getUserData().userid;
@@ -224,7 +224,7 @@ export class DinnersService {
     }
   }
 
-  // Calcolo et� utente
+  // Calcolo età utente
   calcAge(userBirthdate: any) {
     const today = new Date();
     const dateArray = userBirthdate.split('/');

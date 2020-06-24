@@ -44,6 +44,7 @@ export class DinnerDetailPage implements OnInit {
     });
   }
 
+  // Inizializza la mappa per mostrare l'utente e gli altri partecipanti alla cena
   initMap(addresses: google.maps.LatLng[], userAddress: google.maps.LatLng[]) {
     const bounds = new google.maps.LatLngBounds();
     const markers: google.maps.Marker[] = [];

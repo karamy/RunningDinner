@@ -1,114 +1,17 @@
-
 body{
   font-family: "Ubuntu-Italic", "Lucida Sans", helvetica, sans;
 }
-/* General CSS Setup 
- container 
-.container {
-  padding: 5% 5%;
-}
 
- CSS talk bubble 
-.talk-bubble {
-  margin-right: 10%;
-  margin-left: 10%;
-  margin-top: 1em;
-  display: inline-block;
-  position: relative;
-	width: 80%;
-	height: auto;
-}
-.border{
-  border: 8px solid #666;
-}
-.round{
-  border-radius: 30px;
-	-webkit-border-radius: 30px;
-	-moz-border-radius: 30px;
-
-}
- Right triangle placed top right flush. 
-.tri-right.border.right-top:before {
-	content: ' ';
-	position: absolute;
-	width: 0;
-	height: 0;
-  left: auto;
-	right: -40px;
-  top: -8px;
-	bottom: auto;
-	border: 32px solid;
-  border-color: #666 transparent transparent transparent;
-
-}
-.tri-right.right-top:after{
-	content: ' ';
-	position: absolute;
-	width: 0;
-	height: 0;
-  left: auto;
-	right: -20px;
-  top: 0px;
-	bottom: auto;
-	border: 20px solid;
-  border-color: lightgrey transparent transparent transparent;
-}
-.right-top, body{
-  background-color: lightgrey;
-}
-
-.tri-right.border.left-top:before {
-	content: ' ';
-	position: absolute;
-	width: 0;
-	height: 0;
-  left: -40px;
-	right: auto;
-  top: -8px;
-	bottom: auto;
-	border: 32px solid;
-  border-color: #666 transparent transparent transparent;
-}
-.tri-right.left-top:after{
-	content: ' ';
-	position: absolute;
-	width: 0;
-	height: 0;
-  left: -20px;
-	right: auto;
-  top: 0px;
-	bottom: auto;
-	border: 22px solid;
-  border-color: #9CC7AE transparent transparent transparent;
-}
-.left-top, body{
-  background-color: #9CC7AE;
-}
-
- talk bubble contents 
-.talktext{
-  padding: 1em;
-	text-align: left;
-  line-height: 1.5em;
-}
-.talktext p{
-   remove webkit p margins 
-  -webkit-margin-before: 0em;
-  -webkit-margin-after: 0em;
-}
-.msg-time{
-  float:right;
-  color:lightcoral;
-}
-*/
 .newmsg{
   display:inline-block;
   width:60%;
 }
+
 ion-icon{
   font-size: 1.5em;
   color:#9CC7AE;
 }
+
 .footer-button{
   float:right;
 }
@@ -133,16 +36,14 @@ div.message{
 	clear:both;
 	margin-bottom:45px;
 }
+
 div.message.right{
-	
-	
 	padding: 0 58px 30px 0;
 	margin-left: 10%;
 	margin-bottom:45px;
-
 }
-.message .bubble{	
 
+.message .bubble{	
 	background:#f0f4f7;
 	font-size:13px;
 	font-weight:600;
@@ -150,31 +51,27 @@ div.message.right{
 	border-radius:5px 5px 5px 0px;
 	color:#8495a3;
 	position:relative;
-
 }
- div.message.right .bubble{
 
+ div.message.right .bubble{
 	float:right;
 	border-radius:5px 5px 0px 5px ;
-
 }
 .bubble .corner{
-
 	background:url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/bubble-corner.png") 0 0 no-repeat;
 	position:absolute;
 	width:7px;
 	height:7px;
 	left:-5px;
 	bottom:0;
-
 }
 div.message.right .corner{
 
 	background:url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/bubble-cornerR.png") 0 0 no-repeat;
 	left:auto;
 	right:-5px;
-
 }
+
 .bubble span{
 	  color: #aab8c2;
 	  font-size: 11px;
@@ -182,15 +79,16 @@ div.message.right .corner{
 	  right: 0;
 	  bottom: -22px;
 }
+
 ion-avatar {
 	float: left;
 	margin-left: -38px;
 	width: 30px;
 	height: 30px;
 }
+
 div.message.right ion-avatar {
   float: right;	
   margin-left: 0;
   margin-right: -38px;	
 }
-
