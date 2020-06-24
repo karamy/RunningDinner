@@ -4,6 +4,9 @@ import { ChatService, ChatMsg } from "src/app/home/tabs/chat/chat.service";
 import { IonContent } from '@ionic/angular';
 import { NotificationsService } from '../../notifications.service';
 import { Subscription } from 'rxjs';
+import { ProfileService } from 'src/app/home/profile/profile.service';
+
+
 
 @Component({
   selector: 'app-chat',
@@ -20,6 +23,7 @@ export class ChatPage implements OnInit {
 
   constructor(private chatService: ChatService,
     private authService: AuthService,
+    public profileService: ProfileService,
     private notificationService: NotificationsService) { }
 
   ngOnInit() {

@@ -77,6 +77,14 @@ export class ChatService {
     return dd + '/' + mm + '/' + yyyy;
   }
 
+  //ottengo i dati dello user che ha inviato il messaggio
+  getSentbyUser(sentby){
+  }
+
+  //ottengo i dati del partner dello user che ha inviato il messaggio
+  getSentbyPartner(sentby){
+  }
+
   // Invia un nuovo messaggio, ritornando la Promise di firebase
   addNewMessage(msgText) {
     const time = this.formatAMPM(new Date());

@@ -10,23 +10,33 @@
 <ion-content #chatContent>
   <div>
     <ion-list lines="none">
+      
       <ion-item *ngFor = "let item of dinnerMessages" text-wrap>
-        <div *ngIf="item.sentby != user.name" class="talk-bubble tri-right round border left-top">
-          <div class="talktext">
-            <p>{{item.message}}</p>
-            <p class="msg-time">{{item.timeofmsg}}</p>
-          </div>
+        <div *ngIf="item.sentby != user.name" class="message">
+          <ion-avatar> <img [src]="user.profile_photo"></ion-avatar>
+          <div class="bubble">
+            {{item.message}}
+          <div class="corner"></div>
+          <span>{{item.timeofmsg}}</span>
         </div>
+      </div>
 
-        <div *ngIf="item.sentby === user.name" class="talk-bubble tri-right round border right-top">
-          <div class="talktext">
-            <p>{{item.message}}</p>
-            <p class="msg-time">{{item.timeofmsg}}</p>
-          </div>
+        <div *ngIf="item.sentby === user.name" class="message right">
+           <ion-avatar> <img [src]="user.profile_photo"></ion-avatar>
+           <ion-avatar *ngIf="profileService.getPartner()" class="avatar-partner">
+            <img [src]="profileService.getPartner().profile_photo">
+          </ion-avatar>
+            <div class="bubble">
+            {{item.message}}
+          <div class="corner"></div>
+          <span>{{item.timeofmsg}}</span>
         </div>
+      </div>
+
       </ion-item>
     </ion-list>
   </div>
+
   </ion-content>
   <ion-footer>
     <form >
