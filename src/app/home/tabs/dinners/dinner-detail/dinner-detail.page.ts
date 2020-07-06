@@ -33,19 +33,39 @@ export class DinnerDetailPage implements OnInit {
     private navController: NavController) { }
 
   ngOnInit() {
+    // Ottengo i dati di testate della cena dai parametri della rotta
     this.route.queryParams.subscribe((dinner: Dinner) => {
-      this.dinner = dinner;
-      console.log(dinner);
-      this.dinnersService.getDinnerDetails(this.dinner).then(res => {
-        this.dinnerDetails = res;
-        this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type));
-        this.initMap(this.dinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
-      });
+      this.dinner = { ...dinner }; // Clono l'oggetto passato come parametro in quanto, essendo immutabile, darebbe errore nell'edit della cena
+      this.getDinnerDetails();
+    });
+
+    // Registrazione observable per reagire al ricaricamento chat (es. vengo rimosso da una cena)
+    this.notificationsService.getUpdateParamsObservable().subscribe(() => {
+      console.log("Dinner Detail - Ricarico cena");
+      this.getDinnerDetails();
+    });
+  }
+
+  // Carica i dettagli della cena
+  getDinnerDetails() {
+    this.dinnersService.getDinnerDetails(this.dinner).then(res => {
+      this.dinnerDetails = res;
+
+      // Sovrascrivo titolo e descrizione in quanto possono essere modificati
+      const dinnerData = res.dinnerData;
+      this.dinner.title = dinnerData.title;
+      this.dinner.description = dinnerData.description;
+
+      // Ottengo la tipologia
+      this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type));
+
+      // Carico la mappa
+      this.initMap(this.dinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
     });
   }
 
   // Inizializza la mappa per mostrare l'utente e gli altri partecipanti alla cena
-  initMap(addresses: google.maps.LatLng[], userAddress: google.maps.LatLng[]) {
+  private initMap(addresses: google.maps.LatLng[], userAddress: google.maps.LatLng[]) {
     const bounds = new google.maps.LatLngBounds();
     const markers: google.maps.Marker[] = [];
 
@@ -156,11 +176,6 @@ export class DinnerDetailPage implements OnInit {
     this._newDescription = this.dinner.description;
   }
 
-  // Carica i dettagli della cena
-  getDinnerDetail() {
-    console.log("RICARICO CENA");
-  }
-
   // Salva la cena modificata
   onSaveDinner() {
     const updateDinnerBody = {
@@ -172,7 +187,7 @@ export class DinnerDetailPage implements OnInit {
     this.dinnersService.updateDinner(updateDinnerBody)
       .then(
         () => {
-          this.getDinnerDetail(); // Ricarico la cena in caso di esito positivo
+          this.getDinnerDetails(); // Ricarico la cena in caso di esito positivo
         },
         (err) => {
           console.log(err);
@@ -184,7 +199,7 @@ export class DinnerDetailPage implements OnInit {
   }
 
   // Effettua chiamata http per abbandonare cena e gestisce il risultato
-  sendRequestLeaveDinner() {
+  private sendRequestLeaveDinner() {
     const leaveDinnerBody = {
       dinnerId: this.dinner.id,
       groupId: this.paramsService.getParams().groupId
@@ -230,7 +245,7 @@ export class DinnerDetailPage implements OnInit {
   }
 
   // Effettua chiamata http per partecipare alla cena e gestisce il risultato
-  sendRequestJoinDinner() {
+  private sendRequestJoinDinner() {
     const joinDinnerBody = {
       dinnerId: this.dinner.id,
       groupId: this.paramsService.getParams().groupId

@@ -31,7 +31,7 @@
       <rd-dinner [dinner]="dinner"></rd-dinner>
     </div>
   </ion-list>
-  <div *ngIf="!dinnerList || !dinnerList.length">
+  <div *ngIf="!myDinner && (!dinnerList || !dinnerList.length)">
     <ion-card>
       Non sono presenti cene a cui partecipare =(
     </ion-card>

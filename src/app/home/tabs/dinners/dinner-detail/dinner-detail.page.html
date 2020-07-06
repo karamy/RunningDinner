@@ -25,7 +25,8 @@
   </div>
   <div class="card-body" style="height: fit-content; margin-bottom: 2%;">
     <div class="dinner-meta ion-text-center">
-      <h3 class="dinner-name">{{dinner.title}}</h3>
+      <h3 *ngIf="!isEdit" class="dinner-name">{{dinner.title}}</h3>
+      <ion-input *ngIf="isEdit" class="dinner-edit" [(ngModel)]="_newTitle"></ion-input>
       <h3 class="dinner-name">{{dinnerType}}</h3>
       <ion-grid>
         <ion-row>
@@ -72,9 +73,10 @@
           </ion-col>
         </ion-row>
       </ion-grid>
-      <div class="dinner-description">
+      <div *ngIf="!isEdit" class="dinner-description">
         {{dinner.description}}
       </div>
+      <ion-input *ngIf="isEdit" class="dinner-edit" [(ngModel)]="_newDescription"></ion-input>
       <rd-slider [objectsArray]="dinnerDetails.badges" [type]="'badge'" [expandable]="true"
         [descriptionVoid]="'Nessun badge presente'">
       </rd-slider>
@@ -83,13 +85,6 @@
         [descriptionVoid]="'Nessuna intolleranza presente'"></rd-slider>
     </div>
   </div>
-
-  <h3 *ngIf="isEdit">Titolo</h3>
-  <ion-input *ngIf="isEdit" [(ngModel)]="_newTitle">
-  </ion-input>
-  <h3 *ngIf="isEdit">Descrizione</h3>
-  <ion-input *ngIf="isEdit" [(ngModel)]="_newDescription">
-  </ion-input>
 
   <ion-button color="success" *ngIf="!paramsService.getParams().dinnerId" (click)="onJoinDinner()">Partecipa
   </ion-button>

@@ -129,6 +129,7 @@ export class DinnersService {
         .then(
           res => {
             const avgDistance = res['avgDistance'];
+            const dinnerData = res['dinnerData'];
             const dinnerBadges = this.getDinnerBadges(res as DinnerDetails);
             const dinnerFoodAllergies = this.getDinnerFoodAllergies(res as DinnerDetails);
             const dinnerMinMaxAges = this.getDinnerUsersData(res as DinnerDetails);
@@ -142,7 +143,8 @@ export class DinnersService {
                 minMaxAges: dinnerMinMaxAges,
                 addressesLatLng: addressesLatLng,
                 userLatLng: userLatLng,
-                avgDistance: avgDistance
+                avgDistance: avgDistance,
+                dinnerData: dinnerData
               }
               resolve(dinnerDetails);
             })
@@ -342,4 +344,5 @@ export interface DinnerDetails {
   avgDistance?: number;
   addressesLatLng?: google.maps.LatLng[];
   userLatLng?: google.maps.LatLng[];
+  dinnerData?: Dinner;
 }
