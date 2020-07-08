@@ -1,0 +1,145 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home/tabs/dinners">Back</ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button shape="round" size="large" slot="icon-only" (click)="presentPopover($event, dinner.time)">
+        <ion-icon size="large" name="help-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content scrollY="false" fullscreen="true" slot="fixed">
+  <div id="map" class="background-map"></div>
+  <div class="countdown" id="countdown"></div>
+  <ion-grid class="layout-grid">
+    <ion-row class="notch-row">
+      <ion-col style="height: 100%;">
+        <div class="notch">
+          <h3 class="dinner-title">{{dinner.title}}</h3>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row style="height: 100%;">
+      <ion-col style="height: 100%;">
+        <div class="card-body">
+          <div class="dinner-meta ion-text-center">
+            <ion-grid>
+              <ion-row style="margin-top: 5%">
+                <ion-col>
+                  <h3 class="dinner-name">Cena di {{dinnerType}}</h3>
+                </ion-col>
+                <ion-col *ngIf="dinnerDetails.foodAllergies.length > 0">
+                  <div class="foodAllergies">
+                    <ion-button style="margin: 0%; color: black;" size="small" fill="clear"
+                      (click)="presentModalFoodAllergies(myDinnerDetails.foodAllergies, myDinnerDetails.foodAllergiesCategories)">
+                      Sono presenti intolleranze
+                      <ion-icon slot="start" size="default" name="heart-circle-outline"></ion-icon>
+                    </ion-button>
+                  </div>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+            <ion-grid>
+              <ion-row>
+                <ion-col class="ion-text-center" style="padding-left: 2%;">
+                  <h6 *ngIf="myDinnerDetails.myDish.dishId === 1" style="margin-bottom: 0px; margin-top: 10px;">Tu e
+                    {{partnerName}}
+                    dovrete cucinare
+                    l'{{myDinnerDetails.myDish.dishName}}</h6>
+                  <h6 *ngIf="myDinnerDetails.myDish.dishId !== 1" style="margin-bottom: 0px; margin-top: 10px;">Tu e
+                    {{partnerName}}
+                    dovrete cucinare il
+                    {{myDinnerDetails.myDish.dishName}}</h6>
+                </ion-col>
+              </ion-row>
+              <ion-row class="ion-text-center" style="padding-top: 2%;">
+                <ion-col size="1" class="ion-align-items-center">
+                  <ion-icon name="time-outline"></ion-icon>
+                </ion-col>
+                <ion-col class="ion-text-start" style="padding-left: 2%;">
+                  <h6 class="dinner-info">{{dinner.dateString}} alle {{dinner.time}}</h6>
+                </ion-col>
+              </ion-row>
+              <ion-row style="margin-top: 3%;">
+                <ion-col style="display: contents;" class="ion-text-center">
+                  <ion-avatar *ngIf="myDinnerDetails.dishes.length > 0" class="avatar-left">
+                    <img [src]="myDinnerDetails.dishes[0].usersData[0].profile_photo">
+                  </ion-avatar>
+                  <ion-avatar *ngIf="myDinnerDetails.dishes.length > 0" class="avatar-right">
+                    <img [src]="myDinnerDetails.dishes[0].usersData[1].profile_photo">
+                  </ion-avatar>
+                </ion-col>
+                <ion-col *ngIf="myDinnerDetails.dishes.length > 0" class="ion-text-center">
+                  <p style="margin: 0px;">{{myDinnerDetails.dishes[0].dish.dishName}} a casa di
+                    {{myDinnerDetails.dishes[0].usersData[0].name}}
+                    &
+                    {{myDinnerDetails.dishes[0].usersData[1].name}}</p>
+                  <span>
+                    <p style="margin: 0px;">Alle 21.20</p>
+                  </span>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col style="height: 40px; margin-left: 4%;" size="1">
+                  <div class="dotted-line"></div>
+                </ion-col>
+                <ion-col class="ion-text-start">
+                  <p style="margin: 0px; margin-left: 2%;">{{myDinnerDetails.dishDistances[0]}}</p>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col style="display: contents;" class="ion-text-center">
+                  <ion-avatar *ngIf="myDinnerDetails.dishes.length > 0" class="avatar-left">
+                    <img [src]="myDinnerDetails.dishes[1].usersData[0].profile_photo">
+                  </ion-avatar>
+                  <ion-avatar *ngIf="myDinnerDetails.dishes.length > 0" class="avatar-right">
+                    <img [src]="myDinnerDetails.dishes[1].usersData[1].profile_photo">
+                  </ion-avatar>
+                </ion-col>
+                <ion-col *ngIf="myDinnerDetails.dishes.length > 0" class="ion-text-center">
+                  <p style="margin: 0px;">{{myDinnerDetails.dishes[1].dish.dishName}} a casa di
+                    {{myDinnerDetails.dishes[1].usersData[0].name}}
+                    &
+                    {{myDinnerDetails.dishes[1].usersData[1].name}}</p>
+                  <span>
+                    <p style="margin: 0px;">Alle 22.30</p>
+                  </span>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col style="height: 40px; margin-left: 4%;" size="1">
+                  <div class="dotted-line"></div>
+                </ion-col>
+                <ion-col class="ion-text-start">
+                  <p style="margin: 0px; margin-left: 2%;">{{myDinnerDetails.dishDistances[1]}}</p>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col style="display: contents;" class="ion-text-center">
+                  <ion-avatar *ngIf="myDinnerDetails.dishes.length > 0" class="avatar-left">
+                    <img [src]="myDinnerDetails.dishes[2].usersData[0].profile_photo">
+                  </ion-avatar>
+                  <ion-avatar *ngIf="myDinnerDetails.dishes.length > 0" class="avatar-right">
+                    <img [src]="myDinnerDetails.dishes[2].usersData[1].profile_photo">
+                  </ion-avatar>
+                </ion-col>
+                <ion-col *ngIf="myDinnerDetails.dishes.length > 0" class="ion-text-center">
+                  <p style="margin: 0px;">{{myDinnerDetails.dishes[2].dish.dishName}} a casa di
+                    {{myDinnerDetails.dishes[2].usersData[0].name}}
+                    &
+                    {{myDinnerDetails.dishes[2].usersData[1].name}}</p>
+                  <span>
+                    <p style="margin: 0px;">Alle 23.00</p>
+                  </span>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

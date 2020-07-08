@@ -20,6 +20,7 @@ export class DinnerDetailPage implements OnInit {
     avgDistance: -1
   };
   dinnerType: string;
+  dinnerDaysLeft: number;
 
   // Valori temporanei della cena in edit
   _newTitle: string;
@@ -39,6 +40,7 @@ export class DinnerDetailPage implements OnInit {
       this.dinnersService.getDinnerDetails(this.dinner).then(res => {
         this.dinnerDetails = res;
         this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type));
+        this.dinnerDaysLeft = this.dinnersService.getDinnerDaysLeft(this.dinner);
         this.initMap(this.dinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
       });
     });

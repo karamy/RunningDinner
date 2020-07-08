@@ -91,7 +91,9 @@
   <ion-input *ngIf="isEdit" [(ngModel)]="_newDescription">
   </ion-input>
 
-  <ion-button color="success" *ngIf="!paramsService.getParams().dinnerId" (click)="onJoinDinner()">Partecipa
+  <ion-button color="success"
+    *ngIf="!paramsService.getParams().dinnerId && paramsService.getParams().groupId > 0 && dinnerDaysLeft > 0"
+    (click)="onJoinDinner()">Partecipa
   </ion-button>
 
   <!-- <ion-button color="success" (click)="runCombinazioni()">TEST

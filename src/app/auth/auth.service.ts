@@ -264,9 +264,11 @@ export interface AuthenticatedUser {
 
 // Rappresenta i dati di un utente loggato
 export interface UserData {
+  groupid?: number;
   userid: number;
   name: string;
   address: string;
+  group_address?: string;
   phone_number?: number;
   birth_date: Date;
   profile_photo: string;

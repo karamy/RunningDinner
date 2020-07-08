@@ -1,0 +1,38 @@
+<ion-content (click)="onModalDismiss()">
+  <ion-grid style="height: 100%;">
+    <ion-row style="height: 100%; align-items: center" class="ion-text-center">
+      <ion-col>
+        <ion-card>
+          <ion-grid>
+            <ion-row>
+              <ion-col>
+                <h3>In questa cena sono presenti le seguenti intolleranze:</h3>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngFor="let category of categories" style="padding: 0%;">
+              <ion-col style="padding: 0%;">
+                <h5 style="margin: 0%;text-align: center;">{{category}}</h5>
+                <ion-card style="margin: 4%" *ngFor="let food of foodAllergies | categoryFilter: category">
+                  <ion-grid>
+                    <ion-row>
+                      <ion-col>
+                        <ion-list>
+                          <ion-item lines="none">
+                            <ion-avatar>
+                              <img [src]="food.allergy_photo">
+                            </ion-avatar>
+                            <ion-label style="margin-left: 3%;">{{food.allergy_name}}</ion-label>
+                          </ion-item>
+                        </ion-list>
+                      </ion-col>
+                    </ion-row>
+                  </ion-grid>
+                </ion-card>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

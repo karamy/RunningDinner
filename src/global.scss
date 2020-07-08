@@ -14,6 +14,25 @@
   --background: transparent !important;
 }
 
+// Styling del PopOver
+ion-popover{
+  ion-backdrop{
+    opacity: 0.5 !important;
+  }
+  .popover-wrapper {
+    .popover-content{
+      background-color: white !important;
+      width:80%;
+      max-width:500px;
+    }
+    .popover-arrow {
+      &::after {
+        background: white !important;
+      }
+    } 
+  }
+}
+
 // Classi per gestire RDSpinner
 .loader {
   .cssload-container {

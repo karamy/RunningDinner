@@ -9,6 +9,8 @@ import { Router, NavigationEnd } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { filter } from 'rxjs/operators';
 import { FoodAllergiesService } from 'src/app/rdmodals/food-allergies/food-allergies.service';
+import { RDParamsService } from 'src/app/rdparams.service';
+import { ProfileService } from '../../profile/profile.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +19,26 @@ export class DinnersService {
 
   private hideTabBarPages: string[] = [
     'dinner-detail',
+    'dinner-event'
   ];
+  _usersData: UserData[];
   geocoder = new google.maps.Geocoder();
+  myDinnerGroups: number[] = [5352, 4929, 2148]
+  dishTypes: DinnerDish[] = [
+    {
+      dishId: 1,
+      dishName: 'Antipasto'
+    },
+    {
+      dishId: 2,
+      dishName: 'Primo'
+    },
+    {
+      dishId: 3,
+      dishName: 'Secondo'
+    }
+  ];
+
   dinnerTypes: DinnerType[] = [
     {
       code: 1,
@@ -45,6 +65,8 @@ export class DinnersService {
     private rdConstants: RDConstantsService,
     private spinner: RDSpinnerService,
     private authService: AuthService,
+    public paramsService: RDParamsService,
+    private profileService: ProfileService,
     private foodAllergiesService: FoodAllergiesService,
     private badgesService: BadgesService) {
     this.platform.ready().then(() => {
@@ -132,20 +154,33 @@ export class DinnersService {
             const dinnerBadges = this.getDinnerBadges(res as DinnerDetails);
             const dinnerFoodAllergies = this.getDinnerFoodAllergies(res as DinnerDetails);
             const dinnerMinMaxAges = this.getDinnerUsersData(res as DinnerDetails);
-            this.getCoordinates(res as DinnerDetails, this.authService.getUserData().address).then(response => {
+            this._usersData = this.convertUserImagesToJpeg(res as DinnerDetails);
+            const addressesToDecode = {
+              groupid: [],
+              addresses: []
+            }
+            for (let i = 0; i < this._usersData.length; i++) {
+              if (addressesToDecode.groupid.includes(this._usersData[i].groupid) === false) {
+                addressesToDecode.addresses.push(this._usersData[i].group_address);
+                addressesToDecode.groupid.push(this._usersData[i].groupid);
+              }
+            }
+            this.getCoordinates(addressesToDecode, this.authService.getUserData().address).then(response => {
               const addressesLatLng = response[0];
               const userLatLng = response[1];
               const dinnerDetails: DinnerDetails = {
+                usersData: this._usersData,
                 badges: dinnerBadges,
                 foodAllergies: dinnerFoodAllergies[0],
                 foodAllergiesCategories: dinnerFoodAllergies[1],
                 minMaxAges: dinnerMinMaxAges,
                 addressesLatLng: addressesLatLng,
                 userLatLng: userLatLng,
+                groupAddresses: addressesToDecode,
                 avgDistance: avgDistance
-              }
+              };
               resolve(dinnerDetails);
-            })
+            });
           },
           () => {
             reject();
@@ -156,6 +191,54 @@ export class DinnersService {
         )
     );
   }
+
+  // Ottiene i piatti della cena per l'evento cena e gli utenti corrispondenti
+  async getMyDinnerDetails(dinner: Dinner): Promise<MyDinnerDetails> {
+    const dinnerId = dinner.id;
+    await this.spinner.create();
+    return new Promise((resolve, reject) =>
+      this.http.post(this.rdConstants.getApiRoute('getDinnerDishes'), { dinnerId })
+        .toPromise()
+        .then(
+          res => {
+            const myDinnerDetails = {
+              dishes: [],
+              myDish: undefined,
+              dishDistances: [],
+              foodAllergies: [],
+              addressesLatLng: []
+            };
+            myDinnerDetails.dishes = this.getMyDinnerDishes(res as DinnerDish[]);
+            myDinnerDetails.myDish = this.getMyDish(myDinnerDetails);
+            const addressesToDecode = {
+              groupid: [],
+              addresses: []
+            }
+            for (let i = 0; i < this._usersData.length; i++) {
+              if (addressesToDecode.groupid.includes(this._usersData[i].groupid) === false && this.myDinnerGroups.includes(this._usersData[i].groupid) == true) {
+                addressesToDecode.addresses.push(this._usersData[i].group_address);
+                addressesToDecode.groupid.push(this._usersData[i].groupid);
+              }
+            }
+            this.getCoordinates(addressesToDecode, this.authService.getUserData().address).then(response => {
+              myDinnerDetails.addressesLatLng = response[0];
+              this.getDishDistances(myDinnerDetails).then(resp => {
+                myDinnerDetails.dishDistances = resp;
+                resolve(myDinnerDetails);
+              });
+            });
+          },
+          () => {
+            reject();
+          }
+        )
+        .finally(
+          () => { this.spinner.dismiss(); }
+        )
+    );
+  }
+
+  // Funzioni di Dinner
 
   getDinnerBadges(dinnerDetails: DinnerDetails) {
     const dinnerBadges = [];
@@ -212,10 +295,74 @@ export class DinnersService {
     return userMinMaxAges;
   }
 
+  // Funzioni di myDinner
+
+  // Filtro tutti i gruppi partecipanti alla cena tenendo solo quelli con i quali sono abbinato ed assegno il nome al dishId
+  getMyDinnerDishes(dinnerDishes: DinnerDish[]) {
+    const myDinnerDishes = [];
+    for (let i = 0; i < dinnerDishes.length; i++) {
+      const usersNames = [];
+      if (this.myDinnerGroups.includes(dinnerDishes[i].groupId) === true) {
+        for (let j = 0; j < this.dishTypes.length; j++) {
+          if (this.dishTypes[j].dishId === dinnerDishes[i].dishId) {
+            dinnerDishes[i].dishName = this.dishTypes[j].dishName;
+          }
+        }
+        for (let k = 0; k < this._usersData.length; k++) {
+          if (this._usersData[k].groupid === dinnerDishes[i].groupId) {
+            usersNames.push(this._usersData[k]);
+          }
+        }
+        // Inserisco dinnerDish che contiene le info del piatto e gli utenti che lo cucineranno
+        const dinnerDish = {
+          dish: dinnerDishes[i],
+          usersData: usersNames
+        }
+        myDinnerDishes.push(dinnerDish);
+      }
+    }
+    myDinnerDishes.sort((a, b) => a.dish.dishId - b.dish.dishId);
+    return myDinnerDishes;
+  }
+
+  // Ottengo il piatto che devo preparare io
+  getMyDish(myDinnerDetails: MyDinnerDetails) {
+    for (let i = 0; i < myDinnerDetails.dishes.length; i++) {
+      if (myDinnerDetails.dishes[i].dish.groupId === this.paramsService.getParams().groupId) {
+        return myDinnerDetails.dishes[i].dish;
+      }
+    }
+  }
+
+  // Ottengo solo le foodAllergies dei componenti della mia cena
+  getMyDinnerFoodAllergies(foodAllergies: UserAllergy[]) {
+    const myDinnerUserIds = [];
+    const myDinnerFoodAllergies = [];
+
+    // Ottengo gli user_id dei componenti alla cena
+    for (let i = 0; i < this.myDinnerGroups.length; i++) {
+      const stringId = this.myDinnerGroups[i].toString().match(/.{1,2}/g);
+      const idArray = stringId.map(Number);
+      myDinnerUserIds.push(idArray);
+    }
+    for (let k = 0; k < foodAllergies.length; k++) {
+      for (let j = 0; j < myDinnerUserIds.length; j++) {
+        if (foodAllergies[k].user_id === myDinnerUserIds[j][0] || foodAllergies[k].user_id === myDinnerUserIds[j][1]) {
+          myDinnerFoodAllergies.push(foodAllergies[k]);
+        }
+      }
+    }
+    // Ottengo le categorie delle foodAllergies presenti nella cena
+    const myDinnerAllergiesCategories = this.foodAllergiesService.createCategoryArray(myDinnerFoodAllergies);
+    return [myDinnerFoodAllergies, myDinnerAllergiesCategories];
+  }
+
+  // Restituisce le informazioni sul tipo della cena
   getDinnerTypes() {
     return this.dinnerTypes;
   }
 
+  // Restituisce il nome del tipo della cena
   decodeType(type: number) {
     for (let i = 0; i < this.dinnerTypes.length; i++) {
       if (this.dinnerTypes[i].code === type) {
@@ -239,9 +386,9 @@ export class DinnersService {
 
   formatDate(date: Date) {
     // Converto l'ora in formato HH:mm
-    date = new Date(date)
-    const hours = ('0' + date.getHours()).slice(-2);
-    const minutes = ('0' + date.getMinutes()).slice(-2);
+    date = new Date(date);
+    const hours = ('0' + date.getUTCHours()).slice(-2);
+    const minutes = ('0' + date.getUTCMinutes()).slice(-2);
     const dinnerTime = hours + '.' + minutes;
 
     // Converto la data in formato nomeGiorno DD nomeMese YYYY 
@@ -251,14 +398,22 @@ export class DinnersService {
     return [dinnerDate, dinnerTime];
   }
 
+  // Converto img da base64 a jpeg
+  convertUserImagesToJpeg(dinnerDetails: DinnerDetails) {
+    for (let i = 0; i < dinnerDetails.usersData.length; i++) {
+      dinnerDetails.usersData[i].profile_photo = 'data:image/jpeg;base64,' + dinnerDetails.usersData[i].profile_photo;
+    }
+    return dinnerDetails.usersData;
+  }
+
   // Per ogni indirizzo della cena ottengo le coordinate
-  async getCoordinates(dinnerDetails: DinnerDetails, userAddress: string) {
+  async getCoordinates(addressesToDecode: any, userAddress: string) {
     const addressesLatLng = [];
     const userLatLng = [];
     // Ottengo coordinate dei partecipanti alla cena escluso eventualmente lo user
-    for (let i = 0; i < dinnerDetails.usersData.length; i++) {
-      await this.geocodeAddresses(dinnerDetails.usersData[i].address).then(res => {
-        if (dinnerDetails.usersData[i]['userId'] !== this.authService.getUserData().userid) {
+    for (let i = 0; i < addressesToDecode.addresses.length; i++) {
+      await this.geocodeAddresses(addressesToDecode.addresses[i]).then(res => {
+        if (addressesToDecode.groupid[i] !== this.paramsService.getParams().groupId) {
           addressesLatLng.push(res);
         }
       },
@@ -289,6 +444,32 @@ export class DinnersService {
         }
       });
     });
+  }
+
+  // Calcolo la distanza tra il primo ed il secondo gruppo ed il secondo e il terzo
+  async getDishDistances(myDinnerDetails: MyDinnerDetails) {
+    let dish2Distance: string;
+    let dish3Distance: string;
+    for (let i = 0; i < myDinnerDetails.dishes.length; i++) {
+      if (i === 0) {
+        await this.profileService.calcDistance(myDinnerDetails.dishes[i].usersData[0].group_address, myDinnerDetails.dishes[i + 1].usersData[0].group_address).then(res => {
+          dish2Distance = res;
+        });
+      } else if (i === 1) {
+        await this.profileService.calcDistance(myDinnerDetails.dishes[i].usersData[0].group_address, myDinnerDetails.dishes[i + 1].usersData[0].group_address).then(res => {
+          dish3Distance = res;
+        });
+      }
+    }
+    return [dish2Distance, dish3Distance]
+  }
+
+  // Calcolo quanti giorni mancano alla cena (ritorna 0 se mancano meno di 24 ore)
+  getDinnerDaysLeft(dinner: Dinner) {
+    const now = new Date().getTime();
+    const dinnerDate = new Date(dinner.date).getTime();
+    const dinnerDaysLeft = Math.floor(((dinnerDate - now) - 7200000) / (1000 * 60 * 60 * 24));
+    return dinnerDaysLeft;
   }
 
   // Partecipa a cena
@@ -325,7 +506,7 @@ export interface Dinner {
   title: string;
   description: string;
   type: number; // rappresenta la tipologia di cena
-  groupIds: string[]; // Rappresenta gli id dei gruppi partecipanti alla cena
+  groupIds: number[]; // Rappresenta gli id dei gruppi partecipanti alla cena
   date: Date;
   dateString?: string;
   time?: string;
@@ -334,12 +515,33 @@ export interface Dinner {
 
 // Rappresenta i dettagli di una cena
 export interface DinnerDetails {
-  badges: UserBadge[];
+  badges?: UserBadge[];
   foodAllergies: UserAllergy[];
   foodAllergiesCategories?: string[];
   usersData?: UserData[];
   minMaxAges?: number[];
   avgDistance?: number;
   addressesLatLng?: google.maps.LatLng[];
+  groupAddresses?: any;
   userLatLng?: google.maps.LatLng[];
+}
+
+// Rappresenta i piatti di una cena
+export interface DinnerDish {
+  groupId?: number;
+  dishId: number;
+  dishName?: string;
+}
+
+// Rappresenta i dettagli dell'evento cena
+export interface DinnerEvent {
+  dish: DinnerDish;
+  usersData: UserData[];
+}
+
+// Rappresenta la cena nell'evento cena
+export interface MyDinnerDetails extends DinnerDetails {
+  dishes: DinnerEvent[];
+  myDish: DinnerDish;
+  dishDistances: string[];
 }

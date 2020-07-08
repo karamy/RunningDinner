@@ -6,10 +6,13 @@ import { FoodAllergiesPage } from './food-allergies/food-allergies.page';
 import { IonicModule } from '@ionic/angular';
 import { RDComponentsModule } from '../rdcomponents/rdcomponents.module';
 import { FormsModule } from '@angular/forms';
+import { DinnerInfoPage } from './dinner-info/dinner-info.page';
+import { FoodAllergiesInfoPage } from './food-allergies-info/food-allergies-info.page';
+import { RDPipesModule } from '../rdpipes/rdpipes.module';
 
 @NgModule({
-  imports: [CommonModule, FormsModule, IonicModule, RDComponentsModule],
-  declarations: [ContactsDetailPage, CountryCodesPage, FoodAllergiesPage],
-  entryComponents: [ContactsDetailPage, CountryCodesPage, FoodAllergiesPage] // Dichiaro le pagine come entryComponents per essere disponibili al ModalController di Ionic
+  imports: [CommonModule, FormsModule, IonicModule, RDComponentsModule, RDPipesModule],
+  declarations: [ContactsDetailPage, CountryCodesPage, FoodAllergiesPage, DinnerInfoPage, FoodAllergiesInfoPage],
+  entryComponents: [ContactsDetailPage, CountryCodesPage, FoodAllergiesPage, DinnerInfoPage, FoodAllergiesInfoPage] // Dichiaro le pagine come entryComponents per essere disponibili al ModalController di Ionic
 })
 export class RDModalsModule { }

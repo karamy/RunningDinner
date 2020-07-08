@@ -22,7 +22,7 @@ export class DinnersPage implements OnInit {
     this.loadDinners(); // Caricamento iniziale cene
 
     this.notificationsService.getUpdateParamsObservable().subscribe(() => {
-      console.log("Elenco cene - Ricarico cene");
+      console.log('Elenco cene - Ricarico cene');
       this.loadDinners();
     });
   }
@@ -35,14 +35,14 @@ export class DinnersPage implements OnInit {
         this.myDinner = response.myDinner;
         this.dinnerList = response.otherDinners;
         if (this.myDinner) {
-          const myDinnerDateTime = this.dinnersService.formatDate(this.myDinner.date)
-          this.myDinner.dateString = myDinnerDateTime[0]
-          this.myDinner.time = myDinnerDateTime[1]
+          const myDinnerDateTime = this.dinnersService.formatDate(this.myDinner.date);
+          this.myDinner.dateString = myDinnerDateTime[0];
+          this.myDinner.time = myDinnerDateTime[1];
         }
         for (let i = 0; i < this.dinnerList.length; i++) {
-          const dinnerDateTime = this.dinnersService.formatDate(this.dinnerList[i].date)
-          this.dinnerList[i].dateString = dinnerDateTime[0]
-          this.dinnerList[i].time = dinnerDateTime[1]
+          const dinnerDateTime = this.dinnersService.formatDate(this.dinnerList[i].date);
+          this.dinnerList[i].dateString = dinnerDateTime[0];
+          this.dinnerList[i].time = dinnerDateTime[1];
         }
         if (event) { // Se lanciato dal refresher emetto evento di completamento
           event.target.complete();
@@ -56,7 +56,21 @@ export class DinnersPage implements OnInit {
 
   // Mostra il dettaglio della cena selezionata
   goToDinnerDetail(dinner: Dinner) {
-    this.router.navigate(['/home/tabs/dinners/dinner-detail'], { queryParams: dinner });
+    if (this.compareDate(dinner)) {
+      this.router.navigate(['/home/tabs/dinners/dinner-event'], { queryParams: dinner });
+    } else {
+      this.router.navigate(['/home/tabs/dinners/dinner-detail'], { queryParams: dinner });
+    }
+  }
+
+  // Controllo se la data della cena è > o < di 24h da adesso e se il mio groupId è presente nella cena
+  compareDate(dinner: Dinner) {
+    const daysLeft = this.dinnersService.getDinnerDaysLeft(dinner);
+    if (daysLeft === 0 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
 
