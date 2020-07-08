@@ -151,6 +151,7 @@ export class DinnersService {
         .then(
           res => {
             const avgDistance = res['avgDistance'];
+            const dinnerData = res['dinnerData'];
             const dinnerBadges = this.getDinnerBadges(res as DinnerDetails);
             const dinnerFoodAllergies = this.getDinnerFoodAllergies(res as DinnerDetails);
             const dinnerMinMaxAges = this.getDinnerUsersData(res as DinnerDetails);
@@ -177,6 +178,7 @@ export class DinnersService {
                 addressesLatLng: addressesLatLng,
                 userLatLng: userLatLng,
                 groupAddresses: addressesToDecode,
+                dinnerData: dinnerData
                 avgDistance: avgDistance
               };
               resolve(dinnerDetails);
@@ -524,6 +526,7 @@ export interface DinnerDetails {
   addressesLatLng?: google.maps.LatLng[];
   groupAddresses?: any;
   userLatLng?: google.maps.LatLng[];
+  dinnerData?: Dinner;
 }
 
 // Rappresenta i piatti di una cena

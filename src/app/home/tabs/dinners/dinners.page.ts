@@ -21,6 +21,7 @@ export class DinnersPage implements OnInit {
   ngOnInit() {
     this.loadDinners(); // Caricamento iniziale cene
 
+    // Registrazione observable per reagire al ricaricamento cene (es. vengo aggiunto a una cena)
     this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Elenco cene - Ricarico cene');
       this.loadDinners();

@@ -32,6 +32,8 @@ export class ChatPage implements OnInit {
     this.messagesSubscription = this.chatService.init().subscribe((receivedMessages) => {
       this.handleNewMessages(receivedMessages);
     });
+
+    // Registrazione observable per reagire al ricaricamento chat (es. vengo aggiunto a una cena)
     this.notificationService.getUpdateParamsObservable().subscribe(() => {
       console.log("Chat - Ricarico parametri e messaggi");
       this.dinnerMessages = [];
