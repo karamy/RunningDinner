@@ -178,7 +178,7 @@ export class DinnersService {
                 addressesLatLng: addressesLatLng,
                 userLatLng: userLatLng,
                 groupAddresses: addressesToDecode,
-                dinnerData: dinnerData
+                dinnerData: dinnerData,
                 avgDistance: avgDistance
               };
               resolve(dinnerDetails);
