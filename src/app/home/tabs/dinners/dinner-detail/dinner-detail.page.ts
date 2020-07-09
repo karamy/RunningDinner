@@ -20,7 +20,7 @@ export class DinnerDetailPage implements OnInit {
     avgDistance: -1
   };
   dinnerType: string;
-  dinnerDaysLeft: number;
+  dinnerDaysLeft: number; // Indica quanti giorni (multipli di 24h) mancano al giorno della cena
 
   // Valori temporanei della cena in edit
   _newTitle: string;

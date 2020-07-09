@@ -181,5 +181,4 @@ export class DinnerEventPage implements OnInit {
       }
     }, 1000);
   }
-
 }

@@ -14,11 +14,11 @@ const routes: Routes = [
   {
     path: 'dinner-detail',
     loadChildren: () => import('./dinner-detail/dinner-detail.module').then(m => m.DinnerDetailPageModule)
-  },  {
+  },
+  {
     path: 'dinner-event',
     loadChildren: () => import('./dinner-event/dinner-event/dinner-event.module').then( m => m.DinnerEventPageModule)
   }
-
 ];
 
 @NgModule({
