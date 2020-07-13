@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { DinnersService, Dinner } from './dinners.service';
 import { Router } from '@angular/router';
@@ -16,7 +16,8 @@ export class DinnersPage implements OnInit {
   constructor(public paramsService: RDParamsService,
     private dinnersService: DinnersService,
     private router: Router,
-    private notificationsService: NotificationsService) { }
+    private notificationsService: NotificationsService,
+    private ref: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.loadDinners(); // Caricamento iniziale cene
@@ -48,6 +49,10 @@ export class DinnersPage implements OnInit {
         if (event) { // Se lanciato dal refresher emetto evento di completamento
           event.target.complete();
         }
+
+        // Lancio la change detection, altrimenti all'arrivo della notifica
+        // non aggiornava la videata
+        this.ref.detectChanges();
       },
       (err) => {
         console.warn(err);
