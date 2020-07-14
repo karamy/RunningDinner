@@ -7,17 +7,6 @@ import { RDConstantsService } from 'src/app/rdcostants.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { RDSpinnerService } from 'src/app/rdspinner.service';
 
-// Rappresenta i dati di un contatto sul telefono
-export class RDContact {
-  constructor() { }
-  phoneNumbers: string[] = [];
-
-  name: string;
-  imageUrl: SafeUrl;
-  userId: number;
-}
-
-
 @Injectable({
   providedIn: 'root'
 })
@@ -189,9 +178,10 @@ export class ContactsService {
   }
 
   // Richiede l'invio di notifica lato server al contatto per aggiungerlo al gruppo
-  async sendGroupInvite(userId) {
+  async sendGroupInvite(userId: number, contactHouseId: number) {
     const addGroupBody = {
-      userId: userId
+      userId: userId,
+      contactHouseId: contactHouseId
     };
     await this.spinner.create();
     return this.http.post(this.rdConstants.getApiRoute('inviteGroup'), addGroupBody)
@@ -201,8 +191,8 @@ export class ContactsService {
       );
   }
 
-  // Scioglie il gruppo di cui fa parte l'utente, anche qui in automatico dovrebbe
-  // inviare una notifica all'altro partecipante, che viene informato dell'azione fatta
+  // Scioglie il gruppo di cui fa parte l'utente, anche qui in automatico
+  // invia una notifica all'altro partecipante, che viene informato dell'azione fatta
   async leaveGroup(groupId) {
     const leaveGroupBody = {
       groupId: groupId
@@ -214,5 +204,14 @@ export class ContactsService {
         () => { this.spinner.dismiss(); }
       );
   }
+}
 
+// Rappresenta i dati di un contatto sul telefono
+export class RDContact {
+  constructor() { }
+  phoneNumbers: string[] = [];
+
+  name: string;
+  imageUrl: SafeUrl;
+  userId: number;
 }
