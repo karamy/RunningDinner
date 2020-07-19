@@ -9,6 +9,8 @@ export interface SignupData {
   phoneNumber: string;
   birthDate: Date;
   profilePhoto: string;
+  latitude: number;
+  longitude: number;
 }
 
 @Injectable({
@@ -24,15 +26,19 @@ export class SignupService {
       address: '',
       phoneNumber: '',
       birthDate: null,
-      profilePhoto: ''
+      profilePhoto: '',
+      latitude: 0,
+      longitude: 0
     };
   }
 
   setName(name: string) {
     this.signupData.name = name;
   }
-  setAddress(address: string) {
+  setAddressAndCoordinates(address: string, lat: number, lon: number) {
     this.signupData.address = address;
+    this.signupData.latitude = lat;
+    this.signupData.longitude = lon;
   }
   setPhoneNumber(phoneNumber: string) {
     this.signupData.phoneNumber = phoneNumber;

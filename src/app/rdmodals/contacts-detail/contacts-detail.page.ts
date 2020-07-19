@@ -70,7 +70,7 @@ export class ContactsDetailPage implements OnInit {
     this.contactsService.sendGroupInvite(this.contactId, contactHouseId).then(
       () => { },
       (err) => { // Errore creazione gruppo
-        this.rdToast.show(err.error);
+        this.rdToast.show("Errore invito a gruppo");
         console.warn(err);
       }
     );

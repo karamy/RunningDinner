@@ -15,14 +15,16 @@ export class UserService {
       .toPromise();
   }
 
-  async updateUser(name: string, birth_date: Date, address: string, phone_number: number, profile_photo: string) {
+  async updateUser(name: string, birth_date: Date, address: string, phone_number: number, profile_photo: string, lat: number, lon: number) {
     const dataToSend = {
       user: {
         name: name,
         birth_date: birth_date,
         address: address,
         phone_number: phone_number,
-        profile_photo: profile_photo
+        profile_photo: profile_photo,
+        latitude: lat,
+        longitude: lon
       }
     };
 

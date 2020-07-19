@@ -74,6 +74,18 @@ export class ContactsService {
             phoneNumbers: ['+393496824393'],
             imageUrl: 'assets/Logo.png',
             userId: 0
+          },
+          {
+            name: 'Sid',
+            phoneNumbers: ['+393914174499'],
+            imageUrl: 'assets/Logo.png',
+            userId: 0
+          },
+          {
+            name: 'Matteo',
+            phoneNumbers: ['+393338829439'],
+            imageUrl: 'assets/Logo.png',
+            userId: 0
           }
         ];
         resolve(testContacts);

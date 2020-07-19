@@ -45,6 +45,10 @@ export class AuthPage implements OnInit {
       {
         userName: "Matteo",
         userNumber: "+393338829439"
+      },
+      {
+        userName: "Emulatore",
+        userNumber: "+391234567890"
       }
     ];
   }
