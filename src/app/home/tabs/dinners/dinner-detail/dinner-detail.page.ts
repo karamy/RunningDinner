@@ -49,8 +49,8 @@ export class DinnerDetailPage implements OnInit {
 
   // Carica i dettagli della cena
   getDinnerDetails() {
-      this.dinnersService.getDinnerDetails(this.dinner).then(res => {
-        this.dinnerDetails = res;
+    this.dinnersService.getDinnerDetails(this.dinner).then(res => {
+      this.dinnerDetails = res;
 
       // Sovrascrivo titolo e descrizione in quanto possono essere modificati
       const dinnerData = res.dinnerData;
@@ -58,12 +58,12 @@ export class DinnerDetailPage implements OnInit {
       this.dinner.description = dinnerData.description;
 
       // Ottengo la tipologia
-        this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type));
-        this.dinnerDaysLeft = this.dinnersService.getDinnerDaysLeft(this.dinner);
+      this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type));
+      this.dinnerDaysLeft = this.dinnersService.getDinnerDaysLeft(this.dinner);
 
       // Carico la mappa
-        this.initMap(this.dinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
-      });
+      this.initMap(this.dinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
+    });
   }
 
   // Inizializza la mappa per mostrare l'utente e gli altri partecipanti alla cena

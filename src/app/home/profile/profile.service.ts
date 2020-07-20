@@ -10,14 +10,11 @@ import { RDConstantsService } from 'src/app/rdcostants.service';
 export class ProfileService {
 
   private _partner: PartnerData;
-  directionsService: google.maps.DirectionsService;
 
   constructor(
     public paramsService: RDParamsService,
     private http: HttpClient,
-    private rdConstants: RDConstantsService) {
-    this.directionsService = new google.maps.DirectionsService();
-  }
+    private rdConstants: RDConstantsService) { }
 
   // Trasformo data in formato YYYY/MM/DD
   changeDateFormat(userBirthdate: any) {
@@ -45,7 +42,7 @@ export class ProfileService {
     const groupId = this.paramsService.getParams().groupId;
     const dataToSend = {
       groupId: groupId
-    }
+    };
     return new Promise((resolve, reject) => {
       this.http
         .post(this.rdConstants.getApiRoute('getGroupPartner'), dataToSend)
@@ -64,18 +61,15 @@ export class ProfileService {
 
   // Aggiunge i parametri avgAge e distance al partner e lo scrive in localStorage
   private writePartner(partner: PartnerData, user: UserData) {
-    this.calcDistance(user.address, partner.address).then(res => {
-      partner.distance = res;
-      const userAge = this.calcAge(user.birth_date); // Ottengo l'età dello user
+    const userAge = this.calcAge(user.birth_date); // Ottengo l'età dello user
 
-      // Trasformo la data in stringa nel formato DD/MM/YYYY
-      partner.birth_date = new Date(partner.birth_date);
-      partner.birth_date = partner.birth_date.toLocaleDateString() as unknown as Date;
-      partner.avgAge = this.calcAvgAge(userAge, partner.birth_date);
-      partner.profile_photo = 'data:image/jpeg;base64,' + partner.profile_photo;
-      localStorage.setItem('partner', JSON.stringify(partner));
-      this.readPartner();
-    });
+    // Trasformo la data in stringa nel formato DD/MM/YYYY
+    partner.birth_date = new Date(partner.birth_date);
+    partner.birth_date = partner.birth_date.toLocaleDateString() as unknown as Date;
+    partner.avgAge = this.calcAvgAge(userAge, partner.birth_date);
+    partner.profile_photo = 'data:image/jpeg;base64,' + partner.profile_photo;
+    localStorage.setItem('partner', JSON.stringify(partner));
+    this.readPartner();
   }
 
   // Legge i parametri partner presenti in localStorage e le carica nel Service
@@ -103,28 +97,18 @@ export class ProfileService {
     return Math.round(avgAge);
   }
 
-  // Calcolo distanza tra user e partner
-  calcDistance(userAddress: string, partnerAddress: string): Promise<string> {
-    return new Promise((res, rej) => {
-      this.directionsService.route({
-        origin: userAddress,
-        destination: partnerAddress,
-        travelMode: google.maps.TravelMode['DRIVING']
-      }, (response, status) => {
-        if (status === 'OK') {
-          const distance = response.routes[0].legs[0].distance.text;
-          res(distance);
-        } else {
-          window.alert('Directions request failed due to ' + status);
-          rej();
-        }
-      });
-    });
+  // Individuo se la casa del gruppo è quella dello user o del partner
+  findHouseOwner(user: UserData, partner: PartnerData) {
+    if (partner.group_address === partner.address) {
+      return partner.name;
+    } else {
+      return user.name;
+    }
   }
 
 }
 
 export interface PartnerData extends UserData {
-  distance: string;
   avgAge: number;
+  group_address: string;
 }

@@ -3,6 +3,7 @@ import { RDParamsService } from 'src/app/rdparams.service';
 import { DinnersService, Dinner } from './dinners.service';
 import { Router } from '@angular/router';
 import { NotificationsService } from '../../notifications.service';
+import { ProfileService } from '../../profile/profile.service';
 
 @Component({
   selector: 'app-dinners',
@@ -15,12 +16,13 @@ export class DinnersPage implements OnInit {
 
   constructor(public paramsService: RDParamsService,
     private dinnersService: DinnersService,
+    private profileService: ProfileService,
     private router: Router,
     private notificationsService: NotificationsService) { }
 
   ngOnInit() {
     this.loadDinners(); // Caricamento iniziale cene
-
+    this.profileService.readPartner(); // Carica i dati del partner per poter inviare group_address
     // Registrazione observable per reagire al ricaricamento cene (es. vengo aggiunto a una cena)
     this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Elenco cene - Ricarico cene');

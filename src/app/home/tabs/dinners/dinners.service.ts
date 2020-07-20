@@ -5,9 +5,6 @@ import { RDSpinnerService } from 'src/app/rdspinner.service';
 import { UserBadge, BadgesService } from '../../profile/badges.service';
 import { UserAllergy } from 'src/app/rdmodals/food-allergies/food-allergies.page';
 import { UserData, AuthService } from 'src/app/auth/auth.service';
-import { Router, NavigationEnd } from '@angular/router';
-import { Platform } from '@ionic/angular';
-import { filter } from 'rxjs/operators';
 import { FoodAllergiesService } from 'src/app/rdmodals/food-allergies/food-allergies.service';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { ProfileService } from '../../profile/profile.service';
@@ -17,13 +14,10 @@ import { ProfileService } from '../../profile/profile.service';
 })
 export class DinnersService {
 
-  private hideTabBarPages: string[] = [
-    'dinner-detail',
-    'dinner-event'
-  ];
   _usersData: UserData[];
   geocoder = new google.maps.Geocoder();
-  myDinnerGroups: number[] = [4651, 4651, 4651]
+  directionsService: google.maps.DirectionsService;
+  myDinnerGroups: number[] = [2148, 5352, 4929];
   dishTypes: DinnerDish[] = [
     {
       dishId: 1,
@@ -60,48 +54,14 @@ export class DinnersService {
 
   constructor(
     private http: HttpClient,
-    private router: Router,
-    private platform: Platform,
     private rdConstants: RDConstantsService,
     private spinner: RDSpinnerService,
     private authService: AuthService,
-    public paramsService: RDParamsService,
     private profileService: ProfileService,
+    public paramsService: RDParamsService,
     private foodAllergiesService: FoodAllergiesService,
     private badgesService: BadgesService) {
-    this.platform.ready().then(() => {
-      this.navEvents();
-    });
-  }
-
-  // Mi subscribo all'evento NavigationEnd per capire quando la navigazione sulle pagine dinner/dinner-detail finisce
-  navEvents() {
-    this.router.events
-      .pipe(filter((e) => e instanceof NavigationEnd))
-      .subscribe((e: any) => {
-        this.showHideTabs(e);
-      });
-  }
-
-  // Ottengo il nome della pagina aperta (page) e controllo se presente in hideTabBarPages
-  showHideTabs(e: NavigationEnd) {
-    const urlArray = e.url.split('/');
-    const pageUrl = urlArray[urlArray.length - 1];
-    const page = pageUrl.split('?')[0];
-    const shouldHide = this.hideTabBarPages.indexOf(page) > -1;
-    shouldHide ? this.hideTabs() : this.showTabs();
-  }
-
-  // Nascondo le tabs
-  public hideTabs() {
-    const tabBar = document.getElementById('myTabBar');
-    if (tabBar.style.display !== 'none') tabBar.style.display = 'none';
-  }
-
-  // Mostro le tabs
-  public showTabs() {
-    const tabBar = document.getElementById('myTabBar');
-    if (tabBar.style.display !== 'flex') tabBar.style.display = 'flex';
+    this.directionsService = new google.maps.DirectionsService();
   }
 
   // Registra nuova cena a DB, e aggiunge il mio gruppo in automatico
@@ -134,16 +94,21 @@ export class DinnersService {
       );
   }
 
-  // Ottiene i dettagli della cena
+  // Ottiene i dettagli della cena selezionata
   async getDinnerDetails(dinner: Dinner): Promise<DinnerDetails> {
     const dinnerId = dinner.id;
-    const userId = this.authService.getUserData().userid;
-    const userAddress = this.authService.getUserData().address;
+    let userAddress: string;
+    if (this.paramsService.getParams().groupId) {
+      userAddress = this.profileService.getPartner().group_address;
+    } else {
+      userAddress = this.authService.getUserData().address;
+    }
+    const userGroupId = this.paramsService.getParams().groupId;
     const dataToSend = {
       dinnerId: dinnerId,
-      userId: userId,
-      userAddress: userAddress
-    }
+      userAddress: userAddress,
+      userGroupId: userGroupId
+    };
     await this.spinner.create();
     return new Promise((resolve, reject) =>
       this.http.post(this.rdConstants.getApiRoute('getDinnerDetails'), dataToSend)
@@ -159,14 +124,22 @@ export class DinnersService {
             const addressesToDecode = {
               groupid: [],
               addresses: []
-            }
+            };
+            // Creo oggetto con i groupId e groupaddress per poi ottenere le coordinate
             for (let i = 0; i < this._usersData.length; i++) {
               if (addressesToDecode.groupid.includes(this._usersData[i].groupid) === false) {
                 addressesToDecode.addresses.push(this._usersData[i].group_address);
                 addressesToDecode.groupid.push(this._usersData[i].groupid);
               }
             }
-            this.getCoordinates(addressesToDecode, this.authService.getUserData().address).then(response => {
+            let userAddressToDecode: string;
+            if (this.paramsService.getParams().groupId) {
+              userAddressToDecode = this.profileService.getPartner().group_address;
+            } else {
+              userAddressToDecode = this.authService.getUser().userData.address;
+            }
+            // Ottengo le coordinate degli indirizzi dei gruppi e dell'utente da utilizzare poi per calcolare le distanze
+            this.getCoordinates(addressesToDecode, userAddressToDecode).then(response => {
               const addressesLatLng = response[0];
               const userLatLng = response[1];
               const dinnerDetails: DinnerDetails = {
@@ -222,7 +195,7 @@ export class DinnersService {
                 addressesToDecode.groupid.push(this._usersData[i].groupid);
               }
             }
-            this.getCoordinates(addressesToDecode, this.authService.getUserData().address).then(response => {
+            this.getCoordinates(addressesToDecode, this.profileService.getPartner().group_address).then(response => {
               myDinnerDetails.addressesLatLng = response[0];
               this.getDishDistances(myDinnerDetails).then(resp => {
                 myDinnerDetails.dishDistances = resp;
@@ -242,6 +215,7 @@ export class DinnersService {
 
   // Funzioni di Dinner
 
+  // Ottengo i Badges della cena selezionata
   getDinnerBadges(dinnerDetails: DinnerDetails) {
     const dinnerBadges = [];
     dinnerDetails.badges.forEach(badge => {
@@ -266,6 +240,7 @@ export class DinnersService {
     return dinnerBadges;
   }
 
+  // Ottengo le intolleranze della cena selezionata
   getDinnerFoodAllergies(dinnerDetails: DinnerDetails) {
     const dinnerFoodAllergies = [];
     dinnerDetails.foodAllergies.forEach(foodAllergy => {
@@ -286,6 +261,7 @@ export class DinnersService {
     return [dinnerFoodAllergies, dinnerAllergiesCategory];
   }
 
+  // Calcolo gli anni e l'età minima/massima degli utenti partecipanti alla cena selezionata
   getDinnerUsersData(dinnerDetails: DinnerDetails) {
     const userAges: number[] = [];
     dinnerDetails.usersData.forEach(user => {
@@ -319,7 +295,7 @@ export class DinnersService {
         const dinnerDish = {
           dish: dinnerDishes[i],
           usersData: usersNames
-        }
+        };
         myDinnerDishes.push(dinnerDish);
       }
     }
@@ -393,7 +369,7 @@ export class DinnersService {
     const minutes = ('0' + date.getUTCMinutes()).slice(-2);
     const dinnerTime = hours + '.' + minutes;
 
-    // Converto la data in formato nomeGiorno DD nomeMese YYYY 
+    // Converto la data in formato nomeGiorno DD nomeMese YYYY
     const days = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato']
     const months = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre']
     const dinnerDate = days[date.getDay()] + ' ' + date.getDate() + ' ' + months[date.getMonth()] + ' ' + date.getFullYear();
@@ -454,11 +430,11 @@ export class DinnersService {
     let dish3Distance: string;
     for (let i = 0; i < myDinnerDetails.dishes.length; i++) {
       if (i === 0) {
-        await this.profileService.calcDistance(myDinnerDetails.dishes[i].usersData[0].group_address, myDinnerDetails.dishes[i + 1].usersData[0].group_address).then(res => {
+        await this.calcDistance(myDinnerDetails.dishes[i].usersData[0].group_address, myDinnerDetails.dishes[i + 1].usersData[0].group_address).then(res => {
           dish2Distance = res;
         });
       } else if (i === 1) {
-        await this.profileService.calcDistance(myDinnerDetails.dishes[i].usersData[0].group_address, myDinnerDetails.dishes[i + 1].usersData[0].group_address).then(res => {
+        await this.calcDistance(myDinnerDetails.dishes[i].usersData[0].group_address, myDinnerDetails.dishes[i + 1].usersData[0].group_address).then(res => {
           dish3Distance = res;
         });
       }
@@ -492,6 +468,25 @@ export class DinnersService {
       .finally(
         () => { this.spinner.dismiss(); }
       );
+  }
+
+  // Calcolo distanza tra due indirizzi
+  calcDistance(firstAddress: string, secondAddress: string): Promise<string> {
+    return new Promise((res, rej) => {
+      this.directionsService.route({
+        origin: firstAddress,
+        destination: secondAddress,
+        travelMode: google.maps.TravelMode['DRIVING']
+      }, (response, status) => {
+        if (status === 'OK') {
+          const distance = response.routes[0].legs[0].distance.text;
+          res(distance);
+        } else {
+          window.alert('Directions request failed due to ' + status);
+          rej();
+        }
+      });
+    });
   }
 }
 

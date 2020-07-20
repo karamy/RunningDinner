@@ -12,7 +12,8 @@
 </ion-header>
 
 <ion-content scrollY="false" fullscreen="true" slot="fixed">
-  <div id="map" class="background-map"></div>
+  <div (click)="presentModalMapDetails(myDinnerDetails.addressesLatLng, dinnerDetails.userLatLng, bounds)" id="map"
+    class="background-map"></div>
   <div class="countdown" id="countdown"></div>
   <ion-grid class="layout-grid">
     <ion-row class="notch-row">

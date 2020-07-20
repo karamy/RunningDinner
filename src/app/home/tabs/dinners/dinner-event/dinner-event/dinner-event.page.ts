@@ -6,6 +6,7 @@ import { RDParamsService } from 'src/app/rdparams.service';
 import { PopoverController, ModalController } from '@ionic/angular';
 import { DinnerInfoPage } from 'src/app/rdmodals/dinner-info/dinner-info.page';
 import { FoodAllergiesInfoPage } from 'src/app/rdmodals/food-allergies-info/food-allergies-info.page';
+import { DinnerMapPage } from 'src/app/rdmodals/dinner-map/dinner-map.page';
 
 @Component({
   selector: 'app-dinner-event',
@@ -33,6 +34,7 @@ export class DinnerEventPage implements OnInit {
     addressesLatLng: []
   };
   partnerName: string;
+  bounds = new google.maps.LatLngBounds();
 
   constructor(private route: ActivatedRoute,
     private popoverController: PopoverController,
@@ -61,10 +63,19 @@ export class DinnerEventPage implements OnInit {
     await modal.present();
   }
 
+  async presentModalMapDetails(addresses, userAddress, bounds) {
+    const modal = await this.modalController.create({
+      component: DinnerMapPage,
+      backdropDismiss: true,
+      componentProps: { addresses, userAddress, bounds }
+    });
+    await modal.present();
+  }
+
   ngOnInit() {
     this.route.queryParams.subscribe((dinner: Dinner) => {
       this.dinner = dinner;
-      console.log(this.dinner)
+      console.log(this.dinner);
       this.dinnersService.getDinnerDetails(this.dinner).then(res => {
         this.dinnerDetails = res;
         this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type));
@@ -73,6 +84,7 @@ export class DinnerEventPage implements OnInit {
         this.initCountdown(this.dinner.date);
         this.dinnersService.getMyDinnerDetails(this.dinner).then(response => {
           this.myDinnerDetails = response;
+          console.log(this.myDinnerDetails)
           const myDinnerFoodAllergies = this.dinnersService.getMyDinnerFoodAllergies(this.dinnerDetails.foodAllergies);
           this.myDinnerDetails.foodAllergies = myDinnerFoodAllergies[0];
           this.myDinnerDetails.foodAllergiesCategories = myDinnerFoodAllergies[1];
@@ -84,7 +96,6 @@ export class DinnerEventPage implements OnInit {
 
   // Inizializza la mappa per mostrare l'utente e gli altri partecipanti alla cena
   initMap(addresses: google.maps.LatLng[], userAddress: google.maps.LatLng[]) {
-    const bounds = new google.maps.LatLngBounds();
     const markers: google.maps.Marker[] = [];
 
     // Istanzio la mappa
@@ -147,9 +158,9 @@ export class DinnerEventPage implements OnInit {
     }
 
     for (var j = 0; j < markers.length; j++) {
-      bounds.extend(markers[j].getPosition());
+      this.bounds.extend(markers[j].getPosition());
     }
-    map.fitBounds(bounds, { top: 15, bottom: 0, left: 0, right: 0 });
+    map.fitBounds(this.bounds, { top: 15, bottom: 0, left: 0, right: 0 });
   }
 
   initCountdown(dinnerDate: Date) {

@@ -4,8 +4,12 @@
       <ion-back-button defaultHref="/home/tabs/dinners"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="primary">
-      <ion-button (click)="onLogout()">
-        <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
+      <ion-button *ngIf="!editMode && !profileService.getPartner()" fill="clear"
+        (click)="this.editMode = !this.editMode">
+        <ion-icon name="create-outline"></ion-icon>
+      </ion-button>
+      <ion-button *ngIf="editMode" fill="clear" (click)="saveChanges()">
+        <ion-icon name="save-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -71,14 +75,9 @@
           </div>
         </ion-list>
       </div>
-      <h6 *ngIf="profileService.getPartner()">A {{profileService.getPartner().distance}} di
-        distanza</h6>
-      <ion-button *ngIf="!editMode && !profileService.getPartner()" fill="outline" color="primary"
-        (click)="this.editMode = !this.editMode">
-        Modifica profilo
-      </ion-button>
-      <ion-button *ngIf="editMode" fill="outline" color="primary" style="margin-top: 3%;margin-bottom: 0%;"
-        (click)="saveChanges()">Salva modifiche</ion-button>
+      <h6 *ngIf="profileService.getPartner()">La casa del gruppo è quella di
+        {{profileService.findHouseOwner(user, profileService.getPartner())}}</h6>
+      <h6 *ngIf="profileService.getPartner()">{{profileService.getPartner().group_address}}</h6>
     </div>
   </div>
   <ion-card>
@@ -210,8 +209,7 @@
     </ion-grid>
   </ion-card>
   <ion-card
-    *ngIf="foodAllergiesService.getUserFoodAllergies() && (foodAllergiesService.getUserFoodAllergies().length > 0 || foodAllergiesService.getGroupFoodAllergies().length > 0)"
-    style="margin-bottom: 2.5%;">
+    *ngIf="foodAllergiesService.getUserFoodAllergies() && (foodAllergiesService.getUserFoodAllergies().length > 0 || foodAllergiesService.getGroupFoodAllergies().length > 0)">
     <ion-grid>
       <ion-row style="align-items: center;" class="no-padding">
         <ion-col style="padding-top: 0%;">
@@ -316,14 +314,13 @@
       </div>
     </ion-grid>
   </ion-card>
-  <ion-card>
-    <ion-grid>
-      <ion-row *ngIf="paramsService.getParams().groupId && !paramsService.getParams().dinnerId"
-        class="ion-align-items-center">
-        <ion-col class="ion-text-center">
-          <ion-button (click)="onLeaveGroup()">Lascia il gruppo</ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-card>
+  <ion-grid>
+    <ion-row>
+      <ion-col class="ion-text-center">
+        <ion-button *ngIf="editMode" color="danger" style="width: 50%;" (click)="onLogout()">Logout</ion-button>
+        <ion-button *ngIf="paramsService.getParams().groupId && !paramsService.getParams().dinnerId" style="width: 50%;"
+          (click)="onLeaveGroup()">Lascia il gruppo</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>
