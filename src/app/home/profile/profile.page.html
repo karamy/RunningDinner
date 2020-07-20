@@ -4,8 +4,7 @@
       <ion-back-button defaultHref="/home/tabs/dinners"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="primary">
-      <ion-button *ngIf="!editMode && !profileService.getPartner()" fill="clear"
-        (click)="this.editMode = !this.editMode">
+      <ion-button *ngIf="!editMode && !profileService.getPartner()" fill="clear" (click)="triggerEditMode()">
         <ion-icon name="create-outline"></ion-icon>
       </ion-button>
       <ion-button *ngIf="editMode" fill="clear" (click)="saveChanges()">
@@ -56,8 +55,9 @@
             </ion-input>
           </ion-col>
           <ion-col class="no-padding">
-            <ion-input class="ages ion-no-padding ion-text-start" *ngIf="editMode" [(ngModel)]="user.birth_date">
-            </ion-input>
+            <ion-datetime class="ages ion-no-padding ion-text-start" *ngIf="editMode" [(ngModel)]="user.birth_date"
+              displayFormat="DD/MM/YYYY" cancelText="Annulla" doneText="Fatto" [value]="user.birth_date"
+              [placeholder]="user.birth_date"></ion-datetime>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -318,6 +318,7 @@
     <ion-row>
       <ion-col class="ion-text-center">
         <ion-button *ngIf="editMode" color="danger" style="width: 50%;" (click)="onLogout()">Logout</ion-button>
+        <ion-button color="danger" style="width: 50%;" (click)="onLogout()">Logout Debug</ion-button>
         <ion-button *ngIf="paramsService.getParams().groupId && !paramsService.getParams().dinnerId" style="width: 50%;"
           (click)="onLeaveGroup()">Lascia il gruppo</ion-button>
       </ion-col>

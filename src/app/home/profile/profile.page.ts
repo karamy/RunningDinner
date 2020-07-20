@@ -106,8 +106,20 @@ export class ProfilePage implements OnInit {
     }
   }
 
+  triggerEditMode() {
+    // Converto la stringa in Date nel formato YYYY/MM/DD
+    this.user.birth_date = this.profileService.changeDateFormat(this.user.birth_date);
+    // Poi la converto in stringa formato ISO (necessario per il datetime picker)
+    this.user.birth_date = this.user.birth_date.toISOString() as unknown as Date;
+    this.editMode = !this.editMode;
+  }
+
   saveChanges() {
     this.spinner.create('Aggiorno informazioni...');
+    // Comverto la stringa ISO in data
+    this.user.birth_date = new Date(this.user.birth_date);
+    // Poi la converto in stringa nel formato DD/MM/YYYY
+    this.user.birth_date = this.user.birth_date.toLocaleDateString() as unknown as Date;
     this.user.birth_date = this.profileService.changeDateFormat(this.user.birth_date); // Rendo la data in formato YYYY/MM/DD
     const profilePhoto = this.user.profile_photo.replace('data:image/jpeg;base64,', ''); // Converto l'immagine in base64
     const geocoder = new google.maps.Geocoder();
@@ -123,10 +135,12 @@ export class ProfilePage implements OnInit {
           },
           () => {
             console.log('Errore updateUser');
+            this.authService.readUser();
+            this.getUser();
           }
         )
         .finally(() => { this.spinner.dismiss(); });
-    }
+    };
 
     geocoder.geocode({ 'address': this.user.address }, function (results, status) {
       if (status === 'OK') {

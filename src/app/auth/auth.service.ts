@@ -32,7 +32,7 @@ export class AuthService {
   }
 
   // Legge le informazioni utente presenti in localStorage e le carica nel Service
-  private readUser() {
+  public readUser() {
     this._user = JSON.parse(
       localStorage.getItem('user')
     ) as AuthenticatedUser;
@@ -194,6 +194,7 @@ export class AuthService {
 
   // Ritorna i dati dell'utente loggato
   getUserData(): UserData {
+    console.log(this._user.userData)
     return this._user.userData;
   }
 
