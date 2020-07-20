@@ -110,7 +110,7 @@ export class NotificationsService {
     const notificationType: string = notificationContent.type;
     switch (notificationType) {
       case "confirmGroupInvite": // Richiesta di aggiunta a gruppo
-        this.presentAlertAddToGroup(notificationContent.userIdThatInvites as number, notificationContent.userNameThatInvites as string);
+        this.presentAlertAddToGroup(notificationContent.userIdThatInvites as number, notificationContent.userNameThatInvites as string, notificationContent.userIdThatInvitesHouse as boolean);
         break;
       case "updateParams": // Richiesta di ricaricamento parametri
         this.paramsService.loadParams()
@@ -155,17 +155,20 @@ export class NotificationsService {
   }
 
   // Mostra popup di conferma aggiunta a gruppo a seguito di ricezione notifica
-  async presentAlertAddToGroup(userIdThatInvites: number, userNameThatInvites: string) {
+  async presentAlertAddToGroup(userIdThatInvites: number, userNameThatInvites: string, userIdThatInvitesHouse: boolean) {
+    const addToGroupMsg = userIdThatInvitesHouse ? userNameThatInvites + ' ti ha aggiunto a un gruppo a casa sua, accetti?' : userNameThatInvites + ' ti ha aggiunto a un gruppo a casa tua, accetti?'
+
     const alert = await this.alertController.create({
       header: 'Nuovo invito',
-      message: userNameThatInvites + ' ti ha aggiunto a un gruppo, accetti?',
+      message: addToGroupMsg,
       buttons: [
         'Cancel',
         {
           text: 'Certo!',
           handler: () => {
             // Confermo l'aggiunta dell'utente al gruppo
-            this.sendGroupConfirm(userIdThatInvites).then(
+            const houseUserId = userIdThatInvitesHouse ? userIdThatInvites : this.authService.getUserData().userid;
+            this.sendGroupConfirm(userIdThatInvites, houseUserId).then(
               () => {
                 // Gruppo creato, ricarico parametri e carico i dati del partner
                 this.paramsService.loadParams().then(() => {
@@ -194,11 +197,13 @@ export class NotificationsService {
     await alert.present();
   }
 
-  // Conferma la richiesta di partecipazione a un gruppo
-  // Scelto di metterlo qui invece che in ContactsService per evitare dipendenza circolare in fase di build
-  async sendGroupConfirm(userIdThatInvites) {
+  // Conferma la richiesta di partecipazione a un gruppo, specificando chi mette la casa
+  // Scelto di metterlo qui invece che in ContactsService per evitare dipendenza circolare
+  // in fase di build
+  async sendGroupConfirm(userIdThatInvites: number, contactHouseId: number) {
     const addGroupConfirmBody = {
-      userId: userIdThatInvites
+      userId: userIdThatInvites,
+      contactHouseId: contactHouseId
     };
     await this.spinner.create();
     return this.http.post(this.rdConstants.getApiRoute('inviteGroupConfirm'), addGroupConfirmBody)

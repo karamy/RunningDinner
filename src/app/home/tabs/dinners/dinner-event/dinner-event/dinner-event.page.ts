@@ -98,8 +98,9 @@ export class DinnerEventPage implements OnInit {
   initMap(addresses: google.maps.LatLng[], userAddress: google.maps.LatLng[]) {
     const markers: google.maps.Marker[] = [];
 
-    // Istanzio la mappa
-    const map = new google.maps.Map(document.getElementById('map'), {
+    const mapElement = document.getElementById('map');
+    if (mapElement) { // Istanzio la mappa solo se sono sulla pagina, altrimenti da errore
+      const map = new google.maps.Map(mapElement, {
       disableDefaultUI: true
     });
 
@@ -161,6 +162,7 @@ export class DinnerEventPage implements OnInit {
       this.bounds.extend(markers[j].getPosition());
     }
     map.fitBounds(this.bounds, { top: 15, bottom: 0, left: 0, right: 0 });
+  }
   }
 
   initCountdown(dinnerDate: Date) {

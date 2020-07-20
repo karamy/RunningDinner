@@ -110,17 +110,32 @@ export class ProfilePage implements OnInit {
     this.spinner.create('Aggiorno informazioni...');
     this.user.birth_date = this.profileService.changeDateFormat(this.user.birth_date); // Rendo la data in formato YYYY/MM/DD
     const profilePhoto = this.user.profile_photo.replace('data:image/jpeg;base64,', ''); // Converto l'immagine in base64
-    this.userService.updateUser(this.user.name, this.user.birth_date, this.user.address, this.user.phone_number, profilePhoto).then(
-      res => {
-        this.authService.addExistingTokens(res as AuthenticatedUser);
-        this.getUser();
-        this.spinner.dismiss();
-      },
-      () => {
-        console.log('Errore updateUser');
-        this.spinner.dismiss();
+    const geocoder = new google.maps.Geocoder();
+
+    // Dichiaro la funzione qui perchè altrimenti VS Code non la riconosceva all'interno dello scope
+    // Esegue l'aggiornamento delle informazioni utente
+    const updateUser = (profilePhoto: string, lat: number, lon: number) => {
+      this.userService.updateUser(this.user.name, this.user.birth_date, this.user.address, this.user.phone_number, profilePhoto, lat, lon)
+        .then(
+          res => {
+            this.authService.addExistingTokens(res as AuthenticatedUser);
+            this.getUser();
+          },
+          () => {
+            console.log('Errore updateUser');
+          }
+        )
+        .finally(() => { this.spinner.dismiss(); });
+    }
+
+    geocoder.geocode({ 'address': this.user.address }, function (results, status) {
+      if (status === 'OK') {
+        updateUser(profilePhoto, results[0].geometry.location.lat(), results[0].geometry.location.lng());
+      } else {
+        console.log('Impossibile eseguire geocoder per la seguente ragione: ' + status);
       }
-    );
+    });
+
     this.editMode = !this.editMode;
   }
 

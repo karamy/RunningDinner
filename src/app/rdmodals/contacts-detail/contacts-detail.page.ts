@@ -1,9 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, AlertController } from '@ionic/angular';
 import { ContactsService } from '../../home/tabs/contacts/contacts.service';
 import { RDToastService } from 'src/app/rdtoast.service';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { BadgesService, UserBadge } from 'src/app/home/profile/badges.service';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-contacts-detail',
@@ -21,11 +22,12 @@ export class ContactsDetailPage implements OnInit {
     private contactsService: ContactsService,
     private badgesService: BadgesService,
     private rdToast: RDToastService,
-    public paramsService: RDParamsService // Utilizzato nell'html della pagina, non rimuovere
+    public paramsService: RDParamsService, // Utilizzato nell'html della pagina, non rimuovere
+    private alertController: AlertController,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
-
     this.badgesService.getContactBadges(this.contactId).then(res => {
       this.contactBadges = this.contactBadges.concat(res);
     },
@@ -41,10 +43,34 @@ export class ContactsDetailPage implements OnInit {
 
   // Richiede l'invio di notifica lato server al contatto per aggiungerlo al gruppo
   async onAddToGroupRequest() {
-    this.contactsService.sendGroupInvite(this.contactId).then(
+    const alert = await this.alertController.create({
+      header: 'Nuovo invito',
+      message: 'In quale casa ospiterai i tuoi amici?',
+      buttons: [
+        { // Casa mia
+          text: 'Casa mia',
+          handler: () => {
+            this.sendInvite(this.authService.getUserData().userid);
+          }
+        },
+        { // Casa dell'utente nel mio gruppo
+          text: 'Casa di ' + this.contactName,
+          handler: () => {
+            this.sendInvite(this.contactId);
+          }
+        },
+        'Annulla'
+      ]
+    });
+    await alert.present();
+  }
+
+  // Effettua la richiesta
+  private sendInvite(contactHouseId: number) {
+    this.contactsService.sendGroupInvite(this.contactId, contactHouseId).then(
       () => { },
       (err) => { // Errore creazione gruppo
-        this.rdToast.show(err.error);
+        this.rdToast.show("Errore invito a gruppo");
         console.warn(err);
       }
     );

@@ -17,7 +17,7 @@ export class DinnersService {
   _usersData: UserData[];
   geocoder = new google.maps.Geocoder();
   directionsService: google.maps.DirectionsService;
-  myDinnerGroups: number[] = [2148, 5352, 4929];
+  myDinnerGroups: number[] = [2148, 1247, 4929];
   dishTypes: DinnerDish[] = [
     {
       dishId: 1,

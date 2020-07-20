@@ -33,24 +33,38 @@ export class AddressMapPage implements AfterViewInit {
 
   // Effettua la registrazione utente, e in caso positivo entra nella home
   onSignup() {
-    this.signupService.setAddress(this.autocomplete.input);
 
-    this.spinner.create("Effettuo login..."); // Creo lo spinner ma non lo rimuovo tanto ci pensa l'authService dopo il login a farlo
-    this.signupService.signupUser().then(
-      () => {
-        this.authService.doLogin(this.signupService.getSignupData().phoneNumber);
-      },
-      (err) => {
-        alert('Errore registrazione');
-        this.spinner.dismiss();
-        this.authService.doLogout();
-        console.warn(err);
+    // Dichiaro la funzione qui perchè altrimenti VS Code non la riconosceva all'interno dello scope
+    // Esegue la registrazione e il successivo login
+    const signUpAndLogin = (lat: number, lon: number) => {
+      this.signupService.setAddressAndCoordinates(this.autocomplete.input, lat, lon);
+
+      this.spinner.create("Effettuo login..."); // Creo lo spinner ma non lo rimuovo tanto ci pensa l'authService dopo il login a farlo
+      this.signupService.signupUser().then(
+        () => {
+          this.authService.doLogin(this.signupService.getSignupData().phoneNumber);
+        },
+        (err) => {
+          alert('Errore registrazione');
+          this.spinner.dismiss();
+          this.authService.doLogout();
+          console.warn(err);
+        }
+      );
+    }
+
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ 'address': this.autocomplete.input }, function (results, status) {
+      if (status === 'OK') {
+        signUpAndLogin(results[0].geometry.location.lat(), results[0].geometry.location.lng());
+      } else {
+        console.log('Impossibile eseguire geocoder per la seguente ragione: ' + status);
       }
-    );
+    });
   }
 
-  /*  Get Map from Google Maps */
   ngAfterViewInit() {
+    //Get Map from Google Maps
     this.getGoogleMaps().then(googleMaps => {
       if (this.mapElementRef) {
         const mapEl = this.mapElementRef.nativeElement;
