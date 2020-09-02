@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Dinner, DinnersService, DinnerDetails } from '../dinners.service';
 import { AlertController, NavController } from '@ionic/angular';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { NotificationsService } from 'src/app/home/notifications.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dinner-detail',
   templateUrl: './dinner-detail.page.html',
   styleUrls: ['./dinner-detail.page.scss'],
 })
-export class DinnerDetailPage implements OnInit {
+export class DinnerDetailPage implements OnInit, OnDestroy {
   dinner: Dinner;
   isEdit: Boolean = false; // Indica se la cena è in modalità edit
   dinnerDetails: DinnerDetails = {
@@ -26,6 +27,8 @@ export class DinnerDetailPage implements OnInit {
   _newTitle: string;
   _newDescription: string;
 
+  private subscription: Subscription;
+
   constructor(private route: ActivatedRoute,
     private alertController: AlertController,
     private dinnersService: DinnersService,
@@ -40,30 +43,41 @@ export class DinnerDetailPage implements OnInit {
       this.getDinnerDetails();
     });
 
-    // Registrazione observable per reagire al ricaricamento chat (es. vengo rimosso da una cena)
-    this.notificationsService.getUpdateParamsObservable().subscribe(() => {
+    // Registrazione observable per reagire al ricaricamento cena (es. vengo rimosso da una cena)
+    this.subscription = this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log("Dinner Detail - Ricarico cena");
       this.getDinnerDetails();
     });
   }
 
+  // Rimuovo la sottoscrizione all'observable quando esco dalla videata
+  ngOnDestroy() {
+    console.log("OnDestroy");
+    this.subscription.unsubscribe();
+  }
+
   // Carica i dettagli della cena
   getDinnerDetails() {
-    this.dinnersService.getDinnerDetails(this.dinner).then(res => {
-      this.dinnerDetails = res;
+    this.dinnersService.getDinnerDetails(this.dinner).then(
+      (res) => {
+        this.dinnerDetails = res;
 
-      // Sovrascrivo titolo e descrizione in quanto possono essere modificati
-      const dinnerData = res.dinnerData;
-      this.dinner.title = dinnerData.title;
-      this.dinner.description = dinnerData.description;
+        // Sovrascrivo titolo e descrizione in quanto possono essere modificati
+        const dinnerData = res.dinnerData;
+        this.dinner.title = dinnerData.title;
+        this.dinner.description = dinnerData.description;
 
-      // Ottengo la tipologia
-      this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type));
-      this.dinnerDaysLeft = this.dinnersService.getDinnerDaysLeft(this.dinner);
+        // Ottengo la tipologia
+        this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type));
+        this.dinnerDaysLeft = this.dinnersService.getDinnerDaysLeft(this.dinner);
 
-      // Carico la mappa
-      this.initMap(this.dinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
-    });
+        // Carico la mappa
+        this.initMap(this.dinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
+      },
+      () => {
+        console.log("Errore getDinnerDetails, ritorno alla home");
+        this.navController.navigateRoot('/home');
+      });
   }
 
   // Inizializza la mappa per mostrare l'utente e gli altri partecipanti alla cena
@@ -71,7 +85,7 @@ export class DinnerDetailPage implements OnInit {
     const bounds = new google.maps.LatLngBounds();
     const markers: google.maps.Marker[] = [];
 
-   
+
     const mapElement = document.getElementById('map');
     if (mapElement) { // Istanzio la mappa solo se sono sulla pagina, altrimenti da errore 
       const map = new google.maps.Map(mapElement, {

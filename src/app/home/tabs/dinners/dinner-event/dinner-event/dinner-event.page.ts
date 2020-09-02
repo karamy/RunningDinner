@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Dinner, DinnersService, DinnerDetails, MyDinnerDetails } from '../../dinners.service';
 import { ProfileService } from 'src/app/home/profile/profile.service';
@@ -7,13 +7,15 @@ import { PopoverController, ModalController } from '@ionic/angular';
 import { DinnerInfoPage } from 'src/app/rdmodals/dinner-info/dinner-info.page';
 import { FoodAllergiesInfoPage } from 'src/app/rdmodals/food-allergies-info/food-allergies-info.page';
 import { DinnerMapPage } from 'src/app/rdmodals/dinner-map/dinner-map.page';
+import { NotificationsService } from 'src/app/home/notifications.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dinner-event',
   templateUrl: './dinner-event.page.html',
   styleUrls: ['./dinner-event.page.scss'],
 })
-export class DinnerEventPage implements OnInit {
+export class DinnerEventPage implements OnInit, OnDestroy {
   dinner: Dinner;
   dinnerDetails: DinnerDetails = {
     badges: [],
@@ -36,12 +38,15 @@ export class DinnerEventPage implements OnInit {
   partnerName: string;
   bounds = new google.maps.LatLngBounds();
 
+  private subscription: Subscription;
+
   constructor(private route: ActivatedRoute,
     private popoverController: PopoverController,
     private modalController: ModalController,
     private dinnersService: DinnersService,
     private profileService: ProfileService,
-    public paramsService: RDParamsService) { }
+    public paramsService: RDParamsService,
+    private notificationsService: NotificationsService) { }
 
   async presentPopover(ev: any, dinnerTime) {
     const popover = await this.popoverController.create({
@@ -72,7 +77,20 @@ export class DinnerEventPage implements OnInit {
     await modal.present();
   }
 
+  // Rimuovo la sottoscrizione all'observable quando esco dalla videata
+  ngOnDestroy() {
+    console.log("OnDestroy");
+    this.subscription.unsubscribe();
+  }
+
   ngOnInit() {
+
+    // Registrazione observable per reagire al ricaricamento cena (es. vengo rimosso da una cena)
+    this.subscription = this.notificationsService.getUpdateParamsObservable().subscribe(() => {
+      console.log("Dinner Event - Ricarico cena");
+      //this.getDinnerDetails();
+    });
+
     this.route.queryParams.subscribe((dinner: Dinner) => {
       this.dinner = dinner;
       console.log(this.dinner);
@@ -101,53 +119,34 @@ export class DinnerEventPage implements OnInit {
     const mapElement = document.getElementById('map');
     if (mapElement) { // Istanzio la mappa solo se sono sulla pagina, altrimenti da errore
       const map = new google.maps.Map(mapElement, {
-      disableDefaultUI: true
-    });
-
-    // Creo marker per indirizzo user
-    const userMarker = {
-      url: '../../../../../assets/you-marker.png',
-      size: new google.maps.Size(50, 50),
-      origin: new google.maps.Point(0, 0),
-      scaledSize: new google.maps.Size(50, 50)
-    };
-
-    // Creo marker per le cene
-    const dinnerMarker = {
-      url: '../../../../../assets/dinner-marker.png',
-      size: new google.maps.Size(50, 50),
-      origin: new google.maps.Point(0, 0),
-      scaledSize: new google.maps.Size(50, 50)
-    };
-
-    // Imposto la posizione sulla mappa per lo user
-    const mapUserMarker = new google.maps.Marker({
-      position: userAddress[0],
-      map: map,
-      icon: userMarker
-    });
-    markers.push(mapUserMarker);
-    const userCircle = new google.maps.Circle({
-      center: userAddress[0],
-      radius: 100,
-      fillColor: '#0000FF',
-      fillOpacity: 0.1,
-      map: map,
-      strokeColor: '#FFFFFF',
-      strokeOpacity: 0.1,
-      strokeWeight: 2
-    });
-
-    // Imposto la posizione sulla mappa per le cene
-    for (let i = 0; i < addresses.length; i++) {
-      const mapDinnerMarker = new google.maps.Marker({
-        position: addresses[i],
-        map: map,
-        icon: dinnerMarker
+        disableDefaultUI: true
       });
-      markers.push(mapDinnerMarker);
-      const dinnerCircle = new google.maps.Circle({
-        center: addresses[i],
+
+      // Creo marker per indirizzo user
+      const userMarker = {
+        url: '../../../../../assets/you-marker.png',
+        size: new google.maps.Size(50, 50),
+        origin: new google.maps.Point(0, 0),
+        scaledSize: new google.maps.Size(50, 50)
+      };
+
+      // Creo marker per le cene
+      const dinnerMarker = {
+        url: '../../../../../assets/dinner-marker.png',
+        size: new google.maps.Size(50, 50),
+        origin: new google.maps.Point(0, 0),
+        scaledSize: new google.maps.Size(50, 50)
+      };
+
+      // Imposto la posizione sulla mappa per lo user
+      const mapUserMarker = new google.maps.Marker({
+        position: userAddress[0],
+        map: map,
+        icon: userMarker
+      });
+      markers.push(mapUserMarker);
+      const userCircle = new google.maps.Circle({
+        center: userAddress[0],
         radius: 100,
         fillColor: '#0000FF',
         fillOpacity: 0.1,
@@ -156,13 +155,32 @@ export class DinnerEventPage implements OnInit {
         strokeOpacity: 0.1,
         strokeWeight: 2
       });
-    }
 
-    for (var j = 0; j < markers.length; j++) {
-      this.bounds.extend(markers[j].getPosition());
+      // Imposto la posizione sulla mappa per le cene
+      for (let i = 0; i < addresses.length; i++) {
+        const mapDinnerMarker = new google.maps.Marker({
+          position: addresses[i],
+          map: map,
+          icon: dinnerMarker
+        });
+        markers.push(mapDinnerMarker);
+        const dinnerCircle = new google.maps.Circle({
+          center: addresses[i],
+          radius: 100,
+          fillColor: '#0000FF',
+          fillOpacity: 0.1,
+          map: map,
+          strokeColor: '#FFFFFF',
+          strokeOpacity: 0.1,
+          strokeWeight: 2
+        });
+      }
+
+      for (var j = 0; j < markers.length; j++) {
+        this.bounds.extend(markers[j].getPosition());
+      }
+      map.fitBounds(this.bounds, { top: 15, bottom: 0, left: 0, right: 0 });
     }
-    map.fitBounds(this.bounds, { top: 15, bottom: 0, left: 0, right: 0 });
-  }
   }
 
   initCountdown(dinnerDate: Date) {
