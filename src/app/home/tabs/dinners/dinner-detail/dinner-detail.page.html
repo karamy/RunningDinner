@@ -87,7 +87,7 @@
   </div>
 
   <ion-button color="success"
-    *ngIf="!paramsService.getParams().dinnerId && paramsService.getParams().groupId && dinnerDaysLeft"
+    *ngIf="!paramsService.getParams().dinnerId && paramsService.getParams().groupId && dinnerDaysLeft && dinner.groupIds.length < 9"
     (click)="onJoinDinner()">Partecipa
   </ion-button>
 </ion-content>
