@@ -13,6 +13,7 @@ import { Diagnostic } from "@ionic-native/diagnostic/ngx";
 import { Contacts } from "@ionic-native/contacts";
 import { RDModalsModule } from './rdmodals/rdmodals.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { LaunchNavigator } from '@ionic-native/launch-navigator/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -35,7 +36,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
       useClass: TokenInterceptorService,
       multi: true,
     },
-    Contacts
+    Contacts,
+    LaunchNavigator
   ],
   bootstrap: [AppComponent]
 })

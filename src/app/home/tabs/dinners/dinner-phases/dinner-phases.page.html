@@ -1,0 +1,128 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home/tabs/dinners">Back</ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button shape="round" size="large" slot="icon-only" (click)="presentPopover($event, dinner.time)">
+        <ion-icon size="large" name="help-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content scrollY="false" fullscreen="true" slot="fixed">
+  <div id="map" class="background-map"></div>
+  <!-- <div class="countdown" id="countdown"></div> -->
+  <ion-grid class="layout-grid">
+    <ion-row class="notch-row">
+      <ion-col style="height: 100%;">
+        <div class="notch">
+          <h3 *ngIf="phase === 1" class="dinner-title">{{firstDish.name}}</h3>
+          <h3 *ngIf="phase === 2" class="dinner-title">{{secondDish.name}}</h3>
+          <h3 *ngIf="phase === 3" class="dinner-title">{{thirdDish.name}}</h3>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row style="height: 100%;">
+      <ion-col style="height: 100%;">
+        <div class="card-body">
+          <div class="dinner-meta ion-text-center">
+            <ion-grid>
+              <ion-row style="margin-top: 5%;">
+                <ion-col style="display: contents;" class="ion-text-center">
+                  <h6 *ngIf="phase === 1" class="dinner-info">Dalle
+                    {{dinnersService.formatDate(firstDish.startTime)[1]}} alle
+                    {{dinnersService.formatDate(firstDish.endTime)[1]}}
+                  </h6>
+                  <h6 *ngIf="phase === 2" class="dinner-info">Dalle
+                    {{dinnersService.formatDate(secondDish.startTime)[1]}} alle
+                    {{dinnersService.formatDate(secondDish.endTime)[1]}}
+                  </h6>
+                  <h6 *ngIf="phase === 3" class="dinner-info">Dalle
+                    {{dinnersService.formatDate(thirdDish.startTime)[1]}} alle
+                    {{dinnersService.formatDate(thirdDish.endTime)[1]}}
+                  </h6>
+                </ion-col>
+              </ion-row>
+              <ion-row style="margin-top: 3%;">
+                <ion-col *ngIf="myDinnerDetails.houses" class="ion-text-center">
+                  <p class="dinner-name">A casa di </p>
+                  <span *ngIf="phase === 1" class="dinner-name">
+                    {{myDinnerDetails.houses.firstHouse.firstName}}
+                    &
+                    {{myDinnerDetails.houses.firstHouse.secondName}}
+                  </span>
+                  <span *ngIf="phase === 2" class="dinner-name">
+                    {{myDinnerDetails.houses.secondHouse.firstName}}
+                    &
+                    {{myDinnerDetails.houses.secondHouse.secondName}}
+                  </span>
+                  <span *ngIf="phase === 3" class="dinner-name">
+                    {{myDinnerDetails.houses.thirdHouse.firstName}}
+                    &
+                    {{myDinnerDetails.houses.thirdHouse.secondName}}
+                  </span>
+                </ion-col>
+                <ion-col class="ion-text-center">
+                  <div style="display: -webkit-box;">
+                    <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-left">
+                      <img *ngIf="phase === 1" [src]="myDinnerDetails.houses.firstHouse.firstImage">
+                      <img *ngIf="phase === 2" [src]="myDinnerDetails.houses.secondHouse.firstImage">
+                      <img *ngIf="phase === 3" [src]="myDinnerDetails.houses.thirdHouse.firstImage">
+                    </ion-avatar>
+                    <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-right">
+                      <img *ngIf="phase === 1" [src]="myDinnerDetails.houses.firstHouse.secondImage">
+                      <img *ngIf="phase === 2" [src]="myDinnerDetails.houses.secondHouse.secondImage">
+                      <img *ngIf="phase === 3" [src]="myDinnerDetails.houses.thirdHouse.secondImage">
+                    </ion-avatar>
+                  </div>
+                </ion-col>
+              </ion-row>
+              <ion-row class="ion-text-center" style="margin-top: 3%;">
+                <ion-col>
+                  <h3 style="margin: 0%;">Indicazioni</h3>
+                </ion-col>
+              </ion-row>
+              <ion-row class="ion-text-center" style="margin-top: 3%;">
+                <ion-col size="1" class="ion-align-items-center">
+                  <ion-icon name="home-outline"></ion-icon>
+                </ion-col>
+                <ion-col class="ion-text-start" style="padding-left: 2%;">
+                  <h6 *ngIf="phase === 1" class="dinner-info">{{myDinnerDetails.houses.firstHouse.groupAddress}}</h6>
+                  <h6 *ngIf="phase === 2" class="dinner-info">{{myDinnerDetails.houses.secondHouse.groupAddress}}</h6>
+                  <h6 *ngIf="phase === 3" class="dinner-info">{{myDinnerDetails.houses.thirdHouse.groupAddress}}</h6>
+                </ion-col>
+              </ion-row>
+              <ion-row class="ion-text-center" style="margin-top: 3%;">
+                <ion-col size="1" class="ion-align-items-center">
+                  <ion-icon name="map-outline"></ion-icon>
+                </ion-col>
+                <ion-col class="ion-text-start" style="padding-left: 2%;">
+                  <h6 class="dinner-info">{{distanceFromUser}}</h6>
+                </ion-col>
+              </ion-row>
+              <ion-row class="ion-text-center" style="margin-top: 3%;">
+                <ion-col size="1" class="ion-align-items-center">
+                  <ion-icon name="car-sport-outline"></ion-icon>
+                </ion-col>
+                <ion-col class="ion-text-start" style="padding-left: 2%;">
+                  <h6 class="dinner-info">{{travelTime}}</h6>
+                </ion-col>
+              </ion-row>
+              <ion-row class="ion-text-center" style="margin-top: 7%;">
+                <ion-col class="ion-align-items-center">
+                  <ion-button
+                    *ngIf="phase === 1 && this.paramsService.getParams().groupId != this.myDinnerDetails.houses.firstHouse.groupid || phase === 2 || phase === 3"
+                    (click)="startNavigation()">
+                    Inizia Navigazione
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { RDConstantsService } from 'src/app/rdcostants.service';
 import { RDSpinnerService } from 'src/app/rdspinner.service';
 import { UserBadge, BadgesService } from '../../profile/badges.service';
-import { UserAllergy } from 'src/app/rdmodals/food-allergies/food-allergies.page';
+import { UserAllergy, FoodAllergy } from 'src/app/rdmodals/food-allergies/food-allergies.page';
 import { UserData, AuthService } from 'src/app/auth/auth.service';
 import { FoodAllergiesService } from 'src/app/rdmodals/food-allergies/food-allergies.service';
 import { RDParamsService } from 'src/app/rdparams.service';
@@ -17,38 +17,27 @@ export class DinnersService {
   _usersData: UserData[];
   geocoder = new google.maps.Geocoder();
   directionsService: google.maps.DirectionsService;
-  myDinnerGroups: number[] = [2148, 1247, 4929];
-  dishTypes: DinnerDish[] = [
-    {
-      dishId: 1,
-      dishName: 'Antipasto'
-    },
-    {
-      dishId: 2,
-      dishName: 'Primo'
-    },
-    {
-      dishId: 3,
-      dishName: 'Secondo'
-    }
-  ];
 
   dinnerTypes: DinnerType[] = [
     {
       code: 1,
-      description: 'Italiano'
+      description: 'Italiano',
+      dishes: ['Antipasto', 'Primo', 'Secondo']
     },
     {
       code: 2,
-      description: 'Pesce'
+      description: 'Pesce',
+      dishes: ['Antipasto', 'Primo', 'Secondo']
     },
     {
       code: 3,
-      description: 'Vegan'
+      description: 'Vegan',
+      dishes: ['Antipasto', 'Primo', 'Secondo']
     },
     {
       code: 4,
-      description: 'Sushi'
+      description: 'Sushi',
+      dishes: ['Primo piatto', 'Secondo piatto', 'Terzo piatto']
     }
   ];
 
@@ -118,6 +107,7 @@ export class DinnersService {
             const avgDistance = res['avgDistance'];
             const dinnerData = res['dinnerData'];
             const dinnerBadges = this.getDinnerBadges(res as DinnerDetails);
+            const allDinnerFoodAllergies = this.foodAllergiesService.convertImagesToJpeg(res['foodAllergies']);
             const dinnerFoodAllergies = this.getDinnerFoodAllergies(res as DinnerDetails);
             const dinnerMinMaxAges = this.getDinnerUsersData(res as DinnerDetails);
             this._usersData = this.convertUserImagesToJpeg(res as DinnerDetails);
@@ -127,7 +117,7 @@ export class DinnersService {
             };
             // Creo oggetto con i groupId e groupaddress per poi ottenere le coordinate
             for (let i = 0; i < this._usersData.length; i++) {
-              if (addressesToDecode.groupid.includes(this._usersData[i].groupid) === false) {
+              if (addressesToDecode.groupid.includes(this._usersData[i].groupid) === false && this._usersData[i].groupid !== this.paramsService.getParams().groupId) {
                 addressesToDecode.addresses.push(this._usersData[i].group_address);
                 addressesToDecode.groupid.push(this._usersData[i].groupid);
               }
@@ -139,12 +129,13 @@ export class DinnersService {
               userAddressToDecode = this.authService.getUser().userData.address;
             }
             // Ottengo le coordinate degli indirizzi dei gruppi e dell'utente da utilizzare poi per calcolare le distanze
-            this.getCoordinates(addressesToDecode, userAddressToDecode).then(response => {
+            this.getCoordinates(addressesToDecode.addresses, userAddressToDecode).then(response => {
               const addressesLatLng = response[0];
               const userLatLng = response[1];
               const dinnerDetails: DinnerDetails = {
                 usersData: this._usersData,
                 badges: dinnerBadges,
+                allFoodAllergies: allDinnerFoodAllergies,
                 foodAllergies: dinnerFoodAllergies[0],
                 foodAllergiesCategories: dinnerFoodAllergies[1],
                 minMaxAges: dinnerMinMaxAges,
@@ -168,37 +159,31 @@ export class DinnersService {
   }
 
   // Ottiene i piatti della cena per l'evento cena e gli utenti corrispondenti
-  async getMyDinnerDetails(dinner: Dinner): Promise<MyDinnerDetails> {
-    const dinnerId = dinner.id;
+  async getMyDinnerDetails(dinner: Dinner, groupId: number): Promise<MyDinnerDetails> {
+    const dataToSend = {
+      dinnerId: dinner.id,
+      groupId: groupId
+    };
     await this.spinner.create();
     return new Promise((resolve, reject) =>
-      this.http.post(this.rdConstants.getApiRoute('getDinnerDishes'), { dinnerId })
+      this.http.post(this.rdConstants.getApiRoute('getDinnerHouses'), dataToSend)
         .toPromise()
         .then(
           res => {
             const myDinnerDetails = {
-              dishes: [],
+              houses: res as DinnerHouses,
               myDish: undefined,
-              dishDistances: [],
+              houseDistances: [],
               foodAllergies: [],
               addressesLatLng: []
             };
-            myDinnerDetails.dishes = this.getMyDinnerDishes(res as DinnerDish[]);
-            myDinnerDetails.myDish = this.getMyDish(myDinnerDetails);
-            const addressesToDecode = {
-              groupid: [],
-              addresses: []
-            }
-            for (let i = 0; i < this._usersData.length; i++) {
-              if (addressesToDecode.groupid.includes(this._usersData[i].groupid) === false && this.myDinnerGroups.includes(this._usersData[i].groupid) == true) {
-                addressesToDecode.addresses.push(this._usersData[i].group_address);
-                addressesToDecode.groupid.push(this._usersData[i].groupid);
-              }
-            }
+            myDinnerDetails.houses = this.convertHouseImagesToJpeg(myDinnerDetails.houses);
+            const addressesToDecode = this.detAddressesToDecode(myDinnerDetails.houses);
+
             this.getCoordinates(addressesToDecode, this.profileService.getPartner().group_address).then(response => {
               myDinnerDetails.addressesLatLng = response[0];
-              this.getDishDistances(myDinnerDetails).then(resp => {
-                myDinnerDetails.dishDistances = resp;
+              this.getHouseDistances(myDinnerDetails.houses).then(resp => {
+                myDinnerDetails.houseDistances = resp as string[];
                 resolve(myDinnerDetails);
               });
             });
@@ -240,10 +225,10 @@ export class DinnersService {
     return dinnerBadges;
   }
 
-  // Ottengo le intolleranze della cena selezionata
-  getDinnerFoodAllergies(dinnerDetails: DinnerDetails) {
+  // Rimuove duplicati tenendo solo il primo
+  removeFoodAllergiesDuplicates(foodAllergies: UserAllergy[]) {
     const dinnerFoodAllergies = [];
-    dinnerDetails.foodAllergies.forEach(foodAllergy => {
+    foodAllergies.forEach(foodAllergy => {
       const sameAllergyId = dinnerFoodAllergies.filter(x => x.allergy_id === foodAllergy.allergy_id);
       if (sameAllergyId) {
         const sameName = sameAllergyId.find(x => x.allergy_name.toLowerCase() === foodAllergy.allergy_name.toLowerCase());
@@ -254,11 +239,17 @@ export class DinnersService {
         dinnerFoodAllergies.push(foodAllergy);
       }
     });
-    this.foodAllergiesService.convertImagesToJpeg(dinnerFoodAllergies);
-    this.foodAllergiesService.orderFoodAllergies(dinnerFoodAllergies);
-    const dinnerAllergiesCategory = this.foodAllergiesService.createCategoryArray(dinnerFoodAllergies);
+    return dinnerFoodAllergies;
+  }
 
-    return [dinnerFoodAllergies, dinnerAllergiesCategory];
+  // Ottengo le intolleranze della cena selezionata
+  getDinnerFoodAllergies(dinnerDetails: DinnerDetails) {
+    // Rimuovo eventuali intolleranze duplicate
+    const uniqueFoodAllergiesList = this.removeFoodAllergiesDuplicates(dinnerDetails.foodAllergies);
+    // Ottengo le categorie delle foodAllergies presenti nella cena
+    const dinnerAllergiesCategory = this.foodAllergiesService.createCategoryArray(uniqueFoodAllergiesList);
+
+    return [uniqueFoodAllergiesList, dinnerAllergiesCategory];
   }
 
   // Calcolo gli anni e l'età minima/massima degli utenti partecipanti alla cena selezionata
@@ -275,64 +266,77 @@ export class DinnersService {
 
   // Funzioni di myDinner
 
-  // Filtro tutti i gruppi partecipanti alla cena tenendo solo quelli con i quali sono abbinato ed assegno il nome al dishId
-  getMyDinnerDishes(dinnerDishes: DinnerDish[]) {
-    const myDinnerDishes = [];
-    for (let i = 0; i < dinnerDishes.length; i++) {
-      const usersNames = [];
-      if (this.myDinnerGroups.includes(dinnerDishes[i].groupId) === true) {
-        for (let j = 0; j < this.dishTypes.length; j++) {
-          if (this.dishTypes[j].dishId === dinnerDishes[i].dishId) {
-            dinnerDishes[i].dishName = this.dishTypes[j].dishName;
-          }
-        }
-        for (let k = 0; k < this._usersData.length; k++) {
-          if (this._usersData[k].groupid === dinnerDishes[i].groupId) {
-            usersNames.push(this._usersData[k]);
-          }
-        }
-        // Inserisco dinnerDish che contiene le info del piatto e gli utenti che lo cucineranno
-        const dinnerDish = {
-          dish: dinnerDishes[i],
-          usersData: usersNames
-        };
-        myDinnerDishes.push(dinnerDish);
-      }
-    }
-    myDinnerDishes.sort((a, b) => a.dish.dishId - b.dish.dishId);
-    return myDinnerDishes;
+  // Converto le immagini dei membri delle case in JPEG
+  convertHouseImagesToJpeg(dinnerHouses: DinnerHouses) {
+    dinnerHouses.firstHouse.firstImage = 'data:image/jpeg;base64,' + dinnerHouses.firstHouse.firstImage;
+    dinnerHouses.firstHouse.secondImage = 'data:image/jpeg;base64,' + dinnerHouses.firstHouse.secondImage;
+    dinnerHouses.secondHouse.firstImage = 'data:image/jpeg;base64,' + dinnerHouses.secondHouse.firstImage;
+    dinnerHouses.secondHouse.secondImage = 'data:image/jpeg;base64,' + dinnerHouses.secondHouse.secondImage;
+    dinnerHouses.thirdHouse.firstImage = 'data:image/jpeg;base64,' + dinnerHouses.thirdHouse.firstImage;
+    dinnerHouses.thirdHouse.secondImage = 'data:image/jpeg;base64,' + dinnerHouses.thirdHouse.secondImage;
+    return dinnerHouses;
   }
 
-  // Ottengo il piatto che devo preparare io
-  getMyDish(myDinnerDetails: MyDinnerDetails) {
-    for (let i = 0; i < myDinnerDetails.dishes.length; i++) {
-      if (myDinnerDetails.dishes[i].dish.groupId === this.paramsService.getParams().groupId) {
-        return myDinnerDetails.dishes[i].dish;
-      }
+  // Ottengo gli address di tutte le case tranne quella dello user
+  detAddressesToDecode(dinnerHouses: DinnerHouses) {
+    const addressesToDecode = [];
+    if (dinnerHouses.firstHouse.groupid !== this.paramsService.getParams().groupId) {
+      addressesToDecode.push(dinnerHouses.firstHouse.groupAddress);
     }
+    if (dinnerHouses.secondHouse.groupid !== this.paramsService.getParams().groupId) {
+      addressesToDecode.push(dinnerHouses.secondHouse.groupAddress);
+    }
+    if (dinnerHouses.thirdHouse.groupid !== this.paramsService.getParams().groupId) {
+      addressesToDecode.push(dinnerHouses.thirdHouse.groupAddress);
+    }
+    return addressesToDecode;
   }
 
   // Ottengo solo le foodAllergies dei componenti della mia cena
-  getMyDinnerFoodAllergies(foodAllergies: UserAllergy[]) {
-    const myDinnerUserIds = [];
+  getMyDinnerFoodAllergies(dinnerHouses: DinnerHouses, foodAllergies: UserAllergy[]) {
     const myDinnerFoodAllergies = [];
+    const myDinnerUserIds = [dinnerHouses.firstHouse.firstUserId, dinnerHouses.firstHouse.secondUserId, dinnerHouses.secondHouse.firstUserId, dinnerHouses.secondHouse.secondUserId, dinnerHouses.thirdHouse.firstUserId, dinnerHouses.thirdHouse.secondUserId]
 
-    // Ottengo gli user_id dei componenti alla cena
-    for (let i = 0; i < this.myDinnerGroups.length; i++) {
-      const stringId = this.myDinnerGroups[i].toString().match(/.{1,2}/g);
-      const idArray = stringId.map(Number);
-      myDinnerUserIds.push(idArray);
-    }
     for (let k = 0; k < foodAllergies.length; k++) {
       for (let j = 0; j < myDinnerUserIds.length; j++) {
-        if (foodAllergies[k].user_id === myDinnerUserIds[j][0] || foodAllergies[k].user_id === myDinnerUserIds[j][1]) {
+        if (foodAllergies[k].user_id === myDinnerUserIds[j]) {
           myDinnerFoodAllergies.push(foodAllergies[k]);
         }
       }
     }
+
+    // Rimuovo eventuali intolleranze duplicate
+    const uniqueMyDinnerFoodAllergies = this.removeFoodAllergiesDuplicates(myDinnerFoodAllergies);
     // Ottengo le categorie delle foodAllergies presenti nella cena
-    const myDinnerAllergiesCategories = this.foodAllergiesService.createCategoryArray(myDinnerFoodAllergies);
-    return [myDinnerFoodAllergies, myDinnerAllergiesCategories];
+    const myDinnerAllergiesCategories = this.foodAllergiesService.createCategoryArray(uniqueMyDinnerFoodAllergies);
+
+    return [uniqueMyDinnerFoodAllergies, myDinnerAllergiesCategories];
+  }
+
+  setDinnerDishes(dinner: Dinner) {
+    const decodedDishNames = this.decodeType(Number(dinner.type));
+    const dinnerDate = new Date(dinner.date);
+
+    // firstDish
+    const firstDishName = decodedDishNames[1];
+    const firstDishStart = new Date(dinnerDate.getTime());
+    const firstDishEnd = new Date(firstDishStart.getTime() + 35 * 60000);
+
+    // secondDish
+    const secondDishName = decodedDishNames[2];
+    const secondDishStart = new Date(firstDishEnd.getTime() + 25 * 60000);
+    const secondDishEnd = new Date(secondDishStart.getTime() + 35 * 60000);
+
+    // thirdDish
+    const thirdDishName = decodedDishNames[3];
+    const thirdDishStart = new Date(secondDishEnd.getTime() + 25 * 60000);
+    const thirdDishEnd = new Date(thirdDishStart.getTime() + 40 * 60000);
+
+    const firstDish = { name: firstDishName, startTime: firstDishStart, endTime: firstDishEnd };
+    const secondDish = { name: secondDishName, startTime: secondDishStart, endTime: secondDishEnd };
+    const thirdDish = { name: thirdDishName, startTime: thirdDishStart, endTime: thirdDishEnd };
+
+    return [firstDish, secondDish, thirdDish];
   }
 
   // Restituisce le informazioni sul tipo della cena
@@ -340,13 +344,56 @@ export class DinnersService {
     return this.dinnerTypes;
   }
 
-  // Restituisce il nome del tipo della cena
+  // Restituisce il nome del tipo della cena ed i piatti preparati
   decodeType(type: number) {
     for (let i = 0; i < this.dinnerTypes.length; i++) {
       if (this.dinnerTypes[i].code === type) {
-        return this.dinnerTypes[i].description;
+        const firstDish = this.dinnerTypes[i].dishes[0];
+        const secondDish = this.dinnerTypes[i].dishes[1];
+        const thirdDish = this.dinnerTypes[i].dishes[2]
+        return [this.dinnerTypes[i].description, firstDish, secondDish, thirdDish]
       }
     }
+  }
+
+  // Determina il piatto che cucinerà il mio gruppo
+  detMyDish(dinnerHouses: DinnerHouses, firstDish: string, secondDish: string, thirdDish: string) {
+    if (this.paramsService.getParams().groupId === dinnerHouses.firstHouse.groupid) {
+      return firstDish;
+    } else if (this.paramsService.getParams().groupId === dinnerHouses.secondHouse.groupid) {
+      return secondDish;
+    } else {
+      return thirdDish;
+    }
+  }
+
+  // Funzioni di dinnerPhase
+
+  // Determino in che fase della cena sono
+  setPhase(firstDish: DinnerDish, secondDish: DinnerDish, thirdDish: DinnerDish) {
+    const now = new Date();
+    let phase: number;
+    if (now.getTime() <= firstDish.endTime.getTime() - 7200000) {
+      phase = 1;
+    } else if (now.getTime() <= secondDish.endTime.getTime() - 7200000) {
+      phase = 2;
+    } else if (now.getTime() <= thirdDish.endTime.getTime() - 7200000) {
+      phase = 3;
+    } else {
+      phase = 4;
+    }
+    return phase;
+  }
+
+  // Imposto le variabili della fase ritornando la distanza tra le due case, il tempo di viaggio e l'oggetto DirectionsRenderer che disegna il percorso sulla mappa
+  setVariables(firstAddress: string, secondAddress: string) {
+    const variablesArray = [];
+    return new Promise(async (res) => {
+      await this.calcDistance(firstAddress, secondAddress).then(async res => {
+        variablesArray.push('A ' + res[0] + ' da te', 'Tempo di viaggio stimato: ' + res[1] + ' in auto', res[2]);
+      })
+      res(variablesArray);
+    })
   }
 
   // Calcolo età utente
@@ -389,11 +436,9 @@ export class DinnersService {
     const addressesLatLng = [];
     const userLatLng = [];
     // Ottengo coordinate dei partecipanti alla cena escluso eventualmente lo user
-    for (let i = 0; i < addressesToDecode.addresses.length; i++) {
-      await this.geocodeAddresses(addressesToDecode.addresses[i]).then(res => {
-        if (addressesToDecode.groupid[i] !== this.paramsService.getParams().groupId) {
-          addressesLatLng.push(res);
-        }
+    for (let i = 0; i < addressesToDecode.length; i++) {
+      await this.geocodeAddresses(addressesToDecode[i]).then(res => {
+        addressesLatLng.push(res);
       },
         () => {
           console.log('Errore in geocodeAddresses dinners');
@@ -406,7 +451,6 @@ export class DinnersService {
       () => {
         console.log('Errore in geocodeAddresses user');
       });
-
     return [addressesLatLng, userLatLng];
   }
 
@@ -425,29 +469,32 @@ export class DinnersService {
   }
 
   // Calcolo la distanza tra il primo ed il secondo gruppo ed il secondo e il terzo
-  async getDishDistances(myDinnerDetails: MyDinnerDetails) {
-    let dish2Distance: string;
-    let dish3Distance: string;
-    for (let i = 0; i < myDinnerDetails.dishes.length; i++) {
-      if (i === 0) {
-        await this.calcDistance(myDinnerDetails.dishes[i].usersData[0].group_address, myDinnerDetails.dishes[i + 1].usersData[0].group_address).then(res => {
-          dish2Distance = res;
+  getHouseDistances(dinnerHouses: DinnerHouses) {
+    return new Promise((resolve, reject) => {
+      const houseDistances = [];
+      this.calcDistance(dinnerHouses.firstHouse.groupAddress, dinnerHouses.secondHouse.groupAddress).then(res => {
+        houseDistances.push(res[0]);
+        this.calcDistance(dinnerHouses.secondHouse.groupAddress, dinnerHouses.thirdHouse.groupAddress).then(resp => {
+          houseDistances.push(resp[0]);
+          resolve(houseDistances);
         });
-      } else if (i === 1) {
-        await this.calcDistance(myDinnerDetails.dishes[i].usersData[0].group_address, myDinnerDetails.dishes[i + 1].usersData[0].group_address).then(res => {
-          dish3Distance = res;
-        });
-      }
-    }
-    return [dish2Distance, dish3Distance]
+      });
+    });
   }
 
-  // Calcolo quanti giorni mancano alla cena (ritorna 0 se mancano meno di 24 ore)
-  getDinnerDaysLeft(dinner: Dinner) {
+  // Calcolo quanto tempo manca alla cena
+  getDinnerTimeLeft(dinnerDate: Date) {
     const now = new Date().getTime();
-    const dinnerDate = new Date(dinner.date).getTime();
-    const dinnerDaysLeft = Math.floor(((dinnerDate - now) - 7200000) / (1000 * 60 * 60 * 24));
-    return dinnerDaysLeft;
+    const diffDate = new Date(dinnerDate).getTime();
+    const distance = (diffDate - now) - 7200000;
+    let dinnerDaysLeft = Math.floor(distance / (1000 * 60 * 60 * 24));
+    let dinnerHoursLeft = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const dinnerMinutesLeft = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    if (dinnerHoursLeft < 0) {
+      dinnerDaysLeft++;
+      dinnerHoursLeft++;
+    }
+    return [dinnerDaysLeft, dinnerHoursLeft, dinnerMinutesLeft];
   }
 
   // Partecipa a cena
@@ -470,8 +517,9 @@ export class DinnersService {
       );
   }
 
-  // Calcolo distanza tra due indirizzi
-  calcDistance(firstAddress: string, secondAddress: string): Promise<string> {
+  // Calcolo distanza e tempo di percorrenza in auto tra due indirizzi
+  calcDistance(firstAddress: string, secondAddress: string): Promise<any> {
+    const directionsRenderer = new google.maps.DirectionsRenderer();
     return new Promise((res, rej) => {
       this.directionsService.route({
         origin: firstAddress,
@@ -479,8 +527,10 @@ export class DinnersService {
         travelMode: google.maps.TravelMode['DRIVING']
       }, (response, status) => {
         if (status === 'OK') {
-          const distance = response.routes[0].legs[0].distance.text;
-          res(distance);
+          const distance = response.routes[0].legs[0].distance.text; // Distanza tra due indirizzi
+          const travelTime = response.routes[0].legs[0].duration.text; // Tempo di percorrenza in macchina
+          directionsRenderer.setDirections(response); // Oggetto per disegnare sulla mappa il percorso
+          res([distance, travelTime, directionsRenderer]);
         } else {
           window.alert('Directions request failed due to ' + status);
           rej();
@@ -488,12 +538,34 @@ export class DinnersService {
       });
     });
   }
+
+  // Se esiste un marker nello stesso indirizzo, applico al secondo un offset
+  checkIfExistingMarker(markers: google.maps.Marker[], address: google.maps.LatLng) {
+    if (markers.length !== 0) {
+      for (let i = 0; i < markers.length; i++) {
+        const existingMarker = markers[i];
+        const pos = existingMarker.getPosition();
+
+        if (address.equals(pos)) {
+          // Applico un offset al secondo marker
+          const newLat = address.lat() + (Math.random() - .5) / 1500;
+          const newLng = address.lng() + (Math.random() - .5) / 1500;
+          const finalLatLng = new google.maps.LatLng(newLat, newLng);
+          return finalLatLng;
+        }
+      }
+      return address;
+    } else {
+      return address;
+    }
+  }
 }
 
 // Rappresenta una tipologia di cena
 export interface DinnerType {
   code: number; // 1: italiano, 2: sushi, 3: vegan, 4: flash dinner
   description: string;
+  dishes: string[];
   background?: string; // TODO aggiungere gestione backgound della card in base alla tipologia di cena
 }
 
@@ -506,13 +578,14 @@ export interface Dinner {
   groupIds: number[]; // Rappresenta gli id dei gruppi partecipanti alla cena
   date: Date;
   dateString?: string;
-  time?: string;
+  time?: number;
   administrator: number; // rappresenta l'id del gruppo amministratore della cena
 }
 
 // Rappresenta i dettagli di una cena
 export interface DinnerDetails {
   badges?: UserBadge[];
+  allFoodAllergies?: UserAllergy[];
   foodAllergies: UserAllergy[];
   foodAllergiesCategories?: string[];
   usersData?: UserData[];
@@ -524,22 +597,32 @@ export interface DinnerDetails {
   dinnerData?: Dinner;
 }
 
-// Rappresenta i piatti di una cena
-export interface DinnerDish {
-  groupId?: number;
-  dishId: number;
+export interface DinnerHouse {
+  groupid: number;
+  firstName: string;
+  firstUserId: number;
+  secondName: string;
+  secondUserId: number;
+  firstImage: string;
+  secondImage: string;
+  groupAddress: string;
   dishName?: string;
 }
 
-// Rappresenta i dettagli dell'evento cena
-export interface DinnerEvent {
-  dish: DinnerDish;
-  usersData: UserData[];
+export interface DinnerHouses {
+  firstHouse: DinnerHouse;
+  secondHouse: DinnerHouse;
+  thirdHouse: DinnerHouse;
+}
+
+export interface DinnerDish {
+  name: string;
+  startTime: Date;
+  endTime: Date;
 }
 
 // Rappresenta la cena nell'evento cena
 export interface MyDinnerDetails extends DinnerDetails {
-  dishes: DinnerEvent[];
-  myDish: DinnerDish;
-  dishDistances: string[];
+  houses: DinnerHouses;
+  houseDistances: string[];
 }

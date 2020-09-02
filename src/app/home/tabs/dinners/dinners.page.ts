@@ -4,6 +4,7 @@ import { DinnersService, Dinner } from './dinners.service';
 import { Router } from '@angular/router';
 import { NotificationsService } from '../../notifications.service';
 import { ProfileService } from '../../profile/profile.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-dinners',
@@ -41,12 +42,12 @@ export class DinnersPage implements OnInit {
         if (this.myDinner) {
           const myDinnerDateTime = this.dinnersService.formatDate(this.myDinner.date);
           this.myDinner.dateString = myDinnerDateTime[0];
-          this.myDinner.time = myDinnerDateTime[1];
+          this.myDinner.time = Number(myDinnerDateTime[1]);
         }
         for (let i = 0; i < this.dinnerList.length; i++) {
           const dinnerDateTime = this.dinnersService.formatDate(this.dinnerList[i].date);
           this.dinnerList[i].dateString = dinnerDateTime[0];
-          this.dinnerList[i].time = dinnerDateTime[1];
+          this.dinnerList[i].time = Number(dinnerDateTime[1]);
         }
         if (event) { // Se lanciato dal refresher emetto evento di completamento
           event.target.complete();
@@ -62,22 +63,28 @@ export class DinnersPage implements OnInit {
     );
   }
 
-  // Mostra il dettaglio della cena selezionata
+  // In base al tempo che manca alla cena selezionata ti manda sui dettagli/evento/fasi
   goToDinnerDetail(dinner: Dinner) {
-    if (this.compareDate(dinner)) {
+    if (this.compareDate(dinner) === 'event') {
       this.router.navigate(['/home/tabs/dinners/dinner-event'], { queryParams: dinner });
+    } else if (this.compareDate(dinner) === 'phase') {
+      this.router.navigate(['/home/tabs/dinners/dinner-phases'], { queryParams: dinner });
     } else {
       this.router.navigate(['/home/tabs/dinners/dinner-detail'], { queryParams: dinner });
     }
   }
 
-  // Controllo se la data della cena è > o < di 24h da adesso e se il mio groupId è presente nella cena
+  // Controllo quanto tempo manca alla cena per redirezionare alla page corretta
   compareDate(dinner: Dinner) {
-    const daysLeft = this.dinnersService.getDinnerDaysLeft(dinner);
-    if (daysLeft === 0 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
-      return true;
+    const timeLeft = this.dinnersService.getDinnerTimeLeft(dinner.date);
+    // Se giorni mancanti alla cena = 0 ma ore mancanti > 0 ed il mio groupid è presente mando a dinner-event
+    if (timeLeft[0] === 0 && timeLeft[1] > 0 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
+      return 'event';
+      // Se giorni mancanti alla cena = 0 e ore mancanti <= 0 ed il mio groupid è presente mando a dinner-phase
+    } else if (timeLeft[0] === 0 && timeLeft[1] <= 0 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
+      return 'phase';
     } else {
-      return false;
+      return 'details';
     }
   }
 }

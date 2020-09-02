@@ -112,3 +112,29 @@ Versione avanzata con utilizzo di plugin e relativo service-worker --> https://w
   /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --user-data-dir=/tmp/foo --ignore-certificaterrors --unsafely-treat-insecure-origin-as-secure=https://localhost:8080
   Windows:
   start chrome --user-data-dir=/tmp/foo --ignore-certificate-errors --unsafely-treat-insecure-origin-as-secure=https://localhost:8080
+
+----------------------------------------------------------------------------------------------------
+
+Plugin Launch Navigator
+
+Necessario aggiungere la seguente chiave in info.plist per permettere il rilevamento delle app installate su iOS
+
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+    	<string>comgooglemaps</string>
+    	<string>citymapper</string>
+    	<string>uber</string>
+    	<string>lyft</string>
+    	<string>transit</string>
+    	<string>truckmap</string>
+    	<string>waze</string>
+    	<string>yandexnavi</string>
+    	<string>moovit</string>
+    	<string>yandextaxi</string>
+    	<string>yandexmaps</string>
+    	<string>kakaomap</string>
+    	<string>szn-mapy</string>
+    	<string>mapsme</string>
+	</array>
+  
+----------------------------------------------------------------------------------------------------

@@ -4,16 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { DinnerMapPageRoutingModule } from './dinner-map-routing.module';
+import { DinnerPhasesPageRoutingModule } from './dinner-phases-routing.module';
 
-import { DinnerMapPage } from './dinner-map.page';
+import { DinnerPhasesPage } from './dinner-phases.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    DinnerMapPageRoutingModule
-  ]
+    DinnerPhasesPageRoutingModule
+  ],
+  declarations: [DinnerPhasesPage]
 })
-export class DinnerMapPageModule { }
+export class DinnerPhasesPageModule {}

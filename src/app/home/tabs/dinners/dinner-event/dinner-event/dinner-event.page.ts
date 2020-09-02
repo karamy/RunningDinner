@@ -22,13 +22,17 @@ export class DinnerEventPage implements OnInit {
     avgDistance: -1
   };
   dinnerType: string;
+  firstDish: string;
+  secondDish: string;
+  thirdDish: string;
+  myDish: string;
   myDinnerDetails: MyDinnerDetails = {
-    dishes: [],
-    myDish: {
-      dishId: 0,
-      dishName: ''
+    houses: {
+      firstHouse: { groupid: null, firstUserId: null, firstName: "", secondUserId: null, secondName: "", firstImage: "", secondImage: "", groupAddress: "" },
+      secondHouse: { groupid: null, firstUserId: null, firstName: "", secondUserId: null, secondName: "", firstImage: "", secondImage: "", groupAddress: "" },
+      thirdHouse: { groupid: null, firstUserId: null, firstName: "", secondUserId: null, secondName: "", firstImage: "", secondImage: "", groupAddress: "" }
     },
-    dishDistances: [],
+    houseDistances: [],
     foodAllergies: [],
     foodAllergiesCategories: [],
     addressesLatLng: []
@@ -75,17 +79,20 @@ export class DinnerEventPage implements OnInit {
   ngOnInit() {
     this.route.queryParams.subscribe((dinner: Dinner) => {
       this.dinner = dinner;
-      console.log(this.dinner);
       this.dinnersService.getDinnerDetails(this.dinner).then(res => {
         this.dinnerDetails = res;
-        this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type));
+        // Dal dinner_type ottengo nome della tipologia ed i piatti che verranno cucinati nella cena
+        this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type))[0];
+        this.firstDish = this.dinnersService.decodeType(Number(this.dinner.type))[1];
+        this.secondDish = this.dinnersService.decodeType(Number(this.dinner.type))[2];
+        this.thirdDish = this.dinnersService.decodeType(Number(this.dinner.type))[3];
         this.profileService.readPartner();
         this.partnerName = this.profileService.getPartner().name;
         this.initCountdown(this.dinner.date);
-        this.dinnersService.getMyDinnerDetails(this.dinner).then(response => {
+        this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId).then(response => {
           this.myDinnerDetails = response;
-          console.log(this.myDinnerDetails)
-          const myDinnerFoodAllergies = this.dinnersService.getMyDinnerFoodAllergies(this.dinnerDetails.foodAllergies);
+          this.myDish = this.dinnersService.detMyDish(this.myDinnerDetails.houses, this.firstDish, this.secondDish, this.thirdDish);
+          const myDinnerFoodAllergies = this.dinnersService.getMyDinnerFoodAllergies(this.myDinnerDetails.houses, this.dinnerDetails.allFoodAllergies);
           this.myDinnerDetails.foodAllergies = myDinnerFoodAllergies[0];
           this.myDinnerDetails.foodAllergiesCategories = myDinnerFoodAllergies[1];
           this.initMap(this.myDinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
@@ -101,53 +108,34 @@ export class DinnerEventPage implements OnInit {
     const mapElement = document.getElementById('map');
     if (mapElement) { // Istanzio la mappa solo se sono sulla pagina, altrimenti da errore
       const map = new google.maps.Map(mapElement, {
-      disableDefaultUI: true
-    });
-
-    // Creo marker per indirizzo user
-    const userMarker = {
-      url: '../../../../../assets/you-marker.png',
-      size: new google.maps.Size(50, 50),
-      origin: new google.maps.Point(0, 0),
-      scaledSize: new google.maps.Size(50, 50)
-    };
-
-    // Creo marker per le cene
-    const dinnerMarker = {
-      url: '../../../../../assets/dinner-marker.png',
-      size: new google.maps.Size(50, 50),
-      origin: new google.maps.Point(0, 0),
-      scaledSize: new google.maps.Size(50, 50)
-    };
-
-    // Imposto la posizione sulla mappa per lo user
-    const mapUserMarker = new google.maps.Marker({
-      position: userAddress[0],
-      map: map,
-      icon: userMarker
-    });
-    markers.push(mapUserMarker);
-    const userCircle = new google.maps.Circle({
-      center: userAddress[0],
-      radius: 100,
-      fillColor: '#0000FF',
-      fillOpacity: 0.1,
-      map: map,
-      strokeColor: '#FFFFFF',
-      strokeOpacity: 0.1,
-      strokeWeight: 2
-    });
-
-    // Imposto la posizione sulla mappa per le cene
-    for (let i = 0; i < addresses.length; i++) {
-      const mapDinnerMarker = new google.maps.Marker({
-        position: addresses[i],
-        map: map,
-        icon: dinnerMarker
+        disableDefaultUI: true
       });
-      markers.push(mapDinnerMarker);
-      const dinnerCircle = new google.maps.Circle({
-        center: addresses[i],
+
+      // Creo marker per indirizzo user
+      const userMarker = {
+        url: '../../../../../assets/you-marker.png',
+        size: new google.maps.Size(50, 50),
+        origin: new google.maps.Point(0, 0),
+        scaledSize: new google.maps.Size(50, 50)
+      };
+
+      // Creo marker per le cene
+      const dinnerMarker = {
+        url: '../../../../../assets/dinner-marker.png',
+        size: new google.maps.Size(50, 50),
+        origin: new google.maps.Point(0, 0),
+        scaledSize: new google.maps.Size(50, 50)
+      };
+
+      // Imposto la posizione sulla mappa per lo user
+      const mapUserMarker = new google.maps.Marker({
+        position: userAddress[0],
+        map: map,
+        icon: userMarker
+      });
+      markers.push(mapUserMarker);
+      const userCircle = new google.maps.Circle({
+        center: userAddress[0],
         radius: 100,
         fillColor: '#0000FF',
         fillOpacity: 0.1,
@@ -156,28 +144,44 @@ export class DinnerEventPage implements OnInit {
         strokeOpacity: 0.1,
         strokeWeight: 2
       });
-    }
 
-    for (var j = 0; j < markers.length; j++) {
-      this.bounds.extend(markers[j].getPosition());
+      // Imposto la posizione sulla mappa per le cene
+      for (let i = 0; i < addresses.length; i++) {
+        const markerAddress = this.dinnersService.checkIfExistingMarker(markers, addresses[i])
+        const mapDinnerMarker = new google.maps.Marker({
+          position: markerAddress,
+          map: map,
+          icon: dinnerMarker,
+          label: (i + 1).toString()
+        });
+        markers.push(mapDinnerMarker);
+        const dinnerCircle = new google.maps.Circle({
+          center: markerAddress,
+          radius: 100,
+          fillColor: '#0000FF',
+          fillOpacity: 0.1,
+          map: map,
+          strokeColor: '#FFFFFF',
+          strokeOpacity: 0.1,
+          strokeWeight: 2
+        });
+      }
+
+      for (var j = 0; j < markers.length; j++) {
+        this.bounds.extend(markers[j].getPosition());
+      }
+      map.fitBounds(this.bounds, { top: 15, bottom: 0, left: 0, right: 0 });
     }
-    map.fitBounds(this.bounds, { top: 15, bottom: 0, left: 0, right: 0 });
-  }
   }
 
   initCountdown(dinnerDate: Date) {
-    const countDownDate = new Date(dinnerDate).getTime();
     // Aggiorno il countdown ogni secondo
     const interval = setInterval(x => {
-      // Ottengo l'ora attuale
-      const now = new Date().getTime();
-      // Trovo la distanza tra l'ora attuale e l'ora della cena (correggendo il formato a UTC)
-      const distance = (countDownDate - now) - 7200000;
-      // Calcolo giorni, ore, minuti e secondi che mancano
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      // Ottengo quanto manca alla cena
+      const dinnerTimeLeft = this.dinnersService.getDinnerTimeLeft(dinnerDate);
+      // Assegno ore e minuti mancanti alle variabili
+      const hours = dinnerTimeLeft[1];
+      const minutes = dinnerTimeLeft[2];
       // Mostro il risultato in un elemento HTML con id="countdown"
       let hoursString = 'Ore';
       let minutesString = 'Minuti';

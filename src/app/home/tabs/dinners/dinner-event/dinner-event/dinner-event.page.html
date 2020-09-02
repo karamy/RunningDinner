@@ -46,14 +46,9 @@
             <ion-grid>
               <ion-row>
                 <ion-col class="ion-text-center" style="padding-left: 2%;">
-                  <h6 *ngIf="myDinnerDetails.myDish.dishId === 1" style="margin-bottom: 0px; margin-top: 10px;">Tu e
+                  <h6 *ngIf="myDish" style="margin-bottom: 0px; margin-top: 10px;">Tu e
                     {{partnerName}}
-                    dovrete cucinare
-                    l'{{myDinnerDetails.myDish.dishName}}</h6>
-                  <h6 *ngIf="myDinnerDetails.myDish.dishId !== 1" style="margin-bottom: 0px; margin-top: 10px;">Tu e
-                    {{partnerName}}
-                    dovrete cucinare il
-                    {{myDinnerDetails.myDish.dishName}}</h6>
+                    dovrete cucinare {{myDish}}</h6>
                 </ion-col>
               </ion-row>
               <ion-row class="ion-text-center" style="padding-top: 2%;">
@@ -66,18 +61,18 @@
               </ion-row>
               <ion-row style="margin-top: 3%;">
                 <ion-col style="display: contents;" class="ion-text-center">
-                  <ion-avatar *ngIf="myDinnerDetails.dishes.length > 0" class="avatar-left">
-                    <img [src]="myDinnerDetails.dishes[0].usersData[0].profile_photo">
+                  <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-left">
+                    <img [src]="myDinnerDetails.houses.firstHouse.firstImage">
                   </ion-avatar>
-                  <ion-avatar *ngIf="myDinnerDetails.dishes.length > 0" class="avatar-right">
-                    <img [src]="myDinnerDetails.dishes[0].usersData[1].profile_photo">
+                  <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-right">
+                    <img [src]="myDinnerDetails.houses.firstHouse.secondImage">
                   </ion-avatar>
                 </ion-col>
-                <ion-col *ngIf="myDinnerDetails.dishes.length > 0" class="ion-text-center">
-                  <p style="margin: 0px;">{{myDinnerDetails.dishes[0].dish.dishName}} a casa di
-                    {{myDinnerDetails.dishes[0].usersData[0].name}}
+                <ion-col *ngIf="myDinnerDetails.houses" class="ion-text-center">
+                  <p style="margin: 0px;">{{firstDish}} a casa di
+                    {{myDinnerDetails.houses.firstHouse.firstName}}
                     &
-                    {{myDinnerDetails.dishes[0].usersData[1].name}}</p>
+                    {{myDinnerDetails.houses.firstHouse.secondName}}</p>
                   <span>
                     <p style="margin: 0px;">Alle 21.20</p>
                   </span>
@@ -88,23 +83,23 @@
                   <div class="dotted-line"></div>
                 </ion-col>
                 <ion-col class="ion-text-start">
-                  <p style="margin: 0px; margin-left: 2%;">{{myDinnerDetails.dishDistances[0]}}</p>
+                  <p style="margin: 0px; margin-left: 2%;">{{myDinnerDetails.houseDistances[0]}}</p>
                 </ion-col>
               </ion-row>
               <ion-row>
                 <ion-col style="display: contents;" class="ion-text-center">
-                  <ion-avatar *ngIf="myDinnerDetails.dishes.length > 0" class="avatar-left">
-                    <img [src]="myDinnerDetails.dishes[1].usersData[0].profile_photo">
+                  <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-left">
+                    <img [src]="myDinnerDetails.houses.secondHouse.firstImage">
                   </ion-avatar>
-                  <ion-avatar *ngIf="myDinnerDetails.dishes.length > 0" class="avatar-right">
-                    <img [src]="myDinnerDetails.dishes[1].usersData[1].profile_photo">
+                  <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-right">
+                    <img [src]="myDinnerDetails.houses.secondHouse.secondImage">
                   </ion-avatar>
                 </ion-col>
-                <ion-col *ngIf="myDinnerDetails.dishes.length > 0" class="ion-text-center">
-                  <p style="margin: 0px;">{{myDinnerDetails.dishes[1].dish.dishName}} a casa di
-                    {{myDinnerDetails.dishes[1].usersData[0].name}}
+                <ion-col *ngIf="myDinnerDetails.houses" class="ion-text-center">
+                  <p style="margin: 0px;">{{secondDish}} a casa di
+                    {{myDinnerDetails.houses.secondHouse.firstName}}
                     &
-                    {{myDinnerDetails.dishes[1].usersData[1].name}}</p>
+                    {{myDinnerDetails.houses.secondHouse.secondName}}</p>
                   <span>
                     <p style="margin: 0px;">Alle 22.30</p>
                   </span>
@@ -115,23 +110,23 @@
                   <div class="dotted-line"></div>
                 </ion-col>
                 <ion-col class="ion-text-start">
-                  <p style="margin: 0px; margin-left: 2%;">{{myDinnerDetails.dishDistances[1]}}</p>
+                  <p style="margin: 0px; margin-left: 2%;">{{myDinnerDetails.houseDistances[1]}}</p>
                 </ion-col>
               </ion-row>
               <ion-row>
                 <ion-col style="display: contents;" class="ion-text-center">
-                  <ion-avatar *ngIf="myDinnerDetails.dishes.length > 0" class="avatar-left">
-                    <img [src]="myDinnerDetails.dishes[2].usersData[0].profile_photo">
+                  <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-left">
+                    <img [src]="myDinnerDetails.houses.thirdHouse.firstImage">
                   </ion-avatar>
-                  <ion-avatar *ngIf="myDinnerDetails.dishes.length > 0" class="avatar-right">
-                    <img [src]="myDinnerDetails.dishes[2].usersData[1].profile_photo">
+                  <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-right">
+                    <img [src]="myDinnerDetails.houses.thirdHouse.secondImage">
                   </ion-avatar>
                 </ion-col>
-                <ion-col *ngIf="myDinnerDetails.dishes.length > 0" class="ion-text-center">
-                  <p style="margin: 0px;">{{myDinnerDetails.dishes[2].dish.dishName}} a casa di
-                    {{myDinnerDetails.dishes[2].usersData[0].name}}
+                <ion-col *ngIf="myDinnerDetails.houses" class="ion-text-center">
+                  <p style="margin: 0px;">{{thirdDish}} a casa di
+                    {{myDinnerDetails.houses.thirdHouse.firstName}}
                     &
-                    {{myDinnerDetails.dishes[2].usersData[1].name}}</p>
+                    {{myDinnerDetails.houses.thirdHouse.secondName}}</p>
                   <span>
                     <p style="margin: 0px;">Alle 23.00</p>
                   </span>

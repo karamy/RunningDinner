@@ -58,8 +58,8 @@ export class DinnerDetailPage implements OnInit {
       this.dinner.description = dinnerData.description;
 
       // Ottengo la tipologia
-      this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type));
-      this.dinnerDaysLeft = this.dinnersService.getDinnerDaysLeft(this.dinner);
+      this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type))[0];
+      this.dinnerDaysLeft = this.dinnersService.getDinnerTimeLeft(this.dinner.date)[0];
 
       // Carico la mappa
       this.initMap(this.dinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
@@ -71,7 +71,7 @@ export class DinnerDetailPage implements OnInit {
     const bounds = new google.maps.LatLngBounds();
     const markers: google.maps.Marker[] = [];
 
-   
+
     const mapElement = document.getElementById('map');
     if (mapElement) { // Istanzio la mappa solo se sono sulla pagina, altrimenti da errore 
       const map = new google.maps.Map(mapElement, {
@@ -114,14 +114,15 @@ export class DinnerDetailPage implements OnInit {
 
       // Imposto la posizione sulla mappa per le cene
       for (let i = 0; i < addresses.length; i++) {
+        const markerAddress = this.dinnersService.checkIfExistingMarker(markers, addresses[i])
         const mapDinnerMarker = new google.maps.Marker({
-          position: addresses[i],
+          position: markerAddress,
           map: map,
           icon: dinnerMarker
         });
         markers.push(mapDinnerMarker);
         const dinnerCircle = new google.maps.Circle({
-          center: addresses[i],
+          center: markerAddress,
           radius: 100,
           fillColor: '#0000FF',
           fillOpacity: 0.1,
@@ -141,7 +142,7 @@ export class DinnerDetailPage implements OnInit {
 
   // Indica se la cena mostrata è quella a cui partecipo
   isMyDinner() {
-    return this.paramsService.getParams().dinnerId == +this.dinner.id;
+    return this.paramsService.getParams().dinnerId === +this.dinner.id;
   }
 
   // Indica se la sono l'amministratore della cena a cui partecipo
