@@ -74,7 +74,8 @@ export class DinnerMapPage implements OnInit {
         const mapDinnerMarker = new google.maps.Marker({
           position: addresses[i],
           map: map,
-          icon: dinnerMarker
+          icon: dinnerMarker,
+          label: (i + 1).toString()
         });
         markers.push(mapDinnerMarker);
         const dinnerCircle = new google.maps.Circle({

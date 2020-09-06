@@ -45,14 +45,14 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
 
     // Registrazione observable per reagire al ricaricamento cena (es. vengo rimosso da una cena)
     this.subscription = this.notificationsService.getUpdateParamsObservable().subscribe(() => {
-      console.log("Dinner Detail - Ricarico cena");
+      console.log('Dinner Detail - Ricarico cena');
       this.getDinnerDetails();
     });
   }
 
   // Rimuovo la sottoscrizione all'observable quando esco dalla videata
   ngOnDestroy() {
-    console.log("OnDestroy");
+    console.log('OnDestroy');
     this.subscription.unsubscribe();
   }
 
@@ -60,24 +60,30 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
   getDinnerDetails() {
     this.dinnersService.getDinnerDetails(this.dinner).then(
       (res) => {
-      this.dinnerDetails = res;
+        this.dinnerDetails = res;
 
-      // Sovrascrivo titolo e descrizione in quanto possono essere modificati
-      const dinnerData = res.dinnerData;
-      this.dinner.title = dinnerData.title;
-      this.dinner.description = dinnerData.description;
+        // Sovrascrivo titolo e descrizione in quanto possono essere modificati
+        const dinnerData = res.dinnerData;
+        this.dinner.title = dinnerData.title;
+        this.dinner.description = dinnerData.description;
 
-      // Ottengo la tipologia
-      this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type))[0];
-      this.dinnerDaysLeft = this.dinnersService.getDinnerTimeLeft(this.dinner.date)[0];
+        // Ottengo la tipologia
+        this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type))[0];
+        this.dinnerDaysLeft = this.dinnersService.getDinnerTimeLeft(this.dinner.date)[0];
+        console.log(this.dinnerDaysLeft);
 
-      // Carico la mappa
-      this.initMap(this.dinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
+        // Mostro eventualmente alert se qualche problema (cena piena, non sono in gruppo o mancano meno di 24h)
+        if (!this.paramsService.getParams().groupId || !this.dinnerDaysLeft || this.dinner.groupIds.length === 9) {
+          this.showInfoAlert();
+        }
+
+        // Carico la mappa
+        this.initMap(this.dinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
       },
       () => {
-        console.log("Errore getDinnerDetails, ritorno alla home");
+        console.log('Errore getDinnerDetails, ritorno alla home');
         this.navController.navigateRoot('/home');
-    });
+      });
   }
 
   // Inizializza la mappa per mostrare l'utente e gli altri partecipanti alla cena
@@ -154,6 +160,32 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
     }
   }
 
+  // Mostra alert se impossibile partecipare alla cena
+  async showInfoAlert() {
+    let subHeader: string;
+    let image: string;
+
+    if (!this.paramsService.getParams().groupId) {
+      subHeader = 'Devi essere in un gruppo per partecipare ad una cena';
+      image = "../../../../../assets/Group.png";
+    } else if (!this.dinnerDaysLeft) {
+      subHeader = 'Non ci si può iscrivere ad una cena se mancano meno di 24h';
+      image = "../../../../../assets/DinnerClosed.png";
+    } else if (this.dinner.groupIds.length === 9) {
+      subHeader = 'Non ci sono più posti liberi in questa cena';
+      image = "../../../../../assets/DinnerFull.png";
+    }
+
+    const alert = await this.alertController.create({
+      header: 'Attenzione!',
+      subHeader: subHeader,
+      message: `<img src="${image}" style="border-radius: 2px">`,
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
   // Indica se la cena mostrata è quella a cui partecipo
   isMyDinner() {
     return this.paramsService.getParams().dinnerId === +this.dinner.id;
@@ -161,7 +193,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
 
   // Indica se la sono l'amministratore della cena a cui partecipo
   isAdministrator() {
-    return this.isMyDinner() && this.dinner.administrator == this.paramsService.getParams().groupId;
+    return this.isMyDinner() && this.dinner.administrator === this.paramsService.getParams().groupId;
   }
 
   // Abbandono cena
@@ -284,4 +316,4 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
       }
     );
   }
-          }
+}

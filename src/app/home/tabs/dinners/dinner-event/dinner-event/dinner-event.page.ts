@@ -81,40 +81,53 @@ export class DinnerEventPage implements OnInit, OnDestroy {
     await modal.present();
   }
 
-  // Rimuovo la sottoscrizione all'observable quando esco dalla videata
-  ngOnDestroy() {
-    console.log("OnDestroy");
-    this.subscription.unsubscribe();
-  }
-
   ngOnInit() {
+    // Ottengo i dati della cena dai parametri della rotta
+    this.route.queryParams.subscribe((dinner: Dinner) => {
+      this.dinner = { ...dinner };
+      this.getDinnerEventData();
+    });
 
     // Registrazione observable per reagire al ricaricamento cena (es. vengo rimosso da una cena)
     this.subscription = this.notificationsService.getUpdateParamsObservable().subscribe(() => {
-      console.log("Dinner Event - Ricarico cena");
-      //this.getDinnerDetails();
+      console.log('Dinner Event - Ricarico cena');
+      this.getDinnerEventData();
     });
+  }
 
-    this.route.queryParams.subscribe((dinner: Dinner) => {
-      this.dinner = dinner;
-      this.dinnersService.getDinnerDetails(this.dinner).then(res => {
-        this.dinnerDetails = res;
-        // Dal dinner_type ottengo nome della tipologia ed i piatti che verranno cucinati nella cena
-        this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type))[0];
-        this.firstDish = this.dinnersService.decodeType(Number(this.dinner.type))[1];
-        this.secondDish = this.dinnersService.decodeType(Number(this.dinner.type))[2];
-        this.thirdDish = this.dinnersService.decodeType(Number(this.dinner.type))[3];
-        this.profileService.readPartner();
-        this.partnerName = this.profileService.getPartner().name;
-        this.initCountdown(this.dinner.date);
-        this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId).then(response => {
-          this.myDinnerDetails = response;
-          this.myDish = this.dinnersService.detMyDish(this.myDinnerDetails.houses, this.firstDish, this.secondDish, this.thirdDish);
-          const myDinnerFoodAllergies = this.dinnersService.getMyDinnerFoodAllergies(this.myDinnerDetails.houses, this.dinnerDetails.allFoodAllergies);
-          this.myDinnerDetails.foodAllergies = myDinnerFoodAllergies[0];
-          this.myDinnerDetails.foodAllergiesCategories = myDinnerFoodAllergies[1];
-          this.initMap(this.myDinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
-        });
+  // Rimuovo la sottoscrizione all'observable quando esco dalla videata
+  ngOnDestroy() {
+    console.log('OnDestroy');
+    this.subscription.unsubscribe();
+  }
+
+  getDinnerEventData() {
+    this.dinnersService.getDinnerDetails(this.dinner).then(res => {
+      this.dinnerDetails = res;
+
+      // Dal dinner_type ottengo nome della tipologia ed i piatti che verranno cucinati nella cena
+      this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type))[0];
+      this.firstDish = this.dinnersService.decodeType(Number(this.dinner.type))[1];
+      this.secondDish = this.dinnersService.decodeType(Number(this.dinner.type))[2];
+      this.thirdDish = this.dinnersService.decodeType(Number(this.dinner.type))[3];
+
+      // Ottengo dati del partner
+      this.profileService.readPartner();
+      this.partnerName = this.profileService.getPartner().name;
+
+      // Avvio il timer
+      this.initCountdown(this.dinner.date);
+
+      // Ottengo i dati relativi alla mia cena
+      this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId).then(response => {
+        this.myDinnerDetails = response;
+        this.myDish = this.dinnersService.detMyDish(this.myDinnerDetails.houses, this.firstDish, this.secondDish, this.thirdDish);
+        const myDinnerFoodAllergies = this.dinnersService.getMyDinnerFoodAllergies(this.myDinnerDetails.houses, this.dinnerDetails.allFoodAllergies);
+        this.myDinnerDetails.foodAllergies = myDinnerFoodAllergies[0];
+        this.myDinnerDetails.foodAllergiesCategories = myDinnerFoodAllergies[1];
+
+        // Istanzio la mappa
+        this.initMap(this.myDinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
       });
     });
   }
@@ -212,7 +225,11 @@ export class DinnerEventPage implements OnInit, OnDestroy {
         minutesString = 'Minuto';
       }
       if (document.getElementById('countdown')) {
-        document.getElementById('countdown').innerHTML = leftWord + " " + hours + " " + hoursString + " e " + minutes + " " + minutesString + " alla tua cena!";
+        if (minutes === 0) {
+          document.getElementById('countdown').innerHTML = leftWord + ' ' + hours + ' ' + hoursString + ' alla tua cena!';
+        } else {
+          document.getElementById('countdown').innerHTML = leftWord + ' ' + hours + ' ' + hoursString + ' e ' + minutes + ' ' + minutesString + ' alla tua cena!';
+        }
       }
     }, 1000);
   }
