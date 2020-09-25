@@ -8,6 +8,8 @@ import { DinnerInfoPage } from 'src/app/rdmodals/dinner-info/dinner-info.page';
 import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator/ngx';
 import { NotificationsService } from 'src/app/home/notifications.service';
 import { Subscription } from 'rxjs';
+import { CupertinoPane, CupertinoSettings } from 'cupertino-pane';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dinner-phases',
@@ -54,6 +56,7 @@ export class DinnerPhasesPage implements OnInit {
     public dinnersService: DinnersService,
     private profileService: ProfileService,
     private notificationsService: NotificationsService,
+    private router: Router,
     public paramsService: RDParamsService,
     private launchNavigator: LaunchNavigator) { }
 
@@ -88,6 +91,9 @@ export class DinnerPhasesPage implements OnInit {
   }
 
   getDinnerPhasesData() {
+    // Istanzio il pannello inferiore
+    this.presentBottomPanel();
+
     this.dinnersService.getDinnerDetails(this.dinner).then(res => {
       this.dinnerDetails = res;
 
@@ -152,9 +158,37 @@ export class DinnerPhasesPage implements OnInit {
             }
           });
           this.initCountdown(this.thirdDish.endTime);
+        } else if (this.phase === 4) {
+          this.router.navigate(['/home/tabs/dinners/dinner-votes'], { queryParams: this.dinner });
         }
       });
     });
+  }
+
+  // Istanzia il pannello inferiore
+  presentBottomPanel() {
+    const element = document.getElementById('cupertino');
+
+    // Opzioni pannello
+    const panelSettings: CupertinoSettings = {
+      initialBreak: 'top',
+      breaks: {
+        top: { enabled: true, height: window.screen.height * 0.5, bounce: true },
+        middle: { enabled: false, height: window.screen.height * 0.25, bounce: true },
+        bottom: { enabled: true, height: window.screen.height * 0.15 },
+      },
+      topperOverflow: false,
+      bottomClose: false,
+      buttonClose: false,
+      showDraggable: false,
+      onBackdropTap: () => panel.destroy({ animate: true })
+    };
+
+    // Inizializzo il pannello
+    const panel = new CupertinoPane(element, panelSettings);
+
+    // Presento il pannello
+    panel.present({ animate: true });
   }
 
   // Inizializza la mappa per mostrare l'utente e gli altri partecipanti alla cena
@@ -229,8 +263,48 @@ export class DinnerPhasesPage implements OnInit {
       for (var j = 0; j < markers.length; j++) {
         this.bounds.extend(markers[j].getPosition());
       }
-      map.fitBounds(this.bounds, { top: 15, bottom: 0, left: 0, right: 0 });
+      map.fitBounds(this.bounds, { top: 0, bottom: 0, left: 0, right: 0 });
+
+      const bottomPanel = document.getElementById('cupertino');
+
+      // Posizione relativa alla finestra del pannello inferiore
+      const bottomPanelPos = bottomPanel.getBoundingClientRect();
+
+      // Listener che attende che la mappa sia caricata
+      const listener = google.maps.event.addListener(map, 'idle', () => {
+        const pixelOffset = this.getPixelOffset(map, markers);
+
+        // Eseguo il pan della mappa 
+        // Spostando in alto la mappa di un valore pari alla differenza tra la posizione del marker (y) e quella del top del pannello 
+        // + il 25% della distanza tra il top del pannello e il top della pagina
+        map.panBy(0, Math.abs((pixelOffset - bottomPanelPos.top) + (bottomPanelPos.top * 0.25)));
+        google.maps.event.removeListener(listener);
+      });
     }
+  }
+
+  getPixelOffset(map: google.maps.Map, markers: google.maps.Marker[]) {
+    // Ottengo le coordinate della mappa nella scala attuale
+    const scale = Math.pow(2, map.getZoom());
+    const nw = new google.maps.LatLng(
+      map.getBounds().getNorthEast().lat(),
+      map.getBounds().getSouthWest().lng()
+    );
+    const worldCoordinateNW = map.getProjection().fromLatLngToPoint(nw);
+
+    // Ottengo la posizione dei marker (y) in pixel calcolata dall'angolo in alto a sinistra e tengo quello più in basso
+    let pixelOffset = 0;
+    for (let i = 0; i < markers.length; i++) {
+      const worldCoordinate = map.getProjection().fromLatLngToPoint(markers[i].getPosition());
+      const markerOffset = new google.maps.Point(
+        Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale),
+        Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale)
+      );
+      if (pixelOffset < markerOffset.y) {
+        pixelOffset = markerOffset.y;
+      }
+    }
+    return pixelOffset;
   }
 
   // Avvio il plugin per aprire l'app per la navigazione (funziona solo in ambiente nativo)

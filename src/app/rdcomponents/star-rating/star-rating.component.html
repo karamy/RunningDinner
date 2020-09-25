@@ -1,0 +1,5 @@
+<div style="margin-top: 5%;">
+  <h3 style="margin: 0%; font-size: 20px;">{{categoryName}}</h3>
+  <ion-icon name="star" *ngFor="let num of [1,2,3,4,5]" (click)="rate(num)" [ngStyle]="{'color':getColor(num)}">
+  </ion-icon>
+</div>

@@ -1,0 +1,166 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home/tabs/dinners">Back</ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen="true">
+  <div [hidden]="hasVoted === true">
+    <ion-grid>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <h3 *ngIf="dinnerDetails.dinnerData" class="dinner-title">Spero che la cena {{dinnerDetails.dinnerData.title}}
+            vi sia piaciuta {{authService.getUser().userData.name}} & {{profileService.getPartner().name}}</h3>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <h3 class="dinner-title">Ora avete </h3>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <div class="countdown" [hidden]="minutes < 0 || !minutes ">{{minutes + ' ' + minutesString}}</div>
+          <div class="countdown" [hidden]="minutes > 0 || !seconds">{{seconds + ' ' + secondsString}}</div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <h3 class="dinner-title">Per completare la votazione!</h3>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <div id="cupertino" class="bottomPanel">
+      <ion-slides pager="true" [options]="slideOpts">
+        <ion-slide>
+          <ion-grid>
+            <ion-row>
+              <ion-col class="ion-text-center">
+                <h3 style="margin: 0%; font-size: 17px" *ngIf="groupsToVote">Votazione di {{groupsToVote[0].firstName}}
+                  &
+                  {{groupsToVote[0].secondName}}</h3>
+              </ion-col>
+            </ion-row>
+            <ion-row style="margin-top: 2%">
+              <ion-col style="display: flex;">
+                <ion-avatar *ngIf="groupsToVote" style="left: 36%; position: relative;">
+                  <img [src]="groupsToVote[0].firstImage">
+                </ion-avatar>
+                <ion-avatar *ngIf="groupsToVote" style="left: 33%; position: relative; z-index: -1;">
+                  <img [src]="groupsToVote[0].secondImage">
+                </ion-avatar>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="voteCategories">
+              <ion-col size="6">
+                <app-star-rating [groupId]='groupsToVote[0].groupid' [categoryId]='1' [categoryName]='voteCategories[0]'
+                  (ratingChange)="assignVotes($event)">
+                </app-star-rating>
+                <app-star-rating [groupId]='groupsToVote[0].groupid' [categoryId]='2' [categoryName]='voteCategories[1]'
+                  (ratingChange)="assignVotes($event)">
+                </app-star-rating>
+              </ion-col>
+              <ion-col size="6">
+                <app-star-rating [groupId]='groupsToVote[0].groupid' [categoryId]='3' [categoryName]='voteCategories[2]'
+                  (ratingChange)="assignVotes($event)">
+                </app-star-rating>
+                <app-star-rating [groupId]='groupsToVote[0].groupid' [categoryId]='4' [categoryName]='voteCategories[3]'
+                  (ratingChange)="assignVotes($event)">
+                </app-star-rating>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="voteCategories">
+              <ion-col class="ion-text-center">
+                <app-star-rating [groupId]='groupsToVote[0].groupid' [categoryId]='5' [categoryName]='voteCategories[4]'
+                  (ratingChange)="assignVotes($event)">
+                </app-star-rating>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-slide>
+        <ion-slide>
+          <ion-grid>
+            <ion-row>
+              <ion-col class="ion-text-center">
+                <h3 style="margin: 0%; font-size: 17px" *ngIf="groupsToVote">Votazione di {{groupsToVote[1].firstName}}
+                  &
+                  {{groupsToVote[1].secondName}}</h3>
+              </ion-col>
+            </ion-row>
+            <ion-row style="margin-top: 2%">
+              <ion-col style="display: flex;">
+                <ion-avatar *ngIf="groupsToVote" style="left: 36%; position: relative;">
+                  <img [src]="groupsToVote[1].firstImage">
+                </ion-avatar>
+                <ion-avatar *ngIf="groupsToVote" style="left: 33%; position: relative; z-index: -1;">
+                  <img [src]="groupsToVote[1].secondImage">
+                </ion-avatar>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="voteCategories">
+              <ion-col size="6">
+                <app-star-rating [groupId]='groupsToVote[1].groupid' [categoryId]='1' [categoryName]='voteCategories[0]'
+                  (ratingChange)="assignVotes($event)">
+                </app-star-rating>
+                <app-star-rating [groupId]='groupsToVote[1].groupid' [categoryId]='2' [categoryName]='voteCategories[1]'
+                  (ratingChange)="assignVotes($event)">
+                </app-star-rating>
+
+              </ion-col>
+              <ion-col size="6">
+                <app-star-rating [groupId]='groupsToVote[1].groupid' [categoryId]='3' [categoryName]='voteCategories[2]'
+                  (ratingChange)="assignVotes($event)">
+                </app-star-rating>
+                <app-star-rating [groupId]='groupsToVote[1].groupid' [categoryId]='4' [categoryName]='voteCategories[3]'
+                  (ratingChange)="assignVotes($event)">
+                </app-star-rating>
+              </ion-col>
+            </ion-row>
+            <ion-row *ngIf="voteCategories">
+              <ion-col class="ion-text-center">
+                <app-star-rating [groupId]='groupsToVote[1].groupid' [categoryId]='5' [categoryName]='voteCategories[4]'
+                  (ratingChange)="assignVotes($event)">
+                </app-star-rating>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col>
+                <ion-button size="small"
+                  [disabled]="!firstGroupVotes.firstCategory || !firstGroupVotes.secondCategory || !firstGroupVotes.thirdCategory || !firstGroupVotes.fourthCategory || !firstGroupVotes.fifthCategory || !secondGroupVotes.firstCategory || !secondGroupVotes.secondCategory || !secondGroupVotes.thirdCategory || !secondGroupVotes.fourthCategory || !secondGroupVotes.fifthCategory"
+                  (click)="postDinnerVotes()">Submit
+                </ion-button>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-slide>
+      </ion-slides>
+    </div>
+  </div>
+  <div [hidden]="hasVoted === false" class="ion-text-center">
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <h3>Grazie del tuo voto!</h3>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <h3>Ora attendi</h3>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <div class="countdown" [hidden]="minutes < 0 || !minutes ">{{minutes + ' ' + minutesString}}</div>
+          <div class="countdown" [hidden]="minutes > 0 || !seconds">{{seconds + ' ' + secondsString}}</div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <h3>per sapere i risultati!</h3>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

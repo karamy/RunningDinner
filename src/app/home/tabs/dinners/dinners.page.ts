@@ -4,7 +4,6 @@ import { DinnersService, Dinner } from './dinners.service';
 import { Router } from '@angular/router';
 import { NotificationsService } from '../../notifications.service';
 import { ProfileService } from '../../profile/profile.service';
-import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-dinners',
@@ -69,6 +68,8 @@ export class DinnersPage implements OnInit {
       this.router.navigate(['/home/tabs/dinners/dinner-event'], { queryParams: dinner });
     } else if (this.compareDate(dinner) === 'phase') {
       this.router.navigate(['/home/tabs/dinners/dinner-phases'], { queryParams: dinner });
+    } else if (this.compareDate(dinner) === 'votes') {
+      this.router.navigate(['/home/tabs/dinners/dinner-votes'], { queryParams: dinner });
     } else {
       this.router.navigate(['/home/tabs/dinners/dinner-detail'], { queryParams: dinner });
     }
@@ -82,7 +83,20 @@ export class DinnersPage implements OnInit {
       return 'event';
       // Se giorni mancanti alla cena = 0 e ore mancanti <= 0 ed il mio groupid è presente mando a dinner-phase
     } else if (timeLeft[0] === 0 && timeLeft[1] <= 0 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
-      return 'phase';
+      // Se sono passate 2 ore dall'inizio della cena
+      if (timeLeft[1] === -2) {
+        // controllo se sono passati anche 35 minuti
+        if (timeLeft[2] <= -35) {
+          return 'votes';
+        } else {
+          return 'phase';
+        }
+        // Altrimenti se sono passate più di 2 ore dall'inizio della cena
+      } else if (timeLeft[1] < -2) {
+        return 'votes';
+      } else {
+        return 'phase';
+      }
     } else {
       return 'details';
     }

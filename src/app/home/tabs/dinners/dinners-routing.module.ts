@@ -21,6 +21,10 @@ const routes: Routes = [
   },  {
     path: 'dinner-phases',
     loadChildren: () => import('./dinner-phases/dinner-phases.module').then( m => m.DinnerPhasesPageModule)
+  },
+  {
+    path: 'dinner-votes',
+    loadChildren: () => import('./dinner-votes/dinner-votes.module').then( m => m.DinnerVotesPageModule)
   }
 
 ];

@@ -8,6 +8,7 @@ import { UserData, AuthService } from 'src/app/auth/auth.service';
 import { FoodAllergiesService } from 'src/app/rdmodals/food-allergies/food-allergies.service';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { ProfileService } from '../../profile/profile.service';
+import { GroupVotes } from './dinner-votes/dinner-votes.page';
 
 @Injectable({
   providedIn: 'root'
@@ -391,9 +392,86 @@ export class DinnersService {
     return new Promise(async (res) => {
       await this.calcDistance(firstAddress, secondAddress).then(async res => {
         variablesArray.push('A ' + res[0] + ' da te', 'Tempo di viaggio stimato: ' + res[1] + ' in auto', res[2]);
-      })
+      });
       res(variablesArray);
-    })
+    });
+  }
+
+  // Funzioni di dinnerVotes
+
+  // Controllo se l'utente ha già votato o meno
+  async checkIfVoted(dinnerId: number): Promise<any> {
+    await this.spinner.create();
+    return new Promise((resolve, reject) =>
+      this.http.post(this.rdConstants.getApiRoute('checkIfVoted'), { dinnerId })
+        .toPromise()
+        .then(
+          res => {
+            resolve(res);
+          },
+          () => {
+            reject();
+          }
+        )
+        .finally(
+          () => { this.spinner.dismiss(); }
+        )
+    );
+  }
+
+  // Determino quali sono i due gruppi che devo votare
+  detGroupsToVote(myDinnerDetails: MyDinnerDetails) {
+    const groupsToVote = [];
+
+    if (myDinnerDetails.houses.firstHouse.groupid !== this.paramsService.getParams().groupId) {
+      groupsToVote.push(myDinnerDetails.houses.firstHouse);
+    }
+    if (myDinnerDetails.houses.secondHouse.groupid !== this.paramsService.getParams().groupId) {
+      groupsToVote.push(myDinnerDetails.houses.secondHouse);
+    }
+    if (myDinnerDetails.houses.thirdHouse.groupid !== this.paramsService.getParams().groupId) {
+      groupsToVote.push(myDinnerDetails.houses.thirdHouse);
+    }
+
+    return groupsToVote;
+  }
+
+  // Determino, in base al dinnerId, le categorie di voto
+  detVoteCategories(dinnerType: number) {
+    const voteCategories = [];
+
+    switch (dinnerType) {
+      case 1:
+        voteCategories.push(...['Location', 'Bontà', 'Ospitalità', 'Simpatia', 'Complessità del piatto']);
+        return voteCategories;
+      case 2:
+        voteCategories.push(...['Location', 'Bontà', 'Ospitalità', 'Simpatia', 'Complessità del piatto']);
+        return voteCategories;
+      case 3:
+        voteCategories.push(...['Location', 'Bontà', 'Ospitalità', 'Simpatia', 'Veganità']);
+        return voteCategories;
+      case 4:
+        voteCategories.push(...['Location', 'Bontà', 'Ospitalità', 'Simpatia', 'Sushitosità']);
+        return voteCategories;
+      default:
+        voteCategories.push(...['Location', 'Bontà', 'Ospitalità', 'Simpatia', 'Complessità del piatto']);
+        return voteCategories;
+    }
+  }
+
+  // Invia i voti a DB
+  async postGroupVotes(groups: object[], votingGroupId: number, dinnerId: number): Promise<any> {
+    const postVotesBody = {
+      groupsArray: groups,
+      votingGroupId: votingGroupId,
+      dinnerId: dinnerId
+    };
+    await this.spinner.create();
+    return this.http.post(this.rdConstants.getApiRoute('insertDinnerVotes'), postVotesBody)
+      .toPromise()
+      .then(
+        () => { this.spinner.dismiss(); }
+      );
   }
 
   // Calcolo età utente

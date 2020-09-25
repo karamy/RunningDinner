@@ -11,7 +11,8 @@ export class TabsService {
   private hideTabBarPages: string[] = [ // Dichiaro le pagine nelle quali voglio nascondere le tabs
     'dinner-detail',
     'dinner-event',
-    'dinner-phases'
+    'dinner-phases',
+    'dinner-votes'
   ];
 
   constructor(private router: Router, private platform: Platform) {

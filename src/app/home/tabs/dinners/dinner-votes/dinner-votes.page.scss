@@ -1,0 +1,58 @@
+ion-content {
+    --ion-background-color: linear-gradient(0deg, rgba(87,87,87,1) 0%, rgba(151,196,171,1) 50%);
+    position: relative;
+}
+
+ion-toolbar {
+    --background: transparent;
+}
+
+ion-grid {
+    width: 100%;
+    height: 100%;
+    padding: 0%;
+}
+  
+ion-row {
+    width: 100%;
+}
+
+ion-col {
+    align-self: center;
+    padding: 0%;
+}
+
+.bottomPanel {
+    display: block;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 5px;
+    text-align: center;
+    height: 100%;
+}
+
+ion-slides {
+    height: 100%;
+  }
+
+.countdown {
+    width: 100%;
+    margin: 0px;
+    padding-top: 2%;
+    font-size: 22px;
+    text-align: center;
+    color:#F44336;
+}
+
+.dinner-title {
+    margin: 0px;
+    padding-top: 2%;
+}
+
+.swiper-slide img {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    max-height: 100%;
+}
+
