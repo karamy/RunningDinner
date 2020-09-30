@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService, UserData } from "src/app/auth/auth.service";
-import { ChatService, ChatMsg } from "src/app/home/tabs/chat/chat.service";
 import { IonContent } from '@ionic/angular';
-import { NotificationsService } from '../../notifications.service';
 import { Subscription } from 'rxjs';
 import { ProfileService } from 'src/app/home/profile/profile.service';
+import { ChatMsg, ChatService } from './chat.service';
+import { NotificationsService } from 'src/app/home/notifications.service';
 
 
 

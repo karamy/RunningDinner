@@ -17,8 +17,8 @@ const routes: Routes = [
         loadChildren: () => import('./tabs/dinners/dinners.module').then(m => m.DinnersPageModule),
       },
       {
-        path: 'chat',
-        loadChildren: () => import('./tabs/chat/chat.module').then(m => m.ChatPageModule),
+        path: 'dinner-history',
+        loadChildren: () => import('./tabs/dinner-history/dinner-history.module').then(m => m.DinnerHistoryPageModule),
       }
     ]
   },

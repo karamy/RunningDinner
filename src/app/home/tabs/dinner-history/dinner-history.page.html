@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Dinners Chat & History</ion-title>
+    <ion-buttons slot="primary">
+      <rd-profile></rd-profile>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card *ngIf="myDinner" (click)="goToDinnerChat(myDinner)">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <ion-card-header>
+      <ion-card-title>{{myDinner.title}}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content *ngIf="dinnerMessages">
+      {{dinnerMessages[dinnerMessages.length-1].sentby}}: 
+      {{dinnerMessages[dinnerMessages.length-1].message}}
+      {{dinnerMessages[dinnerMessages.length-1].timeofmsg}}
+    </ion-card-content>
+  </ion-card>
+
+  <ion-item-divider>
+    <ion-label>
+      Dinners History
+    </ion-label>
+  </ion-item-divider>
+
+  <ion-card >
+    <ion-card-header>
+      CENA VEGANAZI
+    </ion-card-header>
+    <ion-card-content>
+      solo verdure che ricordino Hitler
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card >
+    <ion-card-header>
+      CENA SUSHI BOLOGNESE
+    </ion-card-header>
+    <ion-card-content>
+      sushi al ragù e altre porcate con le lasagne
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
