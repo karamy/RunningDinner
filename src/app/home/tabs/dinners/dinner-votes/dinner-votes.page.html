@@ -1,7 +1,15 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home/tabs/dinners">Back</ion-back-button>
+      <ion-button href="/home/tabs/dinners">
+        <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
+        Back
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button shape="round" size="large" slot="icon-only" (click)="detDinnerVotes()">
+        <ion-icon size="large" name="refresh-circle-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -17,13 +25,7 @@
       </ion-row>
       <ion-row>
         <ion-col class="ion-text-center">
-          <h3 class="dinner-title">Ora avete </h3>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col>
-          <div class="countdown" [hidden]="minutes < 0 || !minutes ">{{minutes + ' ' + minutesString}}</div>
-          <div class="countdown" [hidden]="minutes > 0 || !seconds">{{seconds + ' ' + secondsString}}</div>
+          <h3 class="dinner-title">Ora avete 20 minuti</h3>
         </ion-col>
       </ion-row>
       <ion-row>
@@ -147,18 +149,12 @@
       </ion-row>
       <ion-row>
         <ion-col>
-          <h3>Ora attendi</h3>
+          <h3>Tra poco potrai</h3>
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col>
-          <div class="countdown" [hidden]="minutes < 0 || !minutes ">{{minutes + ' ' + minutesString}}</div>
-          <div class="countdown" [hidden]="minutes > 0 || !seconds">{{seconds + ' ' + secondsString}}</div>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col>
-          <h3>per sapere i risultati!</h3>
+          <h3>sapere i risultati!</h3>
         </ion-col>
       </ion-row>
     </ion-grid>

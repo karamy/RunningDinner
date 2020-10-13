@@ -62,45 +62,51 @@ export class DinnersPage implements OnInit {
     );
   }
 
-  // In base al tempo che manca alla cena selezionata ti manda sui dettagli/evento/fasi
+  // In base allo state della cena selezionata ti manda sui dettagli/evento/fasi
   goToDinnerDetail(dinner: Dinner) {
-    if (this.compareDate(dinner) === 'event') {
-      this.router.navigate(['/home/tabs/dinners/dinner-event'], { queryParams: dinner });
-    } else if (this.compareDate(dinner) === 'phase') {
-      this.router.navigate(['/home/tabs/dinners/dinner-phases'], { queryParams: dinner });
-    } else if (this.compareDate(dinner) === 'votes') {
-      this.router.navigate(['/home/tabs/dinners/dinner-votes'], { queryParams: dinner });
-    } else {
-      this.router.navigate(['/home/tabs/dinners/dinner-detail'], { queryParams: dinner });
-    }
+    this.dinnersService.getDinnerState(dinner.id).then(res => {
+      const dinnerState = res.dinner_state;
+      console.log("Dinner State: " + dinnerState);
+
+      if (dinnerState === 1 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
+        this.router.navigate(['/home/tabs/dinners/dinner-event'], { queryParams: dinner });
+      } else if ((dinnerState === 2 || dinnerState === 3 || dinnerState === 4) && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
+        this.router.navigate(['/home/tabs/dinners/dinner-phases'], { queryParams: dinner });
+      } else if (dinnerState === 5 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
+        this.router.navigate(['/home/tabs/dinners/dinner-votes'], { queryParams: dinner });
+      } else if (dinnerState === 0) {
+        this.router.navigate(['/home/tabs/dinners/dinner-detail'], { queryParams: dinner });
+      }
+    });
   }
 
+  /*  Vecchio sistema di reindirizzamento basato sul calcolo dell'ora lato app
   // Controllo quanto tempo manca alla cena per redirezionare alla page corretta
-  compareDate(dinner: Dinner) {
-    const timeLeft = this.dinnersService.getDinnerTimeLeft(dinner.date);
-    // Se giorni mancanti alla cena = 0 ma ore mancanti > 0 ed il mio groupid è presente mando a dinner-event
-    if (timeLeft[0] === 0 && timeLeft[1] > 0 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
-      return 'event';
-      // Se giorni mancanti alla cena = 0 e ore mancanti <= 0 ed il mio groupid è presente mando a dinner-phase
-    } else if (timeLeft[0] === 0 && timeLeft[1] <= 0 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
-      // Se sono passate 2 ore dall'inizio della cena
-      if (timeLeft[1] === -2) {
-        // controllo se sono passati anche 35 minuti
-        if (timeLeft[2] <= -35) {
+    compareDate(dinner: Dinner) {
+      const timeLeft = this.dinnersService.getDinnerTimeLeft(dinner.date);
+      // Se giorni mancanti alla cena = 0 ma ore mancanti > 0 ed il mio groupid è presente mando a dinner-event
+      if (timeLeft[0] === 0 && timeLeft[1] > 0 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
+        return 'event';
+        // Se giorni mancanti alla cena = 0 e ore mancanti <= 0 ed il mio groupid è presente mando a dinner-phase
+      } else if (timeLeft[0] === 0 && timeLeft[1] <= 0 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
+        // Se sono passate 2 ore dall'inizio della cena
+        if (timeLeft[1] === -2) {
+          // controllo se sono passati anche 35 minuti
+          if (timeLeft[2] <= -35) {
+            return 'votes';
+          } else {
+            return 'phase';
+          }
+          // Altrimenti se sono passate più di 2 ore dall'inizio della cena
+        } else if (timeLeft[1] < -2) {
           return 'votes';
         } else {
           return 'phase';
         }
-        // Altrimenti se sono passate più di 2 ore dall'inizio della cena
-      } else if (timeLeft[1] < -2) {
-        return 'votes';
       } else {
-        return 'phase';
+        return 'details';
       }
-    } else {
-      return 'details';
-    }
-  }
+    } */
 }
 
 // Rappresenta la risposta del metodo loadDinners

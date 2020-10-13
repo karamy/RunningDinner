@@ -17,14 +17,15 @@ const routes: Routes = [
   },
   {
     path: 'dinner-event',
-    loadChildren: () => import('./dinner-event/dinner-event/dinner-event.module').then( m => m.DinnerEventPageModule)
-  },  {
+    loadChildren: () => import('./dinner-event/dinner-event.module').then(m => m.DinnerEventPageModule)
+  },
+  {
     path: 'dinner-phases',
-    loadChildren: () => import('./dinner-phases/dinner-phases.module').then( m => m.DinnerPhasesPageModule)
+    loadChildren: () => import('./dinner-phases/dinner-phases.module').then(m => m.DinnerPhasesPageModule)
   },
   {
     path: 'dinner-votes',
-    loadChildren: () => import('./dinner-votes/dinner-votes.module').then( m => m.DinnerVotesPageModule)
+    loadChildren: () => import('./dinner-votes/dinner-votes.module').then(m => m.DinnerVotesPageModule)
   }
 
 ];

@@ -1,9 +1,15 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home/tabs/dinners">Back</ion-back-button>
+      <ion-button href="/home/tabs/dinners">
+        <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
+        Back
+      </ion-button>
     </ion-buttons>
     <ion-buttons slot="end">
+      <ion-button shape="round" size="large" slot="icon-only" (click)="getDinnerPhasesData()">
+        <ion-icon size="large" name="refresh-circle-outline"></ion-icon>
+      </ion-button>
       <ion-button shape="round" size="large" slot="icon-only" (click)="presentPopover($event, dinner.time)">
         <ion-icon size="large" name="help-circle-outline"></ion-icon>
       </ion-button>
@@ -15,11 +21,6 @@
   <div id="map" class="background-map"></div>
   <div id="cupertino" class="bottomPanel">
     <ion-grid>
-      <ion-row>
-        <ion-col>
-          <div class="countdown" id="countdown"></div>
-        </ion-col>
-      </ion-row>
       <ion-row>
         <ion-col>
           <h3 *ngIf="phase === 1" class="dinner-title">{{firstDish.name}}</h3>

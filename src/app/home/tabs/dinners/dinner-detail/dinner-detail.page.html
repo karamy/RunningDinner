@@ -18,9 +18,13 @@
 </ion-header>
 
 <ion-content [scrollEvents]="true" fullscreen="true" slot="fixed">
+  <ion-refresher slot="fixed" (ionRefresh)="getDinnerDetails($event)">
+    <ion-refresher-content pullingIcon="lines" refreshingSpinner="lines">
+    </ion-refresher-content>
+  </ion-refresher>
   <div>
     <div style="height: 130px;position: relative;">
-      <div id="map" class="avatar"></div>
+      <div id="mapDetails" class="avatar"></div>
     </div>
   </div>
   <div class="card-body" style="height: fit-content; margin-bottom: 2%;">

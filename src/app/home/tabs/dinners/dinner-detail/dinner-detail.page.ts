@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Dinner, DinnersService, DinnerDetails } from '../dinners.service';
 import { AlertController, NavController } from '@ionic/angular';
 import { RDParamsService } from 'src/app/rdparams.service';
@@ -13,6 +13,7 @@ import { Subscription } from 'rxjs';
 })
 export class DinnerDetailPage implements OnInit, OnDestroy {
   dinner: Dinner;
+  state: number;
   isEdit: Boolean = false; // Indica se la cena è in modalità edit
   dinnerDetails: DinnerDetails = {
     badges: [],
@@ -31,6 +32,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute,
     private alertController: AlertController,
+    private router: Router,
     private dinnersService: DinnersService,
     public paramsService: RDParamsService,
     private notificationsService: NotificationsService,
@@ -57,33 +59,45 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
   }
 
   // Carica i dettagli della cena
-  getDinnerDetails() {
-    this.dinnersService.getDinnerDetails(this.dinner).then(
-      (res) => {
-        this.dinnerDetails = res;
+  getDinnerDetails(event?) {
 
-        // Sovrascrivo titolo e descrizione in quanto possono essere modificati
-        const dinnerData = res.dinnerData;
-        this.dinner.title = dinnerData.title;
-        this.dinner.description = dinnerData.description;
+    // Controllo lo state della cena
+    this.dinnersService.getDinnerState(this.dinner.id).then(res => {
+      this.state = res.dinner_state;
+      if (this.state === 0) {
+        this.dinnersService.getDinnerDetails(this.dinner).then(
+          (resp) => {
+            this.dinnerDetails = resp;
 
-        // Ottengo la tipologia
-        this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type))[0];
-        this.dinnerDaysLeft = this.dinnersService.getDinnerTimeLeft(this.dinner.date)[0];
-        console.log(this.dinnerDaysLeft);
+            // Sovrascrivo titolo e descrizione in quanto possono essere modificati
+            const dinnerData = resp.dinnerData;
+            this.dinner.title = dinnerData.title;
+            this.dinner.description = dinnerData.description;
 
-        // Mostro eventualmente alert se qualche problema (cena piena, non sono in gruppo o mancano meno di 24h)
-        if (!this.paramsService.getParams().groupId || !this.dinnerDaysLeft || this.dinner.groupIds.length === 9) {
-          this.showInfoAlert();
+            // Ottengo la tipologia
+            this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type))[0];
+            this.dinnerDaysLeft = this.dinnersService.getDinnerTimeLeft(this.dinner.date)[0];
+
+            // Mostro eventualmente alert se qualche problema (cena piena, non sono in gruppo o mancano meno di 24h)
+            if (!this.paramsService.getParams().groupId || !this.dinnerDaysLeft || this.dinner.groupIds.length === 9) {
+              this.showInfoAlert();
+            }
+
+            // Carico la mappa
+            this.initMap(this.dinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
+          },
+          () => {
+            console.log('Errore getDinnerDetails, ritorno alla home');
+            this.navController.navigateRoot('/home');
+          });
+
+        if (event) { // Se lanciato dal refresher emetto evento di completamento
+          event.target.complete();
         }
-
-        // Carico la mappa
-        this.initMap(this.dinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
-      },
-      () => {
-        console.log('Errore getDinnerDetails, ritorno alla home');
-        this.navController.navigateRoot('/home');
-      });
+      } else {
+        this.router.navigate(['/home/tabs/dinners/dinner-event'], { queryParams: this.dinner });
+      }
+    });
   }
 
   // Inizializza la mappa per mostrare l'utente e gli altri partecipanti alla cena
@@ -92,8 +106,8 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
     const markers: google.maps.Marker[] = [];
 
 
-    const mapElement = document.getElementById('map');
-    if (mapElement) { // Istanzio la mappa solo se sono sulla pagina, altrimenti da errore 
+    const mapElement = document.getElementById('mapDetails');
+    if (mapElement) { // Istanzio la mappa solo se sono sulla pagina, altrimenti da errore
       const map = new google.maps.Map(mapElement, {
         disableDefaultUI: true
       });
@@ -247,7 +261,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
       .finally( // In qualsiasi esito riporto la cena in view
         () => {
           this.isEdit = false;
-        })
+        });
   }
 
   // Effettua chiamata http per abbandonare cena e gestisce il risultato

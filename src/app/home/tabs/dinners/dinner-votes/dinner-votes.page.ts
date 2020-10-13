@@ -17,6 +17,7 @@ import { AlertController } from '@ionic/angular';
 export class DinnerVotesPage implements OnInit {
 
   dinner: Dinner;
+  state: number;
   hasVoted: boolean;
   dinnerDetails: DinnerDetails = {
     badges: [],
@@ -58,6 +59,7 @@ export class DinnerVotesPage implements OnInit {
   seconds: number;
   minutesString: string;
   secondsString: string;
+  bottomPanel: HTMLElement;
 
   private subscription: Subscription;
 
@@ -96,36 +98,44 @@ export class DinnerVotesPage implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  detDinnerVotes() {
-    // Avvio il countdown
-    this.initCountdown(this.dinner.date);
+  detDinnerVotes(event?) {
+    this.dinnersService.getDinnerState(this.dinner.id).then(resp => {
+      this.state = resp.dinner_state;
 
-    // Controllo se l'utente ha già votato o meno
-    this.dinnersService.checkIfVoted(this.dinner.id).then(response => {
-      this.hasVoted = response.hasVoted;
+      if (this.state === 5) {
+        // Controllo se l'utente ha già votato o meno
+        this.dinnersService.checkIfVoted(this.dinner.id).then(response => {
+          this.hasVoted = response.hasVoted;
 
-      if (this.hasVoted === false) {
-        // Istanzio il pannello inferiore
-        this.presentBottomPanel();
+          if (this.hasVoted === false) {
 
-        this.dinnersService.getDinnerDetails(this.dinner).then(res => {
-          this.dinnerDetails = res;
+            // Istanzio il pannello inferiore
+            if (!this.bottomPanel) {
+              this.presentBottomPanel();
+            }
 
-          // Ottengo i dati relativi alla mia cena
-          this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId).then(response => {
-            this.myDinnerDetails = response;
+            this.dinnersService.getDinnerDetails(this.dinner).then(res => {
+              this.dinnerDetails = res;
 
-            // Creo array con i due gruppi da votare
-            this.groupsToVote = this.dinnersService.detGroupsToVote(this.myDinnerDetails);
+              // Ottengo i dati relativi alla mia cena
+              this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId).then(response => {
+                this.myDinnerDetails = response;
 
-            // Determino le categorie di voto
-            this.voteCategories = this.dinnersService.detVoteCategories(this.dinner.type);
+                // Creo array con i due gruppi da votare
+                this.groupsToVote = this.dinnersService.detGroupsToVote(this.myDinnerDetails);
 
-            // Valorizzo i groupId dei due oggetti che rappresentano i voti del primo e del secondo gruppo
-            this.firstGroupVotes.groupId = this.groupsToVote[0].groupid;
-            this.secondGroupVotes.groupId = this.groupsToVote[1].groupid;
-          });
+                // Determino le categorie di voto
+                this.voteCategories = this.dinnersService.detVoteCategories(this.dinner.type);
+
+                // Valorizzo i groupId dei due oggetti che rappresentano i voti del primo e del secondo gruppo
+                this.firstGroupVotes.groupId = this.groupsToVote[0].groupid;
+                this.secondGroupVotes.groupId = this.groupsToVote[1].groupid;
+              });
+            });
+          }
         });
+      } else if (this.state === 6) {
+        // Inserire path per risultati cena
       }
     });
   }
@@ -192,7 +202,7 @@ export class DinnerVotesPage implements OnInit {
 
   // Istanzia il pannello inferiore
   presentBottomPanel() {
-    const element = document.getElementById('cupertino');
+    this.bottomPanel = document.getElementById('cupertino');
 
     // Opzioni pannello
     const panelSettings: CupertinoSettings = {
@@ -210,40 +220,10 @@ export class DinnerVotesPage implements OnInit {
     };
 
     // Inizializzo il pannello
-    const panel = new CupertinoPane(element, panelSettings);
+    const panel = new CupertinoPane(this.bottomPanel, panelSettings);
 
     // Presento il pannello
     panel.present({ animate: true });
-  }
-
-  initCountdown(dinnerDate: Date) {
-    let dinnerEndDate: number;
-
-    // Aggiungo 3 ore alla data di inizio cena (cioè ottengo la data di fine)
-    dinnerEndDate = new Date(dinnerDate).getTime() + 10800000;
-
-    // Aggiorno il countdown ogni secondo
-    const interval = setInterval(x => {
-      // Ottengo l'ora attuale
-      const now = new Date().getTime();
-      // Trovo la distanza tra l'ora attuale e l'ora di fine della cena (correggendo il formato a UTC)
-      const distance = (dinnerEndDate - now) - 7200000;
-      // Calcolo minuti e secondi che mancano
-      this.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      this.seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      // Mostro il risultato in un elemento HTML con id="countdown"
-      this.minutesString = 'minuti';
-      this.secondsString = 'secondi';
-
-      if (this.minutes === 1) {
-        this.minutesString = 'minuto';
-      }
-
-      if (this.seconds === 1) {
-        this.secondsString = 'secondo';
-      }
-    }, 1000);
   }
 
   // Mostra alert di ringraziamento dopo il voto

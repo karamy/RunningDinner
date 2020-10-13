@@ -48,6 +48,7 @@ export class DinnerPhasesPage implements OnInit {
   dinnerPhase: number;
   phaseVariables: any[];
   bounds = new google.maps.LatLngBounds();
+  bottomPanel: HTMLElement;
 
   private subscription: Subscription;
 
@@ -91,83 +92,87 @@ export class DinnerPhasesPage implements OnInit {
   }
 
   getDinnerPhasesData() {
-    // Istanzio il pannello inferiore
-    this.presentBottomPanel();
-
-    this.dinnersService.getDinnerDetails(this.dinner).then(res => {
-      this.dinnerDetails = res;
-
-      // Dal dinner_type ottengo nome della tipologia ed i piatti che verranno cucinati nella cena
-      this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type))[0];
-      const dishesArray = this.dinnersService.setDinnerDishes(this.dinner);
-      this.firstDish = dishesArray[0];
-      this.secondDish = dishesArray[1];
-      this.thirdDish = dishesArray[2];
-
-      // Determino in che fase sono
-      this.phase = this.dinnersService.setPhase(this.firstDish, this.secondDish, this.thirdDish);
+    // Determino in che fase sono
+    this.dinnersService.setPhase(this.dinner.id).then(resp => {
+      this.phase = resp;
       console.log('Phase Number: ' + this.phase);
 
-      // Ottengo i dati relativi alla mia cena
-      this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId).then(response => {
-        this.myDinnerDetails = response;
+      if (this.phase !== 4) {
 
-        // Imposto le variabili a seconda della fase
-        if (this.phase === 1) {
-          if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.firstHouse.groupid) {
-            this.distanceFromUser = 'Sei a casa tua! Preparati ad accogliere gli ospiti';
-            this.travelTime = 'Beh direi che non devi spostarti xD';
-            this.initMap([], this.dinnerDetails.userLatLng);
-          } else {
-            this.dinnersService.setVariables(this.profileService.getPartner().group_address, this.myDinnerDetails.houses.firstHouse.groupAddress).then(res => {
-              this.phaseVariables = res as [];
-              this.distanceFromUser = this.phaseVariables[0];
-              this.travelTime = this.phaseVariables[1];
-              this.directionsRenderer = this.phaseVariables[2];
-              this.initMap([this.myDinnerDetails.addressesLatLng[0]], this.dinnerDetails.userLatLng, this.directionsRenderer);
-            });
-          }
-          this.initCountdown(this.firstDish.endTime, this.dinner.date);
-        } else if (this.phase === 2) {
-          this.dinnersService.setVariables(this.myDinnerDetails.houses.firstHouse.groupAddress, this.myDinnerDetails.houses.secondHouse.groupAddress).then(res => {
-            this.phaseVariables = res as [];
-            this.distanceFromUser = this.phaseVariables[0];
-            this.travelTime = this.phaseVariables[1];
-            this.directionsRenderer = this.phaseVariables[2];
-            if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.firstHouse.groupid) {
-              this.initMap([this.myDinnerDetails.addressesLatLng[0]], this.dinnerDetails.userLatLng, this.directionsRenderer);
-            } else if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.secondHouse.groupid) {
-              this.initMap(this.dinnerDetails.userLatLng, [this.myDinnerDetails.addressesLatLng[0]], this.directionsRenderer);
-            } else {
-              this.initMap([this.myDinnerDetails.addressesLatLng[1]], [this.myDinnerDetails.addressesLatLng[0]], this.directionsRenderer);
-            }
-          });
-          this.initCountdown(this.secondDish.endTime);
-        } else if (this.phase === 3) {
-          this.dinnersService.setVariables(this.myDinnerDetails.houses.secondHouse.groupAddress, this.myDinnerDetails.houses.thirdHouse.groupAddress).then(res => {
-            this.phaseVariables = res as [];
-            this.distanceFromUser = this.phaseVariables[0];
-            this.travelTime = this.phaseVariables[1];
-            this.directionsRenderer = this.phaseVariables[2];
-            if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.thirdHouse.groupid) {
-              this.initMap(this.dinnerDetails.userLatLng, [this.myDinnerDetails.addressesLatLng[1]], this.directionsRenderer);
-            } else if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.secondHouse.groupid) {
-              this.initMap([this.myDinnerDetails.addressesLatLng[1]], this.dinnerDetails.userLatLng, this.directionsRenderer);
-            } else {
-              this.initMap([this.myDinnerDetails.addressesLatLng[1]], [this.myDinnerDetails.addressesLatLng[0]], this.directionsRenderer);
-            }
-          });
-          this.initCountdown(this.thirdDish.endTime);
-        } else if (this.phase === 4) {
-          this.router.navigate(['/home/tabs/dinners/dinner-votes'], { queryParams: this.dinner });
+        // Istanzio il pannello inferiore se non ancora istanziato
+        if (!this.bottomPanel) {
+          this.presentBottomPanel();
         }
-      });
+
+        this.dinnersService.getDinnerDetails(this.dinner).then(res => {
+          this.dinnerDetails = res;
+
+          // Dal dinner_type ottengo nome della tipologia ed i piatti che verranno cucinati nella cena
+          this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type))[0];
+          const dishesArray = this.dinnersService.setDinnerDishes(this.dinner);
+          this.firstDish = dishesArray[0];
+          this.secondDish = dishesArray[1];
+          this.thirdDish = dishesArray[2];
+
+          // Ottengo i dati relativi alla mia cena
+          this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId).then(response => {
+            this.myDinnerDetails = response;
+
+            // Imposto le variabili a seconda della fase
+            if (this.phase === 1) {
+              if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.firstHouse.groupid) {
+                this.distanceFromUser = 'Sei a casa tua! Preparati ad accogliere gli ospiti';
+                this.travelTime = 'Beh direi che non devi spostarti xD';
+                this.initMap([], this.dinnerDetails.userLatLng);
+              } else {
+                this.dinnersService.setVariables(this.profileService.getPartner().group_address, this.myDinnerDetails.houses.firstHouse.groupAddress).then(res => {
+                  this.phaseVariables = res as [];
+                  this.distanceFromUser = this.phaseVariables[0];
+                  this.travelTime = this.phaseVariables[1];
+                  this.directionsRenderer = this.phaseVariables[2];
+                  this.initMap([this.myDinnerDetails.addressesLatLng[0]], this.dinnerDetails.userLatLng, this.directionsRenderer);
+                });
+              }
+            } else if (this.phase === 2) {
+              this.dinnersService.setVariables(this.myDinnerDetails.houses.firstHouse.groupAddress, this.myDinnerDetails.houses.secondHouse.groupAddress).then(res => {
+                this.phaseVariables = res as [];
+                this.distanceFromUser = this.phaseVariables[0];
+                this.travelTime = this.phaseVariables[1];
+                this.directionsRenderer = this.phaseVariables[2];
+                if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.firstHouse.groupid) {
+                  this.initMap([this.myDinnerDetails.addressesLatLng[0]], this.dinnerDetails.userLatLng, this.directionsRenderer);
+                } else if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.secondHouse.groupid) {
+                  this.initMap(this.dinnerDetails.userLatLng, [this.myDinnerDetails.addressesLatLng[0]], this.directionsRenderer);
+                } else {
+                  this.initMap([this.myDinnerDetails.addressesLatLng[1]], [this.myDinnerDetails.addressesLatLng[0]], this.directionsRenderer);
+                }
+              });
+            } else if (this.phase === 3) {
+              this.dinnersService.setVariables(this.myDinnerDetails.houses.secondHouse.groupAddress, this.myDinnerDetails.houses.thirdHouse.groupAddress).then(res => {
+                this.phaseVariables = res as [];
+                this.distanceFromUser = this.phaseVariables[0];
+                this.travelTime = this.phaseVariables[1];
+                this.directionsRenderer = this.phaseVariables[2];
+                if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.thirdHouse.groupid) {
+                  this.initMap(this.dinnerDetails.userLatLng, [this.myDinnerDetails.addressesLatLng[1]], this.directionsRenderer);
+                } else if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.secondHouse.groupid) {
+                  this.initMap([this.myDinnerDetails.addressesLatLng[1]], this.dinnerDetails.userLatLng, this.directionsRenderer);
+                } else {
+                  this.initMap([this.myDinnerDetails.addressesLatLng[1]], [this.myDinnerDetails.addressesLatLng[0]], this.directionsRenderer);
+                }
+              });
+            }
+          });
+        });
+      } else {
+        this.router.navigate(['/home/tabs/dinners/dinner-votes'], { queryParams: this.dinner });
+      }
     });
   }
 
   // Istanzia il pannello inferiore
   presentBottomPanel() {
-    const element = document.getElementById('cupertino');
+    this.bottomPanel = document.getElementById('cupertino');
 
     // Opzioni pannello
     const panelSettings: CupertinoSettings = {
@@ -185,7 +190,7 @@ export class DinnerPhasesPage implements OnInit {
     };
 
     // Inizializzo il pannello
-    const panel = new CupertinoPane(element, panelSettings);
+    const panel = new CupertinoPane(this.bottomPanel, panelSettings);
 
     // Presento il pannello
     panel.present({ animate: true });
@@ -203,7 +208,7 @@ export class DinnerPhasesPage implements OnInit {
 
       if (directionsRenderer) {
         directionsRenderer.setMap(map); // Disegna il percorso sulla mappa
-        directionsRenderer.setOptions({ suppressMarkers: true }); // Elimina i marker di default (A e B)
+        directionsRenderer.setOptions({ suppressMarkers: true, preserveViewport: true }); // Elimina i marker di default (A e B) e mantiene zoom mappa
       }
 
       // Creo marker per indirizzo user
@@ -263,6 +268,7 @@ export class DinnerPhasesPage implements OnInit {
       for (var j = 0; j < markers.length; j++) {
         this.bounds.extend(markers[j].getPosition());
       }
+
       map.fitBounds(this.bounds, { top: 0, bottom: 0, left: 0, right: 0 });
 
       const bottomPanel = document.getElementById('cupertino');
@@ -272,12 +278,16 @@ export class DinnerPhasesPage implements OnInit {
 
       // Listener che attende che la mappa sia caricata
       const listener = google.maps.event.addListener(map, 'idle', () => {
+
+        // Riduco lo zoom della mappa
+        map.setZoom(map.getZoom() - 1);
+
         const pixelOffset = this.getPixelOffset(map, markers);
 
-        // Eseguo il pan della mappa 
-        // Spostando in alto la mappa di un valore pari alla differenza tra la posizione del marker (y) e quella del top del pannello 
-        // + il 25% della distanza tra il top del pannello e il top della pagina
-        map.panBy(0, Math.abs((pixelOffset - bottomPanelPos.top) + (bottomPanelPos.top * 0.25)));
+        // Eseguo il pan della mappa
+        // Spostando in alto la mappa di un valore pari alla differenza tra la posizione del marker (y) e quella del top del pannello
+        // + il 50% della distanza tra il top del pannello e il top della pagina
+        map.panBy(0, Math.abs((pixelOffset - bottomPanelPos.top) + (bottomPanelPos.top * 0.5)));
         google.maps.event.removeListener(listener);
       });
     }
@@ -293,17 +303,20 @@ export class DinnerPhasesPage implements OnInit {
     const worldCoordinateNW = map.getProjection().fromLatLngToPoint(nw);
 
     // Ottengo la posizione dei marker (y) in pixel calcolata dall'angolo in alto a sinistra e tengo quello più in basso
-    let pixelOffset = 0;
+    let pixelOffsetSum = 0;
     for (let i = 0; i < markers.length; i++) {
       const worldCoordinate = map.getProjection().fromLatLngToPoint(markers[i].getPosition());
       const markerOffset = new google.maps.Point(
         Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale),
         Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale)
       );
-      if (pixelOffset < markerOffset.y) {
-        pixelOffset = markerOffset.y;
-      }
+
+      // Ottengo la somma degli offset (y) dei vari marker
+      pixelOffsetSum = pixelOffsetSum + markerOffset.y;
     }
+
+    // Imposto come pixelOffset un punto medio tra i 2
+    const pixelOffset = pixelOffsetSum / markers.length;
     return pixelOffset;
   }
 
@@ -342,61 +355,5 @@ export class DinnerPhasesPage implements OnInit {
 
     // Avvio il plugin con le opzioni impostate
     this.launchNavigator.navigate(endAddress, options);
-  }
-
-  initCountdown(phaseDate: Date, dinnerDate?: Date) {
-    let countDownDate: number;
-    let distanceDinnerNow: number;
-
-    if (dinnerDate) {
-      distanceDinnerNow = (new Date(dinnerDate).getTime() - new Date().getTime()) - 7200000;
-      if (distanceDinnerNow > 0) {
-        countDownDate = new Date(dinnerDate).getTime();
-      } else {
-        countDownDate = new Date(phaseDate).getTime();
-      }
-    } else {
-      countDownDate = new Date(phaseDate).getTime();
-    }
-
-    // Aggiorno il countdown ogni secondo
-    const interval = setInterval(x => {
-      // Ottengo l'ora attuale
-      const now = new Date().getTime();
-      // Trovo la distanza tra l'ora attuale e l'ora della cena (correggendo il formato a UTC)
-      const distance = (countDownDate - now) - 7200000;
-      // Calcolo giorni, ore, minuti e secondi che mancano
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-
-      // Mostro il risultato in un elemento HTML con id="countdown"
-      let hoursString: string;
-      let minutesString: string;
-      let leftWord: string;
-
-      if (dinnerDate) {
-        hoursString = 'Ora';
-        minutesString = 'Minuti';
-        leftWord = 'Mancano';
-        if (minutes === 1) {
-          leftWord = 'Manca';
-          minutesString = 'Minuto';
-        }
-      } else {
-        minutesString = 'Minuti';
-        leftWord = 'Mancano';
-        if (minutes === 1) {
-          leftWord = 'Manca';
-          minutesString = 'Minuto';
-        }
-      }
-      if (document.getElementById('countdown')) {
-        if (dinnerDate && distanceDinnerNow > 0) {
-          document.getElementById('countdown').innerHTML = leftWord + ' ' + minutes + ' ' + minutesString + ' alla tua cena!';
-        } else {
-          document.getElementById('countdown').innerHTML = leftWord + ' ' + minutes + ' ' + minutesString + ' alla fine della tappa!';
-        }
-      }
-    }, 1000);
   }
 }

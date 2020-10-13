@@ -84,6 +84,26 @@ export class DinnersService {
       );
   }
 
+  // Ottengo lo state della cena
+  async getDinnerState(dinnerId: number): Promise<any> {
+    await this.spinner.create();
+    return new Promise((resolve, reject) =>
+      this.http.post(this.rdConstants.getApiRoute('getDinnerState'), { dinnerId })
+        .toPromise()
+        .then(
+          res => {
+            resolve(res);
+          },
+          () => {
+            reject();
+          }
+        )
+        .finally(
+          () => { this.spinner.dismiss(); }
+        )
+    );
+  }
+
   // Ottiene i dettagli della cena selezionata
   async getDinnerDetails(dinner: Dinner): Promise<DinnerDetails> {
     const dinnerId = dinner.id;
@@ -370,21 +390,40 @@ export class DinnersService {
 
   // Funzioni di dinnerPhase
 
-  // Determino in che fase della cena sono
-  setPhase(firstDish: DinnerDish, secondDish: DinnerDish, thirdDish: DinnerDish) {
-    const now = new Date();
+  // Determino in che fase della cena sono in base allo state della cena
+  async setPhase(dinnerId: number) {
     let phase: number;
-    if (now.getTime() <= firstDish.endTime.getTime() - 7200000) {
-      phase = 1;
-    } else if (now.getTime() <= secondDish.endTime.getTime() - 7200000) {
-      phase = 2;
-    } else if (now.getTime() <= thirdDish.endTime.getTime() - 7200000) {
-      phase = 3;
-    } else {
-      phase = 4;
-    }
+    await this.getDinnerState(dinnerId).then(res => {
+      const dinnerState = res.dinner_state;
+      if (dinnerState === 2) {
+        phase = 1;
+      } else if (dinnerState === 3) {
+        phase = 2;
+      } else if (dinnerState === 4) {
+        phase = 3;
+      } else if (dinnerState === 5) {
+        phase = 4;
+      }
+    });
     return phase;
   }
+
+  /* setPhase vecchio, che si basava sulla data dei singoli piatti
+  setPhase(firstDish: DinnerDish, secondDish: DinnerDish, thirdDish: DinnerDish) {
+      const now = new Date();
+      let phase: number;
+      if (now.getTime() <= firstDish.endTime.getTime() - 7200000) {
+        phase = 1;
+      } else if (now.getTime() <= secondDish.endTime.getTime() - 7200000) {
+        phase = 2;
+      } else if (now.getTime() <= thirdDish.endTime.getTime() - 7200000) {
+        phase = 3;
+      } else {
+        phase = 4;
+      }
+      return phase;
+    }
+    */
 
   // Imposto le variabili della fase ritornando la distanza tra le due case, il tempo di viaggio e l'oggetto DirectionsRenderer che disegna il percorso sulla mappa
   setVariables(firstAddress: string, secondAddress: string) {
@@ -658,6 +697,7 @@ export interface Dinner {
   dateString?: string;
   time?: number;
   administrator: number; // rappresenta l'id del gruppo amministratore della cena
+  state: number; // Rappresenta lo state della cena
 }
 
 // Rappresenta i dettagli di una cena
