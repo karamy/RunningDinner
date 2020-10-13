@@ -1,0 +1,99 @@
+body{
+    font-family: "Ubuntu-Italic", "Lucida Sans", helvetica, sans;
+  }
+  
+  .newmsg{
+    display:inline-block;
+    width:60%;
+  }
+  
+  ion-icon{
+    font-size: 1.5em;
+    color:#9CC7AE;
+  }
+  
+  .footer-button{
+    float:right;
+  }
+  
+  #chatContent{
+      opacity:0;
+      margin-top:30px;
+      width:290px;
+      height:270px;
+      overflow-y:scroll;	
+      overflow-x:hidden;
+      padding-right: 20px;
+      -webkit-transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000);
+         -moz-transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000);
+          -ms-transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000);
+           -o-transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000);
+              transition: all 200ms cubic-bezier(0.000, 0.995, 0.990, 1.000);
+  }
+  
+  div.message{
+      padding:0 0 30px 40px;
+      clear:both;
+      margin-bottom:10px;
+  }
+  
+  div.message.right{
+      padding: 0 50px 30px 0;
+      margin-left:auto;
+  }
+  
+  .message .bubble{	
+      background:#f0f4f7;
+      font-size:13px;
+      font-weight:600;
+      padding:12px 13px;
+      border-radius:5px 5px 5px 0px;
+      color:#8495a3;
+      position:relative;
+      min-width: 50px;
+      
+  }
+  
+   div.message.right .bubble{
+      float:right;
+      border-radius:5px 5px 0px 5px ;
+  }
+  .bubble .corner{
+      background:url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/bubble-corner.png") 0 0 no-repeat;
+      position:absolute;
+      width:7px;
+      height:7px;
+      left:-5px;
+      bottom:0;
+  }
+  div.message.right .corner{
+  
+      background:url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/bubble-cornerR.png") 0 0 no-repeat;
+      left:auto;
+      right:-5px;
+  }
+  
+  .bubble span.time{
+        color: #aab8c2;
+        font-size: 11px;
+        position: absolute;
+        right: 0;
+        bottom: -22px;
+  }
+  
+  ion-avatar {
+      float: left;
+      margin-left: -38px;
+      width: 35px;
+      height: 35px;
+      border: 3px solid  #9CC7AE;
+  }
+
+  
+  div.message.right ion-avatar {
+    float: right;	
+    margin-left: 0;
+    margin-right: -38px;	
+  }
+
+ 
