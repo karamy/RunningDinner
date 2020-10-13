@@ -12,7 +12,8 @@ export class TabsService {
     'dinner-detail',
     'dinner-event',
     'dinner-phases',
-    'dinner-votes'
+    'dinner-votes',
+    'chat'
   ];
 
   constructor(private router: Router, private platform: Platform) {

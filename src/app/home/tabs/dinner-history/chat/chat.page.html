@@ -1,5 +1,8 @@
 <ion-header>
   <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home/tabs/dinner-history"></ion-back-button>
+    </ion-buttons>
     <ion-title>chat</ion-title>
     <ion-buttons slot="primary">
       <rd-profile></rd-profile>
@@ -13,23 +16,21 @@
       
       <ion-item *ngFor = "let item of dinnerMessages" text-wrap>
         <div *ngIf="item.sentby != user.name" class="message">
-          <ion-avatar> <img [src]="user.profile_photo"></ion-avatar>
+          <!-- <ion-avatar > <img [src]="profileService.getUserbyName(item.sentby).profile_photo"></ion-avatar> -->
+          <ion-avatar > <img [src]="user.profile_photo"></ion-avatar>
           <div class="bubble">
-            {{item.message}}
+            <span style="color: lightcoral">{{item.sentby}}</span> <br> {{item.message}}
           <div class="corner"></div>
-          <span>{{item.timeofmsg}}</span>
+          <span class="time">{{item.timeofmsg}}</span>
         </div>
       </div>
 
         <div *ngIf="item.sentby === user.name" class="message right">
-           <ion-avatar> <img [src]="user.profile_photo"></ion-avatar>
-           <ion-avatar *ngIf="profileService.getPartner()" class="avatar-partner">
-            <img [src]="profileService.getPartner().profile_photo">
-          </ion-avatar>
+           <ion-avatar > <img [src]="user.profile_photo"></ion-avatar>
             <div class="bubble">
-            {{item.message}}
+            <span style="color: green">{{item.sentby}}</span> <br> {{item.message}}
           <div class="corner"></div>
-          <span>{{item.timeofmsg}}</span>
+          <span class="time">{{item.timeofmsg}}</span>
         </div>
       </div>
 
