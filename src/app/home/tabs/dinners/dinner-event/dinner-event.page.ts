@@ -43,7 +43,7 @@ export class DinnerEventPage implements OnInit, OnDestroy {
   };
   partnerName: string;
   bounds = new google.maps.LatLngBounds();
-  bottomPanel: HTMLElement;
+  bottomPanel: CupertinoPane;
 
   private subscription: Subscription;
 
@@ -149,7 +149,7 @@ export class DinnerEventPage implements OnInit, OnDestroy {
 
   // Istanzia il pannello inferiore
   presentBottomPanel() {
-    this.bottomPanel = document.getElementById('cupertino');
+    const panel = document.getElementById('cupertinoEvent');
 
     // Opzioni pannello
     const panelSettings: CupertinoSettings = {
@@ -163,14 +163,14 @@ export class DinnerEventPage implements OnInit, OnDestroy {
       bottomClose: false,
       buttonClose: false,
       showDraggable: false,
-      onBackdropTap: () => panel.destroy({ animate: true })
+      onBackdropTap: () => this.bottomPanel.destroy({ animate: true })
     };
 
     // Inizializzo il pannello
-    const panel = new CupertinoPane(this.bottomPanel, panelSettings);
+    this.bottomPanel = new CupertinoPane(panel, panelSettings);
 
     // Presento il pannello
-    panel.present({ animate: true });
+    this.bottomPanel.present({ animate: true });
   }
 
   // Inizializza la mappa per mostrare l'utente e gli altri partecipanti alla cena
@@ -244,7 +244,7 @@ export class DinnerEventPage implements OnInit, OnDestroy {
       }
       map.fitBounds(this.bounds, { top: 0, bottom: 0, left: 0, right: 0 });
 
-      const bottomPanel = document.getElementById('cupertino');
+      const bottomPanel = document.getElementById('cupertinoEvent');
 
       // Posizione relativa alla finestra del pannello inferiore
       const bottomPanelPos = bottomPanel.getBoundingClientRect();

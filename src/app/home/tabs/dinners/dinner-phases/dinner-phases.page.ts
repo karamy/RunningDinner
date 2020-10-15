@@ -48,7 +48,7 @@ export class DinnerPhasesPage implements OnInit {
   dinnerPhase: number;
   phaseVariables: any[];
   bounds = new google.maps.LatLngBounds();
-  bottomPanel: HTMLElement;
+  bottomPanel: CupertinoPane;
 
   private subscription: Subscription;
 
@@ -172,13 +172,13 @@ export class DinnerPhasesPage implements OnInit {
 
   // Istanzia il pannello inferiore
   presentBottomPanel() {
-    this.bottomPanel = document.getElementById('cupertino');
+    const panel = document.getElementById('cupertinoPhases');
 
     // Opzioni pannello
     const panelSettings: CupertinoSettings = {
       initialBreak: 'top',
       breaks: {
-        top: { enabled: true, height: window.screen.height * 0.5, bounce: true },
+        top: { enabled: true, height: window.screen.height * 0.6, bounce: true },
         middle: { enabled: false, height: window.screen.height * 0.25, bounce: true },
         bottom: { enabled: true, height: window.screen.height * 0.15 },
       },
@@ -186,14 +186,14 @@ export class DinnerPhasesPage implements OnInit {
       bottomClose: false,
       buttonClose: false,
       showDraggable: false,
-      onBackdropTap: () => panel.destroy({ animate: true })
+      onBackdropTap: () => this.bottomPanel.destroy({ animate: true })
     };
 
     // Inizializzo il pannello
-    const panel = new CupertinoPane(this.bottomPanel, panelSettings);
+    this.bottomPanel = new CupertinoPane(panel, panelSettings);
 
     // Presento il pannello
-    panel.present({ animate: true });
+    this.bottomPanel.present({ animate: true });
   }
 
   // Inizializza la mappa per mostrare l'utente e gli altri partecipanti alla cena
@@ -271,7 +271,7 @@ export class DinnerPhasesPage implements OnInit {
 
       map.fitBounds(this.bounds, { top: 0, bottom: 0, left: 0, right: 0 });
 
-      const bottomPanel = document.getElementById('cupertino');
+      const bottomPanel = document.getElementById('cupertinoPhases');
 
       // Posizione relativa alla finestra del pannello inferiore
       const bottomPanelPos = bottomPanel.getBoundingClientRect();

@@ -59,7 +59,7 @@ export class DinnerVotesPage implements OnInit {
   seconds: number;
   minutesString: string;
   secondsString: string;
-  bottomPanel: HTMLElement;
+  bottomPanel: CupertinoPane;
 
   private subscription: Subscription;
 
@@ -109,7 +109,7 @@ export class DinnerVotesPage implements OnInit {
 
           if (this.hasVoted === false) {
 
-            // Istanzio il pannello inferiore
+            // Istanzio il pannello inferiore se non ancora istanziato
             if (!this.bottomPanel) {
               this.presentBottomPanel();
             }
@@ -186,6 +186,7 @@ export class DinnerVotesPage implements OnInit {
 
   // Invio i voti a DB
   postDinnerVotes() {
+    this.bottomPanel.destroy({ animate: true });
     const firstGroup = {
       userIds: [this.groupsToVote[0].firstUserId, this.groupsToVote[0].secondUserId],
       votes: this.firstGroupVotes
@@ -202,7 +203,7 @@ export class DinnerVotesPage implements OnInit {
 
   // Istanzia il pannello inferiore
   presentBottomPanel() {
-    this.bottomPanel = document.getElementById('cupertino');
+    const panel = document.getElementById('cupertinoVotes');
 
     // Opzioni pannello
     const panelSettings: CupertinoSettings = {
@@ -216,14 +217,14 @@ export class DinnerVotesPage implements OnInit {
       bottomClose: false,
       buttonClose: false,
       showDraggable: false,
-      onBackdropTap: () => panel.destroy({ animate: true })
+      onBackdropTap: () => this.bottomPanel.destroy({ animate: true })
     };
 
     // Inizializzo il pannello
-    const panel = new CupertinoPane(this.bottomPanel, panelSettings);
+    this.bottomPanel = new CupertinoPane(panel, panelSettings);
 
     // Presento il pannello
-    panel.present({ animate: true });
+    this.bottomPanel.present({ animate: true });
   }
 
   // Mostra alert di ringraziamento dopo il voto
