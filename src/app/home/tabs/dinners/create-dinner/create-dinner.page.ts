@@ -41,7 +41,7 @@ export class CreateDinnerPage implements OnInit {
     this.dinnerTypes = this.dinnersService.getDinnerTypes();
     this.dinnerType = 1; // Pre-seleziono tipologia italiano
     this.dinnerDate = new Date();
-    this.dinnerDate.setDate(this.dinnerDate.getDate() + 1); // Pre-seleziono domani
+    this.dinnerDate.setDate(this.dinnerDate.getDate() + 2); // Pre-seleziono tra due giorni altrimenti tra un minuto scatta la fine delle iscrizioni
   }
 
   // Creazione cena

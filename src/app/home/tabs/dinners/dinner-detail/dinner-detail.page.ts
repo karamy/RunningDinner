@@ -207,7 +207,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
 
   // Indica se la sono l'amministratore della cena a cui partecipo
   isAdministrator() {
-    return this.isMyDinner() && this.dinner.administrator === this.paramsService.getParams().groupId;
+    return this.isMyDinner() && this.dinner.administrator == this.paramsService.getParams().groupId;
   }
 
   // Abbandono cena

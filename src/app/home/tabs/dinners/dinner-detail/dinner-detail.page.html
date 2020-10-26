@@ -4,7 +4,7 @@
       <ion-back-button defaultHref="/home/tabs/dinners"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="primary">
-      <ion-button (click)="onLeaveDinner()" *ngIf="isMyDinner()">
+      <ion-button (click)="onLeaveDinner()" *ngIf="isMyDinner() && !isEdit">
         <ion-icon name="person-remove" slot="icon-only"></ion-icon>
       </ion-button>
       <ion-button (click)="onEditDinner()" *ngIf="isAdministrator() && !isEdit">
