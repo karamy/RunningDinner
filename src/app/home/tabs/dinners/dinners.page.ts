@@ -31,33 +31,37 @@ export class DinnersPage implements OnInit {
     });
   }
 
-  // Ricarica l'elenco delle cene
+  // Ricarico i parametri e l'elenco delle cene
   loadDinners(event?) {
-    this.dinnersService.getDinners().then(
-      (response: DinnerResponse) => {
-        console.log(response);
-        this.myDinner = response.myDinner;
-        this.dinnerList = response.otherDinners;
-        if (this.myDinner) {
-          const myDinnerDateTime = this.dinnersService.formatDate(this.myDinner.date);
-          this.myDinner.dateString = myDinnerDateTime[0];
-          this.myDinner.time = Number(myDinnerDateTime[1]);
-        }
-        for (let i = 0; i < this.dinnerList.length; i++) {
-          const dinnerDateTime = this.dinnersService.formatDate(this.dinnerList[i].date);
-          this.dinnerList[i].dateString = dinnerDateTime[0];
-          this.dinnerList[i].time = Number(dinnerDateTime[1]);
-        }
-        if (event) { // Se lanciato dal refresher emetto evento di completamento
-          event.target.complete();
-        }
+    this.paramsService.loadParams().then(
+      () => {
+        this.dinnersService.getDinners().then(
+          (response: DinnerResponse) => {
+            console.log(response);
+            this.myDinner = response.myDinner;
+            this.dinnerList = response.otherDinners;
+            if (this.myDinner) {
+              const myDinnerDateTime = this.dinnersService.formatDate(this.myDinner.date);
+              this.myDinner.dateString = myDinnerDateTime[0];
+              this.myDinner.time = Number(myDinnerDateTime[1]);
+            }
+            for (let i = 0; i < this.dinnerList.length; i++) {
+              const dinnerDateTime = this.dinnersService.formatDate(this.dinnerList[i].date);
+              this.dinnerList[i].dateString = dinnerDateTime[0];
+              this.dinnerList[i].time = Number(dinnerDateTime[1]);
+            }
+            if (event) { // Se lanciato dal refresher emetto evento di completamento
+              event.target.complete();
+            }
 
-        // Lancio la change detection, altrimenti all'arrivo della notifica
-        // non aggiornava la videata
-        this.ref.detectChanges();
-      },
-      (err) => {
-        console.warn(err);
+            // Lancio la change detection, altrimenti all'arrivo della notifica
+            // non aggiornava la videata
+            this.ref.detectChanges();
+          },
+          (err) => {
+            console.warn(err);
+          }
+        );
       }
     );
   }
