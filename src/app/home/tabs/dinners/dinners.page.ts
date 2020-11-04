@@ -74,6 +74,8 @@ export class DinnersPage implements OnInit {
         this.router.navigate(['/home/tabs/dinners/dinner-phases'], { queryParams: dinner });
       } else if (dinnerState === 5 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
         this.router.navigate(['/home/tabs/dinners/dinner-votes'], { queryParams: dinner });
+      } else if (dinnerState === 6) {
+        this.router.navigate(['/home/tabs/dinner-history/dinner-winners'], { queryParams: dinner });
       } else if (dinnerState === 0) {
         this.router.navigate(['/home/tabs/dinners/dinner-detail'], { queryParams: dinner });
       }

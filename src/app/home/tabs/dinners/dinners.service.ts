@@ -8,7 +8,6 @@ import { UserData, AuthService } from 'src/app/auth/auth.service';
 import { FoodAllergiesService } from 'src/app/rdmodals/food-allergies/food-allergies.service';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { ProfileService } from '../../profile/profile.service';
-import { GroupVotes } from './dinner-votes/dinner-votes.page';
 
 @Injectable({
   providedIn: 'root'
@@ -513,6 +512,39 @@ export class DinnersService {
       );
   }
 
+  // Funzioni di dinnerWinners
+
+  // Ottengo i vincitori della cena selezionata
+    async getDinnerWinners(dinner: Dinner): Promise<DinnerWinner[]> {
+      const dinnerId = dinner.id;
+
+      await this.spinner.create();
+      return new Promise((resolve, reject) =>
+        this.http.post(this.rdConstants.getApiRoute('getDinnerWinners'), {dinnerId})
+          .toPromise()
+          .then(
+            res => {
+              resolve(res as DinnerWinner[]);
+            },
+            () => {
+              reject();
+            }
+          )
+          .finally(
+            () => { this.spinner.dismiss(); }
+          )
+      );
+    }
+
+  // Converto le immagini dei vincitori e dei badges in JPEG
+  convertWinnersImagesToJpeg(dinnerWinners: DinnerWinner[]) {
+    for (let i = 0; i < dinnerWinners.length; i++) {
+      dinnerWinners[i].profile_photo = 'data:image/jpeg;base64,' + dinnerWinners[i].profile_photo;
+      dinnerWinners[i].badge_photo = 'data:image/jpeg;base64,' + dinnerWinners[i].badge_photo;
+    }
+    return dinnerWinners;
+  }
+
   // Calcolo età utente
   calcAge(userBirthdate: any) {
     const today = new Date();
@@ -743,4 +775,17 @@ export interface DinnerDish {
 export interface MyDinnerDetails extends DinnerDetails {
   houses: DinnerHouses;
   houseDistances: string[];
+}
+
+// Rappresenta un vincitore della Cena
+export interface DinnerWinner {
+  userId: number;
+  name: string;
+  groupId: number;
+  profile_photo: string;
+  badgeId: number;
+  badge_photo: string;
+  category: string;
+  vote: number;
+  has_voted: boolean;
 }

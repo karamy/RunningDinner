@@ -3,15 +3,152 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home/tabs/dinner-history"></ion-back-button>
     </ion-buttons>
-    <ion-title>dinner-winners</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-title>Vincitori Cena:</ion-title>
-  
-  <!-- Vincitore Globale cena -->
-
-  <!-- Vincitori Singole categorie -->
-
+  <div *ngIf="!winnerLoaded">
+    <ion-grid>
+      <div *ngFor="let n of [0,1,2]">
+        <ion-row>
+          <ion-col style="display: flex;justify-content: center;">
+            <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-card>
+              <ion-grid>
+                <ion-row>
+                  <ion-col style="display: flex; justify-content: center">
+                    <ion-avatar>
+                      <ion-skeleton-text animated></ion-skeleton-text>
+                    </ion-avatar>
+                    <ion-avatar>
+                      <ion-skeleton-text animated></ion-skeleton-text>
+                    </ion-avatar>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col style="display: flex;justify-content: center;">
+                    <ion-skeleton-text animated style="width: 30%"></ion-skeleton-text>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col style="display: flex;justify-content: center;">
+                    <ion-skeleton-text animated style="width: 10%"></ion-skeleton-text>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col style="display: flex; justify-content: center">
+                    <ion-avatar>
+                      <ion-skeleton-text animated></ion-skeleton-text>
+                    </ion-avatar>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </div>
+    </ion-grid>
+  </div>
+  <div *ngIf="winnerLoaded">
+    <ion-grid>
+      <div *ngIf="dinnerWinnersList.length > 0">
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <h3>Vincitori della Cena</h3>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col>
+            <ion-card *ngFor="let winner of dinnerWinnersList | winnerFilter: 'dinner'">
+              <ion-grid>
+                <ion-row>
+                  <ion-col style="display: flex; justify-content: center">
+                    <ion-avatar>
+                      <img *ngIf="winner.firstHasVoted === true" [src]="winner.firstImage" />
+                      <img *ngIf="winner.firstHasVoted !== true" style="filter: grayscale(1)"
+                        [src]="winner.firstImage" />
+                    </ion-avatar>
+                    <ion-avatar>
+                      <img *ngIf="winner.secondHasVoted === true" [src]="winner.secondImage" />
+                      <img *ngIf="winner.secondHasVoted !== true" style="filter: grayscale(1)"
+                        [src]="winner.secondImage" />
+                    </ion-avatar>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col class="ion-text-center">
+                    <h4>{{winner.firstName}} & {{winner.secondName}}</h4>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col class="ion-text-center">
+                    <p>Voto: {{winner.vote}}</p>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col style="display: flex; justify-content: center">
+                    <ion-avatar>
+                      <img [src]="winner.badgePhoto" />
+                    </ion-avatar>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <h3>Vincitori delle Categorie</h3>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngFor="let category of categories">
+          <ion-col class="ion-text-center">
+            <h3>{{category}}</h3>
+            <ion-card *ngFor="let winner of dinnerWinnersList | winnerFilter: category">
+              <ion-grid>
+                <ion-row>
+                  <ion-col style="display: flex; justify-content: center">
+                    <ion-avatar>
+                      <img *ngIf="winner.firstHasVoted === true" [src]="winner.firstImage" />
+                      <img *ngIf="winner.firstHasVoted !== true" style="filter: grayscale(1)"
+                        [src]="winner.firstImage" />
+                    </ion-avatar>
+                    <ion-avatar>
+                      <img *ngIf="winner.secondHasVoted === true" [src]="winner.secondImage" />
+                      <img *ngIf="winner.secondHasVoted !== true" style="filter: grayscale(1)"
+                        [src]="winner.secondImage" />
+                    </ion-avatar>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col class="ion-text-center">
+                    <h4>{{winner.firstName}} & {{winner.secondName}}</h4>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col class="ion-text-center">
+                    <p>Voto: {{winner.vote}}</p>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col style="display: flex; justify-content: center">
+                    <ion-avatar>
+                      <img [src]="winner.badgePhoto" />
+                    </ion-avatar>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </div>
+      <div *ngIf="dinnerWinnersList.length === 0">
+        <h3>Nessun vincitore della cena</h3>
+      </div>
+    </ion-grid>
+  </div>
 </ion-content>

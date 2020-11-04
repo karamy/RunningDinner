@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CupertinoPane, CupertinoSettings } from 'cupertino-pane';
 import { Dinner, DinnersService, DinnerDetails, MyDinnerDetails, DinnerHouse } from '../dinners.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NotificationsService } from 'src/app/home/notifications.service';
 import { RDParamsService } from 'src/app/rdparams.service';
@@ -66,6 +66,7 @@ export class DinnerVotesPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private notificationsService: NotificationsService,
+    private router: Router,
     private alertController: AlertController,
     public dinnersService: DinnersService,
     public paramsService: RDParamsService,
@@ -135,7 +136,7 @@ export class DinnerVotesPage implements OnInit {
           }
         });
       } else if (this.state === 6) {
-        // Inserire path per risultati cena
+        this.router.navigate(['/home/tabs/dinner-history/dinner-winners'], { queryParams: this.dinner });
       }
     });
   }

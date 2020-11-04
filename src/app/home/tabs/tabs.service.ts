@@ -13,6 +13,7 @@ export class TabsService {
     'dinner-event',
     'dinner-phases',
     'dinner-votes',
+    'dinner-winners',
     'chat'
   ];
 

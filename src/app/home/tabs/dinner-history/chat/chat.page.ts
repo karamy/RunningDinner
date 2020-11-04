@@ -16,7 +16,7 @@ import { NotificationsService } from 'src/app/home/notifications.service';
 export class ChatPage implements OnInit {
   // Recupero attraverso annotation @ViewChild il riferimento all'elemento del DOM su cui effettuare lo scroll
   @ViewChild('chatContent', { static: false }) chatContent: IonContent;
-  newMsgText: String;
+  newMsgText: string;
   dinnerMessages: ChatMsg[] = [];
   user: UserData;
   messagesSubscription: Subscription;
@@ -46,7 +46,7 @@ export class ChatPage implements OnInit {
 
   // Gestione di un nuovo messaggio
   handleNewMessages(receivedMessages) {
-    if (this.dinnerMessages.length == 0) { // Scrollo in fondo solo alla prima ricezione dei messaggi
+    if (this.dinnerMessages.length === 0) { // Scrollo in fondo solo alla prima ricezione dei messaggi
       this.scrollToBottom();
     }
     this.dinnerMessages = this.dinnerMessages.concat(receivedMessages);

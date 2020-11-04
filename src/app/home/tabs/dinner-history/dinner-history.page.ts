@@ -72,7 +72,7 @@ messagesSubscription: Subscription;
     }
 
     handleNewMessages(receivedMessages) {
-      if (this.dinnerMessages.length == 0) { // Scrollo in fondo solo alla prima ricezione dei messaggi
+      if (this.dinnerMessages.length === 0) { // Scrollo in fondo solo alla prima ricezione dei messaggi
       }
       this.dinnerMessages = this.dinnerMessages.concat(receivedMessages);
     }
@@ -80,8 +80,8 @@ messagesSubscription: Subscription;
   goToDinnerChat(dinner: Dinner) {
       this.router.navigate(['/home/tabs/dinner-history/chat'], {queryParams: dinner});
   }
-  goToDinnerWinner() {
-    this.router.navigate(['/home/tabs/dinner-history/dinner-winners'], {});
+  goToDinnerWinner(dinner: Dinner) {
+    this.router.navigate(['/home/tabs/dinner-history/dinner-winners'], {queryParams: dinner});
 }
 }
 

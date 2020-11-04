@@ -79,7 +79,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
             this.dinnerDaysLeft = this.dinnersService.getDinnerTimeLeft(this.dinner.date)[0];
 
             // Mostro eventualmente alert se qualche problema (cena piena, non sono in gruppo o mancano meno di 24h)
-            if (!this.paramsService.getParams().groupId || !this.dinnerDaysLeft || this.dinner.groupIds.length === 9) {
+            if (this.paramsService.getParams().dinnerId !== +this.dinner.id) {
               this.showInfoAlert();
             }
 
