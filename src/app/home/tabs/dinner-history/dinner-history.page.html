@@ -26,7 +26,8 @@
     </ion-label>
   </ion-item-divider>
 
-  <ion-card (click)="goToDinnerWinner()">
+  <ion-card (click)="goToDinnerWinner($event)">
+    <!-- $event da sostituire con la cena -->
     <ion-card-header>
       CENA VEGANAZI
     </ion-card-header>
@@ -35,7 +36,8 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-card (click)="goToDinnerWinner()">
+  <ion-card (click)="goToDinnerWinner($event)">
+    <!-- $event da sostituire con la cena -->
     <ion-card-header>
       CENA SUSHI BOLOGNESE
     </ion-card-header>

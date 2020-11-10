@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Dinner, DinnersService, DinnerDetails } from '../dinners.service';
 import { AlertController, NavController } from '@ionic/angular';
 import { RDParamsService } from 'src/app/rdparams.service';
@@ -32,7 +32,6 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute,
     private alertController: AlertController,
-    private router: Router,
     private dinnersService: DinnersService,
     public paramsService: RDParamsService,
     private notificationsService: NotificationsService,
@@ -59,7 +58,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
   }
 
   // Carica i dettagli della cena
-  getDinnerDetails(event?) {
+  getDinnerDetails() {
 
     // Controllo lo state della cena
     this.dinnersService.getDinnerState(this.dinner.id).then(res => {
@@ -91,11 +90,8 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
             this.navController.navigateRoot('/home');
           });
 
-        if (event) { // Se lanciato dal refresher emetto evento di completamento
-          event.target.complete();
-        }
       } else {
-        this.router.navigate(['/home/tabs/dinners/dinner-event'], { queryParams: this.dinner });
+        this.navController.navigateRoot('/home/tabs/dinners/dinner-event', { queryParams: this.dinner });
       }
     });
   }

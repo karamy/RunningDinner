@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CupertinoPane, CupertinoSettings } from 'cupertino-pane';
 import { Dinner, DinnersService, DinnerDetails, MyDinnerDetails, DinnerHouse } from '../dinners.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NotificationsService } from 'src/app/home/notifications.service';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { ProfileService } from 'src/app/home/profile/profile.service';
 import { AuthService } from 'src/app/auth/auth.service';
-import { AlertController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-dinner-votes',
@@ -66,7 +66,7 @@ export class DinnerVotesPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private notificationsService: NotificationsService,
-    private router: Router,
+    private navController: NavController,
     private alertController: AlertController,
     public dinnersService: DinnersService,
     public paramsService: RDParamsService,
@@ -136,7 +136,7 @@ export class DinnerVotesPage implements OnInit {
           }
         });
       } else if (this.state === 6) {
-        this.router.navigate(['/home/tabs/dinner-history/dinner-winners'], { queryParams: this.dinner });
+        this.navController.navigateRoot('/home/tabs/dinner-history/dinner-winners', { queryParams: this.dinner });
       }
     });
   }

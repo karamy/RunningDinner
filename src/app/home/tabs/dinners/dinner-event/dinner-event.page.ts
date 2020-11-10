@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Dinner, DinnersService, DinnerDetails, MyDinnerDetails } from '../dinners.service';
 import { ProfileService } from 'src/app/home/profile/profile.service';
 import { RDParamsService } from 'src/app/rdparams.service';
-import { PopoverController, ModalController } from '@ionic/angular';
+import { PopoverController, ModalController, NavController } from '@ionic/angular';
 import { DinnerInfoPage } from 'src/app/rdmodals/dinner-info/dinner-info.page';
 import { FoodAllergiesInfoPage } from 'src/app/rdmodals/food-allergies-info/food-allergies-info.page';
 import { DinnerMapPage } from 'src/app/rdmodals/dinner-map/dinner-map.page';
@@ -49,6 +49,7 @@ export class DinnerEventPage implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute,
     private router: Router,
+    private navController: NavController,
     private popoverController: PopoverController,
     private modalController: ModalController,
     private dinnersService: DinnersService,
@@ -72,15 +73,6 @@ export class DinnerEventPage implements OnInit, OnDestroy {
       backdropDismiss: true,
       componentProps: { foodAllergies, categories },
       cssClass: 'modal-style'
-    });
-    await modal.present();
-  }
-
-  async presentModalMapDetails(addresses, userAddress, bounds) {
-    const modal = await this.modalController.create({
-      component: DinnerMapPage,
-      backdropDismiss: true,
-      componentProps: { addresses, userAddress, bounds }
     });
     await modal.present();
   }
@@ -142,7 +134,7 @@ export class DinnerEventPage implements OnInit, OnDestroy {
           });
         });
       } else {
-        this.router.navigate(['/home/tabs/dinners/dinner-phases'], { queryParams: this.dinner });
+        this.navController.navigateRoot('/home/tabs/dinners/dinner-phases', { queryParams: this.dinner });
       }
     });
   }

@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Dinner, DinnersService, DinnerDetails, MyDinnerDetails, DinnerDish } from '../dinners.service';
 import { ProfileService } from 'src/app/home/profile/profile.service';
 import { RDParamsService } from 'src/app/rdparams.service';
-import { PopoverController } from '@ionic/angular';
+import { NavController, PopoverController } from '@ionic/angular';
 import { DinnerInfoPage } from 'src/app/rdmodals/dinner-info/dinner-info.page';
 import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator/ngx';
 import { NotificationsService } from 'src/app/home/notifications.service';
@@ -58,6 +58,7 @@ export class DinnerPhasesPage implements OnInit {
     private profileService: ProfileService,
     private notificationsService: NotificationsService,
     private router: Router,
+    private navController: NavController,
     public paramsService: RDParamsService,
     private launchNavigator: LaunchNavigator) { }
 
@@ -165,7 +166,7 @@ export class DinnerPhasesPage implements OnInit {
           });
         });
       } else {
-        this.router.navigate(['/home/tabs/dinners/dinner-votes'], { queryParams: this.dinner });
+        this.navController.navigateRoot('/home/tabs/dinners/dinner-votes', { queryParams: this.dinner });
       }
     });
   }

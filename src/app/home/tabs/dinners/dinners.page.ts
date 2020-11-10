@@ -4,6 +4,7 @@ import { DinnersService, Dinner } from './dinners.service';
 import { Router } from '@angular/router';
 import { NotificationsService } from '../../notifications.service';
 import { ProfileService } from '../../profile/profile.service';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-dinners',
@@ -18,6 +19,7 @@ export class DinnersPage implements OnInit {
     private dinnersService: DinnersService,
     private profileService: ProfileService,
     private router: Router,
+    private navController: NavController,
     private notificationsService: NotificationsService,
     private ref: ChangeDetectorRef) { }
 
@@ -73,15 +75,15 @@ export class DinnersPage implements OnInit {
       console.log("Dinner State: " + dinnerState);
 
       if (dinnerState === 1 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
-        this.router.navigate(['/home/tabs/dinners/dinner-event'], { queryParams: dinner });
+        this.navController.navigateRoot('/home/tabs/dinners/dinner-event', { queryParams: dinner });
       } else if ((dinnerState === 2 || dinnerState === 3 || dinnerState === 4) && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
-        this.router.navigate(['/home/tabs/dinners/dinner-phases'], { queryParams: dinner });
+        this.navController.navigateRoot('/home/tabs/dinners/dinner-phases', { queryParams: dinner });
       } else if (dinnerState === 5 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
-        this.router.navigate(['/home/tabs/dinners/dinner-votes'], { queryParams: dinner });
+        this.navController.navigateRoot('/home/tabs/dinners/dinner-votes', { queryParams: dinner });
       } else if (dinnerState === 6) {
-        this.router.navigate(['/home/tabs/dinner-history/dinner-winners'], { queryParams: dinner });
+        this.navController.navigateRoot('/home/tabs/dinner-history/dinner-winners', { queryParams: dinner });
       } else if (dinnerState === 0) {
-        this.router.navigate(['/home/tabs/dinners/dinner-detail'], { queryParams: dinner });
+        this.navController.navigateRoot('/home/tabs/dinners/dinner-detail', { queryParams: dinner });
       }
     });
   }

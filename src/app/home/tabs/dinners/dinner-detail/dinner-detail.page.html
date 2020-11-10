@@ -4,6 +4,9 @@
       <ion-back-button defaultHref="/home/tabs/dinners"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="primary">
+      <ion-button shape="round" size="large" slot="icon-only" (click)="getDinnerDetails()">
+        <ion-icon size="large" name="refresh-circle-outline"></ion-icon>
+      </ion-button>
       <ion-button (click)="onLeaveDinner()" *ngIf="isMyDinner() && !isEdit">
         <ion-icon name="person-remove" slot="icon-only"></ion-icon>
       </ion-button>
@@ -18,10 +21,6 @@
 </ion-header>
 
 <ion-content [scrollEvents]="true" fullscreen="true" slot="fixed">
-  <ion-refresher slot="fixed" (ionRefresh)="getDinnerDetails($event)">
-    <ion-refresher-content pullingIcon="lines" refreshingSpinner="lines">
-    </ion-refresher-content>
-  </ion-refresher>
   <div>
     <div style="height: 130px;position: relative;">
       <div id="mapDetails" class="avatar"></div>
