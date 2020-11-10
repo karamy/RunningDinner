@@ -110,7 +110,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
 
       // Creo marker per indirizzo user
       const userMarker = {
-        url: '../../../../../assets/you-marker.png',
+        url: 'assets/you-marker.png',
         size: new google.maps.Size(50, 50),
         origin: new google.maps.Point(0, 0),
         scaledSize: new google.maps.Size(50, 50)
@@ -118,7 +118,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
 
       // Creo marker per le cene
       const dinnerMarker = {
-        url: '../../../../../assets/dinner-marker.png',
+        url: 'assets/dinner-marker.png',
         size: new google.maps.Size(50, 50),
         origin: new google.maps.Point(0, 0),
         scaledSize: new google.maps.Size(50, 50)
@@ -177,13 +177,13 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
 
     if (!this.paramsService.getParams().groupId) {
       subHeader = 'Devi essere in un gruppo per partecipare ad una cena';
-      image = "../../../../../assets/Group.png";
+      image = "assets/Group.png";
     } else if (!this.dinnerDaysLeft) {
       subHeader = 'Non ci si può iscrivere ad una cena se mancano meno di 24h';
-      image = "../../../../../assets/DinnerClosed.png";
+      image = "assets/DinnerClosed.png";
     } else if (this.dinner.groupIds.length === 9) {
       subHeader = 'Non ci sono più posti liberi in questa cena';
-      image = "../../../../../assets/DinnerFull.png";
+      image = "assets/DinnerFull.png";
     }
 
     const alert = await this.alertController.create({

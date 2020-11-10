@@ -177,7 +177,7 @@ export class DinnerEventPage implements OnInit, OnDestroy {
 
       // Creo marker per indirizzo user
       const userMarker = {
-        url: '../../../../../assets/you-marker.png',
+        url: 'assets/you-marker.png',
         size: new google.maps.Size(50, 50),
         origin: new google.maps.Point(0, 0),
         scaledSize: new google.maps.Size(50, 50)
@@ -185,7 +185,7 @@ export class DinnerEventPage implements OnInit, OnDestroy {
 
       // Creo marker per le cene
       const dinnerMarker = {
-        url: '../../../../../assets/dinner-marker.png',
+        url: 'assets/dinner-marker.png',
         size: new google.maps.Size(50, 50),
         origin: new google.maps.Point(0, 0),
         scaledSize: new google.maps.Size(50, 50)
