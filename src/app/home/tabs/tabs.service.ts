@@ -44,12 +44,12 @@ export class TabsService {
   // Nascondo le tabs
   public hideTabs() {
     const tabBar = document.getElementById('myTabBar');
-    if (tabBar.style.display !== 'none') tabBar.style.display = 'none';
+    if (tabBar && tabBar.style.display !== 'none') tabBar.style.display = 'none';
   }
 
   // Mostro le tabs
   public showTabs() {
     const tabBar = document.getElementById('myTabBar');
-    if (tabBar.style.display !== 'flex') tabBar.style.display = 'flex';
+    if (tabBar && tabBar.style.display !== 'flex') tabBar.style.display = 'flex';
   }
 }
