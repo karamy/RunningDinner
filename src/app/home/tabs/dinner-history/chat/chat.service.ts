@@ -1,8 +1,10 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { firebase } from '@firebase/app';
 import '@firebase/database';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
+import { RDConstantsService } from 'src/app/rdcostants.service';
 import { RDParamsService } from 'src/app/rdparams.service';
 
 @Injectable({
@@ -12,7 +14,9 @@ export class ChatService {
   firebaseReference: any;
   allMsgObservable: Observable<any>
 
-  constructor(private authService: AuthService, private paramsService: RDParamsService) {
+  constructor(private authService: AuthService, private paramsService: RDParamsService,
+    private http: HttpClient, private rdConstants: RDConstantsService,
+    private rdParams: RDParamsService) {
     const firebaseConfig = {
       apiKey: "AIzaSyDit-Luu9GP7UwpZTaVerP0EsI70DO-45o",
       authDomain: "runningdinnersms.firebaseapp.com",
@@ -77,8 +81,7 @@ export class ChatService {
     return dd + '/' + mm + '/' + yyyy;
   }
 
-
-  // Invia un nuovo messaggio, ritornando la Promise di firebase
+  // Invia un nuovo messaggio, informando l'api per l'invio notifiche e ritornando la Promise di firebase
   addNewMessage(msgText) {
     const time = this.formatAMPM(new Date());
     const date = this.formatDate(new Date());
@@ -90,7 +93,21 @@ export class ChatService {
       dateofmsg: date
     };
 
+    this.sendNewMessageNotification();
+
     return this.firebaseReference.push(msgToSend);
+  }
+
+  // Invia richiesta all'api di invio notifica agli altri partecipanti della cena
+  sendNewMessageNotification() {
+    const sendNewNotificationBody = {
+      dinnerId: this.rdParams.getParams().dinnerId
+    }
+    this.http.post(this.rdConstants.getApiRoute('sendNewMessageNotification'), sendNewNotificationBody)
+      .toPromise()
+      .catch((e) => {
+        console.log('SendNewMessageNotification error', e);
+      });
   }
 }
 

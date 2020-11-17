@@ -6,8 +6,6 @@ import { ProfileService } from 'src/app/home/profile/profile.service';
 import { ChatMsg, ChatService } from './chat.service';
 import { NotificationsService } from 'src/app/home/notifications.service';
 
-
-
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.page.html',

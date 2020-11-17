@@ -137,6 +137,9 @@ export class NotificationsService {
             }
           );
         break;
+      case "newMessage":
+        console.log("Ricevuto nuovo messaggio in chat");
+        break;
       default:
         console.warn("Ricevuta notifica di tipologia non gestita");
     }
