@@ -1,0 +1,31 @@
+ion-card {
+    width: 100%;
+    border-radius: 15%;
+}
+
+.filter-name {
+    padding: 10% 10% 10% 10%;
+    margin: 10% 0% 10% 0%;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.not-selected {
+    filter: grayscale(100%);
+}
+
+.italiano {
+    background-color: #f0cf85;
+}
+
+.pesce {
+    background-color: #a6dcef;
+}
+
+.vegan {
+    background-color: #89c9b8;
+}
+
+.sushi {
+    background-color: #fabea7;
+}

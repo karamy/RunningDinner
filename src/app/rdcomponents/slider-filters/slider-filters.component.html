@@ -1,0 +1,22 @@
+<ion-slides [options]="slideOpts">
+  <ion-slide (click)="setFilter(1)">
+    <ion-card class="italiano" [class.not-selected]="filterType > 1">
+      <h1 class="filter-name">Italiano</h1>
+    </ion-card>
+  </ion-slide>
+  <ion-slide (click)="setFilter(2)">
+    <ion-card class="pesce" [class.not-selected]="filterType !== 0 && filterType !== 2">
+      <h1 class="filter-name">Pesce</h1>
+    </ion-card>
+  </ion-slide>
+  <ion-slide (click)="setFilter(3)">
+    <ion-card class="vegan" [class.not-selected]="filterType !== 0 && filterType !== 3">
+      <h1 class="filter-name">Vegan</h1>
+    </ion-card>
+  </ion-slide>
+  <ion-slide (click)="setFilter(4)">
+    <ion-card class="sushi" [class.not-selected]="filterType !== 0 && filterType !== 4">
+      <h1 class="filter-name">Sushi</h1>
+    </ion-card>
+  </ion-slide>
+</ion-slides>

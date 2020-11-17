@@ -18,22 +18,15 @@
     <ion-refresher-content pullingIcon="lines" refreshingSpinner="lines">
     </ion-refresher-content>
   </ion-refresher>
-  <div *ngIf="!myDinner">
-    <ion-card>
-      Scegli la tua prossima RunningDinner :D!
-    </ion-card>
-  </div>
-  <div *ngIf="myDinner">
-    <rd-my-dinner (click)="goToDinnerDetail(myDinner)" [dinner]="myDinner"></rd-my-dinner>
-  </div>
+  <app-slider-filters (filter)="setFilter($event)"></app-slider-filters>
   <ion-list *ngIf="dinnerList && dinnerList.length > 0">
-    <div *ngFor="let dinner of dinnerList" (click)="goToDinnerDetail(dinner)">
+    <div *ngFor="let dinner of dinnerList | dinnerFilter: filterType" (click)="goToDinner(dinner)">
       <rd-dinner [dinner]="dinner"></rd-dinner>
     </div>
   </ion-list>
-  <div *ngIf="!myDinner && (!dinnerList || !dinnerList.length)">
+  <div *ngIf="!dinnerList || !dinnerList.length">
     <ion-card>
-      Non sono presenti cene a cui partecipare =(
+      Non sono presenti cene attive in questo momento :(
     </ion-card>
   </div>
 </ion-content>

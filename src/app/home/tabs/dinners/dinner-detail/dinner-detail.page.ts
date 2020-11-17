@@ -91,7 +91,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
           });
 
       } else {
-        this.navController.navigateRoot('/home/tabs/dinners/dinner-event', { queryParams: this.dinner });
+        this.dinnersService.detDinnerStateRoute(this.dinner, this.state);
       }
     });
   }
@@ -183,6 +183,9 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
       image = "assets/DinnerClosed.png";
     } else if (this.dinner.groupIds.length === 9) {
       subHeader = 'Non ci sono più posti liberi in questa cena';
+      image = "assets/DinnerFull.png";
+    } else {
+      subHeader = "Stai già partecipando ad un'altra cena";
       image = "assets/DinnerFull.png";
     }
 

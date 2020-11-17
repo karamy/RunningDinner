@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { DinnersPage } from './dinners.page';
 import { RDComponentsModule } from 'src/app/rdcomponents/rdcomponents.module';
 import { DinnersPageRoutingModule } from './dinners-routing.module';
+import { RDPipesModule } from 'src/app/rdpipes/rdpipes.module';
 
 @NgModule({
   imports: [
@@ -12,7 +13,8 @@ import { DinnersPageRoutingModule } from './dinners-routing.module';
     FormsModule,
     IonicModule,
     DinnersPageRoutingModule,
-    RDComponentsModule
+    RDComponentsModule,
+    RDPipesModule
   ],
   declarations: [DinnersPage]
 })

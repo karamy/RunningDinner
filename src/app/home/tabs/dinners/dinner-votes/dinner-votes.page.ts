@@ -135,8 +135,8 @@ export class DinnerVotesPage implements OnInit {
             });
           }
         });
-      } else if (this.state === 6) {
-        this.navController.navigateRoot('/home/tabs/dinner-history/dinner-winners', { queryParams: this.dinner });
+      } else {
+        this.dinnersService.detDinnerStateRoute(this.dinner, this.state);
       }
     });
   }

@@ -3,11 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { RDConstantsService } from 'src/app/rdcostants.service';
 import { RDSpinnerService } from 'src/app/rdspinner.service';
 import { UserBadge, BadgesService } from '../../profile/badges.service';
-import { UserAllergy, FoodAllergy } from 'src/app/rdmodals/food-allergies/food-allergies.page';
+import { UserAllergy } from 'src/app/rdmodals/food-allergies/food-allergies.page';
 import { UserData, AuthService } from 'src/app/auth/auth.service';
 import { FoodAllergiesService } from 'src/app/rdmodals/food-allergies/food-allergies.service';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { ProfileService } from '../../profile/profile.service';
+import { NavController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +47,7 @@ export class DinnersService {
     private rdConstants: RDConstantsService,
     private spinner: RDSpinnerService,
     private authService: AuthService,
+    private navController: NavController,
     private profileService: ProfileService,
     public paramsService: RDParamsService,
     private foodAllergiesService: FoodAllergiesService,
@@ -101,6 +103,26 @@ export class DinnersService {
           () => { this.spinner.dismiss(); }
         )
     );
+  }
+
+  detDinnerStateRoute(dinner: Dinner, dinnerState: any) {
+    if (dinnerState === -1) {
+      this.navController.navigateRoot('/home/tabs/dinners', { queryParams: { message: 'Cena cancellata' } });
+    } else if (dinnerState === 0) {
+      this.navController.navigateRoot('/home/tabs/dinners/dinner-detail', { queryParams: dinner });
+    } else if (dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
+      if (dinnerState === 1) {
+        this.navController.navigateRoot('/home/tabs/dinners/dinner-event', { queryParams: dinner });
+      } else if (dinnerState === 2 || dinnerState === 3 || dinnerState === 4) {
+        this.navController.navigateRoot('/home/tabs/dinners/dinner-phases', { queryParams: dinner });
+      } else if (dinnerState === 5) {
+        this.navController.navigateRoot('/home/tabs/dinners/dinner-votes', { queryParams: dinner });
+      } else if (dinnerState === 6) {
+        this.navController.navigateRoot('/home/tabs/dinner-history/dinner-winners', { queryParams: dinner });
+      }
+    } else {
+      this.navController.navigateRoot('/home/tabs/dinners', { queryParams: { message: 'Non è più possibile iscriversi alla cena' } });
+    }
   }
 
   // Ottiene i dettagli della cena selezionata
@@ -390,20 +412,18 @@ export class DinnersService {
   // Funzioni di dinnerPhase
 
   // Determino in che fase della cena sono in base allo state della cena
-  async setPhase(dinnerId: number) {
+  setPhase(state: number) {
     let phase: number;
-    await this.getDinnerState(dinnerId).then(res => {
-      const dinnerState = res.dinner_state;
-      if (dinnerState === 2) {
-        phase = 1;
-      } else if (dinnerState === 3) {
-        phase = 2;
-      } else if (dinnerState === 4) {
-        phase = 3;
-      } else if (dinnerState === 5) {
-        phase = 4;
-      }
-    });
+
+    if (state === 2) {
+      phase = 1;
+    } else if (state === 3) {
+      phase = 2;
+    } else if (state === 4) {
+      phase = 3;
+    } else {
+      phase = 4;
+    }
     return phase;
   }
 
@@ -515,26 +535,26 @@ export class DinnersService {
   // Funzioni di dinnerWinners
 
   // Ottengo i vincitori della cena selezionata
-    async getDinnerWinners(dinner: Dinner): Promise<DinnerWinner[]> {
-      const dinnerId = dinner.id;
+  async getDinnerWinners(dinner: Dinner): Promise<DinnerWinner[]> {
+    const dinnerId = dinner.id;
 
-      await this.spinner.create();
-      return new Promise((resolve, reject) =>
-        this.http.post(this.rdConstants.getApiRoute('getDinnerWinners'), {dinnerId})
-          .toPromise()
-          .then(
-            res => {
-              resolve(res as DinnerWinner[]);
-            },
-            () => {
-              reject();
-            }
-          )
-          .finally(
-            () => { this.spinner.dismiss(); }
-          )
-      );
-    }
+    await this.spinner.create();
+    return new Promise((resolve, reject) =>
+      this.http.post(this.rdConstants.getApiRoute('getDinnerWinners'), { dinnerId })
+        .toPromise()
+        .then(
+          res => {
+            resolve(res as DinnerWinner[]);
+          },
+          () => {
+            reject();
+          }
+        )
+        .finally(
+          () => { this.spinner.dismiss(); }
+        )
+    );
+  }
 
   // Converto le immagini dei vincitori e dei badges in JPEG
   convertWinnersImagesToJpeg(dinnerWinners: DinnerWinner[]) {
@@ -543,6 +563,28 @@ export class DinnersService {
       dinnerWinners[i].badge_photo = 'data:image/jpeg;base64,' + dinnerWinners[i].badge_photo;
     }
     return dinnerWinners;
+  }
+
+  // Funzioni di dinnerHistory
+
+  // Ottengo le cene passate dell'utente
+  async getDinnerHistory(): Promise<Dinner[]> {
+    await this.spinner.create();
+    return new Promise((resolve, reject) =>
+      this.http.post(this.rdConstants.getApiRoute('getDinnerHistory'), {})
+        .toPromise()
+        .then(
+          res => {
+            resolve(res as Dinner[]);
+          },
+          () => {
+            reject();
+          }
+        )
+        .finally(
+          () => { this.spinner.dismiss(); }
+        )
+    );
   }
 
   // Calcolo età utente

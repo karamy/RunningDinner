@@ -8,42 +8,18 @@
 </ion-header>
 
 <ion-content>
-  <ion-card *ngIf="myDinner" (click)="goToDinnerChat(myDinner)">
-    <ion-icon name="alert-circle-outline"></ion-icon>
-    <ion-card-header>
-      <ion-card-title>{{myDinner.title}}</ion-card-title>
-    </ion-card-header>
-    <ion-card-content *ngIf="dinnerMessages">
-      {{dinnerMessages[dinnerMessages.length-1].sentby}}:
-      {{dinnerMessages[dinnerMessages.length-1].message}}
-      {{dinnerMessages[dinnerMessages.length-1].timeofmsg}}
-    </ion-card-content>
-  </ion-card>
-
-  <ion-item-divider>
-    <ion-label>
-      Dinners History
-    </ion-label>
-  </ion-item-divider>
-
-  <ion-card (click)="goToDinnerWinner($event)">
-    <!-- $event da sostituire con la cena -->
-    <ion-card-header>
-      CENA VEGANAZI
-    </ion-card-header>
-    <ion-card-content>
-      solo verdure che ricordino Hitler
-    </ion-card-content>
-  </ion-card>
-
-  <ion-card (click)="goToDinnerWinner($event)">
-    <!-- $event da sostituire con la cena -->
-    <ion-card-header>
-      CENA SUSHI BOLOGNESE
-    </ion-card-header>
-    <ion-card-content>
-      sushi al ragù e altre porcate con le lasagne
-    </ion-card-content>
-  </ion-card>
-
+  <ion-refresher slot="fixed" (ionRefresh)="loadDinners($event)">
+    <ion-refresher-content pullingIcon="lines" refreshingSpinner="lines">
+    </ion-refresher-content>
+  </ion-refresher>
+  <div *ngIf="myDinner">
+    <rd-my-dinner (click)="goToDinner(myDinner)" [dinner]="myDinner"></rd-my-dinner>
+  </div>
+  <h1>Cronologia Cene</h1>
+  <div *ngIf="dinnerHistoryList">
+    <div *ngFor="let dinner of dinnerHistoryList">
+      <rd-dinner (click)="goToDinnerWinner(dinner)" [dinner]="dinner"></rd-dinner>
+    </div>
+    <h2 *ngIf="dinnerHistoryList.length === 0">Non sono presenti cene passate</h2>
+  </div>
 </ion-content>

@@ -9,10 +9,11 @@ import { RouterModule } from '@angular/router';
 import { MyDinnerComponent } from './my-dinner/my-dinner.component';
 import { RDPipesModule } from '../rdpipes/rdpipes.module';
 import { StarRatingComponent } from './star-rating/star-rating.component';
+import { SliderFiltersComponent } from './slider-filters/slider-filters.component';
 
 @NgModule({
   imports: [CommonModule, FormsModule, IonicModule, RouterModule, RDPipesModule],
-  declarations: [ProfileComponent, SliderComponent, DinnerComponent, MyDinnerComponent, StarRatingComponent], // Component che fanno parte del modulo
-  exports: [ProfileComponent, SliderComponent, DinnerComponent, MyDinnerComponent, StarRatingComponent] // Component che permetto di importare dove serve tramite import
+  declarations: [ProfileComponent, SliderComponent, DinnerComponent, MyDinnerComponent, StarRatingComponent, SliderFiltersComponent], // Component che fanno parte del modulo
+  exports: [ProfileComponent, SliderComponent, DinnerComponent, MyDinnerComponent, StarRatingComponent, SliderFiltersComponent] // Component che permetto di importare dove serve tramite import
 })
 export class RDComponentsModule { }

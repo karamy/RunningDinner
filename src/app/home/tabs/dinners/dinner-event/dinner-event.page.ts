@@ -1,12 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Dinner, DinnersService, DinnerDetails, MyDinnerDetails } from '../dinners.service';
 import { ProfileService } from 'src/app/home/profile/profile.service';
 import { RDParamsService } from 'src/app/rdparams.service';
-import { PopoverController, ModalController, NavController } from '@ionic/angular';
+import { PopoverController, ModalController } from '@ionic/angular';
 import { DinnerInfoPage } from 'src/app/rdmodals/dinner-info/dinner-info.page';
 import { FoodAllergiesInfoPage } from 'src/app/rdmodals/food-allergies-info/food-allergies-info.page';
-import { DinnerMapPage } from 'src/app/rdmodals/dinner-map/dinner-map.page';
 import { CupertinoPane, CupertinoSettings } from 'cupertino-pane';
 import { NotificationsService } from 'src/app/home/notifications.service';
 import { Subscription } from 'rxjs';
@@ -48,8 +47,6 @@ export class DinnerEventPage implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   constructor(private route: ActivatedRoute,
-    private router: Router,
-    private navController: NavController,
     private popoverController: PopoverController,
     private modalController: ModalController,
     private dinnersService: DinnersService,
@@ -134,7 +131,7 @@ export class DinnerEventPage implements OnInit, OnDestroy {
           });
         });
       } else {
-        this.navController.navigateRoot('/home/tabs/dinners/dinner-phases', { queryParams: this.dinner });
+        this.dinnersService.detDinnerStateRoute(this.dinner, this.state);
       }
     });
   }

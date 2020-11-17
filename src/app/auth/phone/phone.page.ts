@@ -54,7 +54,7 @@ export class PhonePage implements OnInit {
     })
       .catch(() => {
         alert("Si è verificato un errore nella verifica del numero");
-      })
+      });
   }
 
   // Verifica il numero ed effettua login su Firebase

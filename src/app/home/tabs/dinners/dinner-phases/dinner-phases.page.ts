@@ -9,7 +9,6 @@ import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-na
 import { NotificationsService } from 'src/app/home/notifications.service';
 import { Subscription } from 'rxjs';
 import { CupertinoPane, CupertinoSettings } from 'cupertino-pane';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dinner-phases',
@@ -41,6 +40,7 @@ export class DinnerPhasesPage implements OnInit {
     addressesLatLng: []
   };
   phase: number;
+  state: number;
   distanceFromUser: string;
   travelTime: string;
   directionsRenderer = new google.maps.DirectionsRenderer();
@@ -57,7 +57,6 @@ export class DinnerPhasesPage implements OnInit {
     public dinnersService: DinnersService,
     private profileService: ProfileService,
     private notificationsService: NotificationsService,
-    private router: Router,
     private navController: NavController,
     public paramsService: RDParamsService,
     private launchNavigator: LaunchNavigator) { }
@@ -93,9 +92,11 @@ export class DinnerPhasesPage implements OnInit {
   }
 
   getDinnerPhasesData() {
-    // Determino in che fase sono
-    this.dinnersService.setPhase(this.dinner.id).then(resp => {
-      this.phase = resp;
+    this.dinnersService.getDinnerState(this.dinner.id).then(resp => {
+      this.state = resp.dinner_state;
+
+      // Determino in che fase sono
+      this.phase = this.dinnersService.setPhase(this.state);
       console.log('Phase Number: ' + this.phase);
 
       if (this.phase !== 4) {
@@ -166,7 +167,7 @@ export class DinnerPhasesPage implements OnInit {
           });
         });
       } else {
-        this.navController.navigateRoot('/home/tabs/dinners/dinner-votes', { queryParams: this.dinner });
+        this.dinnersService.detDinnerStateRoute(this.dinner, this.state);
       }
     });
   }

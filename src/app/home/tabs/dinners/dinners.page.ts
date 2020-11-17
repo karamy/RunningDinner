@@ -1,10 +1,10 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { DinnersService, Dinner } from './dinners.service';
-import { Router } from '@angular/router';
 import { NotificationsService } from '../../notifications.service';
 import { ProfileService } from '../../profile/profile.service';
-import { NavController } from '@ionic/angular';
+import { ActivatedRoute } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-dinners',
@@ -14,18 +14,31 @@ import { NavController } from '@ionic/angular';
 export class DinnersPage implements OnInit {
   dinnerList: Dinner[];
   myDinner: Dinner;
+  message: string;
+  filterType = 0;
 
   constructor(public paramsService: RDParamsService,
+    private route: ActivatedRoute,
+    private alertController: AlertController,
     private dinnersService: DinnersService,
     private profileService: ProfileService,
-    private router: Router,
-    private navController: NavController,
     private notificationsService: NotificationsService,
     private ref: ChangeDetectorRef) { }
 
   ngOnInit() {
-    this.loadDinners(); // Caricamento iniziale cene
+    // Ottengo l'eventuale messaggio dai parametri della rotta
+    this.route.queryParams.subscribe((params) => {
+      this.message = params.message;
+
+      if (this.message) {
+        this.presentAlert(this.message);
+      }
+
+      this.loadDinners(); // Caricamento iniziale cene
+    });
+
     this.profileService.readPartner(); // Carica i dati del partner per poter inviare group_address
+
     // Registrazione observable per reagire al ricaricamento cene (es. vengo aggiunto a una cena)
     this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Elenco cene - Ricarico cene');
@@ -40,13 +53,9 @@ export class DinnersPage implements OnInit {
         this.dinnersService.getDinners().then(
           (response: DinnerResponse) => {
             console.log(response);
-            this.myDinner = response.myDinner;
+
+            // Popolo la lista delle cene presenti
             this.dinnerList = response.otherDinners;
-            if (this.myDinner) {
-              const myDinnerDateTime = this.dinnersService.formatDate(this.myDinner.date);
-              this.myDinner.dateString = myDinnerDateTime[0];
-              this.myDinner.time = Number(myDinnerDateTime[1]);
-            }
             for (let i = 0; i < this.dinnerList.length; i++) {
               const dinnerDateTime = this.dinnersService.formatDate(this.dinnerList[i].date);
               this.dinnerList[i].dateString = dinnerDateTime[0];
@@ -69,23 +78,27 @@ export class DinnersPage implements OnInit {
   }
 
   // In base allo state della cena selezionata ti manda sui dettagli/evento/fasi
-  goToDinnerDetail(dinner: Dinner) {
+  goToDinner(dinner: Dinner) {
     this.dinnersService.getDinnerState(dinner.id).then(res => {
       const dinnerState = res.dinner_state;
-      console.log("Dinner State: " + dinnerState);
-
-      if (dinnerState === 1 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
-        this.navController.navigateRoot('/home/tabs/dinners/dinner-event', { queryParams: dinner });
-      } else if ((dinnerState === 2 || dinnerState === 3 || dinnerState === 4) && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
-        this.navController.navigateRoot('/home/tabs/dinners/dinner-phases', { queryParams: dinner });
-      } else if (dinnerState === 5 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
-        this.navController.navigateRoot('/home/tabs/dinners/dinner-votes', { queryParams: dinner });
-      } else if (dinnerState === 6) {
-        this.navController.navigateRoot('/home/tabs/dinner-history/dinner-winners', { queryParams: dinner });
-      } else if (dinnerState === 0) {
-        this.navController.navigateRoot('/home/tabs/dinners/dinner-detail', { queryParams: dinner });
-      }
+      console.log('Dinner State: ' + dinnerState);
+      this.dinnersService.detDinnerStateRoute(dinner, dinnerState);
     });
+  }
+
+  // Alert che viene presentato in caso di cena cancellata o iniziata
+  async presentAlert(message: string) {
+    const alert = await this.alertController.create({
+      header: 'Attenzione!',
+      message: message,
+      buttons: ['OK']
+    });
+
+    await alert.present();
+  }
+
+  setFilter(event) {
+    this.filterType = event;
   }
 
   /*  Vecchio sistema di reindirizzamento basato sul calcolo dell'ora lato app
