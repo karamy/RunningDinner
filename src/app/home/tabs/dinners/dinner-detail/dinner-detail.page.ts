@@ -65,6 +65,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
       if (!res) { // Può accadere se vengo rimosso da una cena che viene eliminata, ritorno alla home
         console.log('Errore getDinnerDetails, ritorno alla home');
         this.navController.navigateRoot('/home');
+        return;
       }
 
       this.state = res.dinner_state;
