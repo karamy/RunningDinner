@@ -62,6 +62,11 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
 
     // Controllo lo state della cena
     this.dinnersService.getDinnerState(this.dinner.id).then(res => {
+      if (!res) { // Può accadere se vengo rimosso da una cena che viene eliminata, ritorno alla home
+        console.log('Errore getDinnerDetails, ritorno alla home');
+        this.navController.navigateRoot('/home');
+      }
+
       this.state = res.dinner_state;
       if (this.state === 0) {
         this.dinnersService.getDinnerDetails(this.dinner).then(
