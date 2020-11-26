@@ -1,7 +1,12 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home/tabs/dinner-history"></ion-back-button>
+      <ion-back-button defaultHref="/home/tabs/my-dinners"></ion-back-button>
+    </ion-buttons>
+    <ion-buttons slot="primary">
+      <ion-button shape="round" size="large" routerLink="/home/chat" *ngIf="hideChat === false">
+        <ion-icon size="large" name="chatbubble-ellipses-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>

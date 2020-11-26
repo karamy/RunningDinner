@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CupertinoPane, CupertinoSettings } from 'cupertino-pane';
-import { Dinner, DinnersService, DinnerDetails, MyDinnerDetails, DinnerHouse } from '../dinners.service';
+import { Dinner, DinnersService, DinnerDetails, MyDinnerDetails, DinnerHouse } from 'src/app/home/tabs/dinners/dinners.service';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NotificationsService } from 'src/app/home/notifications.service';

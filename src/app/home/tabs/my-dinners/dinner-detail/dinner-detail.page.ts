@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Dinner, DinnersService, DinnerDetails } from '../dinners.service';
+import { Dinner, DinnersService, DinnerDetails } from 'src/app/home/tabs/dinners/dinners.service';
 import { AlertController, NavController } from '@ionic/angular';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { NotificationsService } from 'src/app/home/notifications.service';
@@ -78,7 +78,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
             this.dinnerDaysLeft = this.dinnersService.getDinnerTimeLeft(this.dinner.date)[0];
 
             // Mostro eventualmente alert se qualche problema (cena piena, non sono in gruppo o mancano meno di 24h)
-            if (this.paramsService.getParams().dinnerId !== +this.dinner.id) {
+            if (this.paramsService.getParams().dinnerId !== +this.dinner.id && this.paramsService.getParams().dinnerId !== undefined) {
               this.showInfoAlert();
             }
 

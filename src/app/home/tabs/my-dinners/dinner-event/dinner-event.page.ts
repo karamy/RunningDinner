@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Dinner, DinnersService, DinnerDetails, MyDinnerDetails } from '../dinners.service';
+import { Dinner, DinnersService, DinnerDetails, MyDinnerDetails } from 'src/app/home/tabs/dinners/dinners.service';
 import { ProfileService } from 'src/app/home/profile/profile.service';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { PopoverController, ModalController } from '@ionic/angular';

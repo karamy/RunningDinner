@@ -4,17 +4,16 @@ import { NavController } from '@ionic/angular';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { NotificationsService } from '../../notifications.service';
 import { ProfileService } from '../../profile/profile.service';
-import { DinnerResponse } from '../dinners/dinners.page';
 import { Dinner, DinnersService } from '../dinners/dinners.service';
 
 
 @Component({
-  selector: 'app-dinner-history',
-  templateUrl: './dinner-history.page.html',
-  styleUrls: ['./dinner-history.page.scss'],
+  selector: 'app-my-dinners',
+  templateUrl: './my-dinners.page.html',
+  styleUrls: ['./my-dinners.page.scss'],
 })
 
-export class DinnerHistoryPage implements OnInit {
+export class MyDinnersPage implements OnInit {
 
   dinnerHistoryList: Dinner[];
   myDinner: Dinner;
@@ -31,7 +30,7 @@ export class DinnerHistoryPage implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe(() => {
-      this.loadDinners(); // Caricamento della myDinner
+      this.loadDinners(); // Caricamento della myDinner e cene passate
     });
 
     // Registrazione observable per reagire al ricaricamento cene (es. vengo aggiunto a una cena)
@@ -45,9 +44,10 @@ export class DinnerHistoryPage implements OnInit {
   loadDinners(event?) {
     this.paramsService.loadParams().then(
       () => {
-        this.dinnersService.getDinners().then(
-          (response: DinnerResponse) => {
-            this.myDinner = response.myDinner;
+        // Ottengo l'eventuale mia cena
+        this.dinnersService.getMyDinner().then(
+          (response: Dinner) => {
+            this.myDinner = response;
             console.log(this.myDinner);
             if (this.myDinner) {
               const myDinnerDateTime = this.dinnersService.formatDate(this.myDinner.date);
@@ -85,7 +85,7 @@ export class DinnerHistoryPage implements OnInit {
 
   // Se clicco su una cena delle cronologia, indirizzo a dinner-winners
   goToDinnerWinner(dinner: Dinner) {
-    this.navController.navigateRoot('/home/tabs/dinner-history/dinner-winners', { queryParams: dinner });
+    this.navController.navigateRoot('/home/tabs/my-dinners/dinner-winners', { queryParams: dinner });
   }
 
 }

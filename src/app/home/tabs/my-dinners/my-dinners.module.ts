@@ -3,17 +3,17 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RDComponentsModule } from 'src/app/rdcomponents/rdcomponents.module';
-import { DinnerHistoryPage } from './dinner-history.page';
-import { DinnerHistoryRoutingModule } from './dinner-history-routing.module';
+import { MyDinnersPage } from './my-dinners.page';
+import { MyDinnersRoutingModule } from './my-dinners-routing.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    DinnerHistoryRoutingModule,
+    MyDinnersRoutingModule,
     RDComponentsModule
   ],
-  declarations: [DinnerHistoryPage]
+  declarations: [MyDinnersPage]
 })
-export class DinnerHistoryPageModule {}
+export class MyDinnersPageModule { }

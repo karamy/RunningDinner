@@ -18,8 +18,4 @@ export class HomePage implements OnInit {
   ngOnInit() {
     this.notificationsService.init(); // Inizializzo notifiche push
   }
-
-  clearTab() {
-    this.navController.navigateRoot('/home/tabs/dinners');
-  }
 }

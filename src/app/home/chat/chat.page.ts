@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AuthService, UserData } from "src/app/auth/auth.service";
+import { AuthService, UserData } from 'src/app/auth/auth.service';
 import { IonContent } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ProfileService } from 'src/app/home/profile/profile.service';

@@ -65,14 +65,37 @@ export class DinnersService {
       );
   }
 
-  // Ottiene l'elenco delle cene (e dell'eventuale cena a cui partecipo)
-  async getDinners(): Promise<object> {
+  // Ottiene l'eventuale cena a cui partecipo
+  async getMyDinner(): Promise<object> {
     await this.spinner.create();
-    return this.http.get(this.rdConstants.getApiRoute('dinners'))
+    return this.http.get(this.rdConstants.getApiRoute('getMyDinner'))
       .toPromise()
       .finally(
         () => { this.spinner.dismiss(); }
       );
+  }
+
+  // Ottengo le cene disponibili esclusa l'eventuale myDinner
+  async getOtherDinners(dinnerId: number): Promise<Dinner[]> {
+    if (!dinnerId) {
+      dinnerId = 0;
+    }
+    await this.spinner.create();
+    return new Promise((resolve, reject) =>
+      this.http.post(this.rdConstants.getApiRoute('getOtherDinners'), { dinnerId })
+        .toPromise()
+        .then(
+          res => {
+            resolve(res as Dinner[]);
+          },
+          () => {
+            reject();
+          }
+        )
+        .finally(
+          () => { this.spinner.dismiss(); }
+        )
+    );
   }
 
   // Abbandona cena, eliminandola se sono l'unico partecipante
@@ -109,16 +132,16 @@ export class DinnersService {
     if (dinnerState === -1) {
       this.navController.navigateRoot('/home/tabs/dinners', { queryParams: { message: 'Cena cancellata' } });
     } else if (dinnerState === 0) {
-      this.navController.navigateRoot('/home/tabs/dinners/dinner-detail', { queryParams: dinner });
+      this.navController.navigateRoot('/home/tabs/my-dinners/dinner-detail', { queryParams: dinner });
     } else if (dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
       if (dinnerState === 1) {
-        this.navController.navigateRoot('/home/tabs/dinners/dinner-event', { queryParams: dinner });
+        this.navController.navigateRoot('/home/tabs/my-dinners/dinner-event', { queryParams: dinner });
       } else if (dinnerState === 2 || dinnerState === 3 || dinnerState === 4) {
-        this.navController.navigateRoot('/home/tabs/dinners/dinner-phases', { queryParams: dinner });
+        this.navController.navigateRoot('/home/tabs/my-dinners/dinner-phases', { queryParams: dinner });
       } else if (dinnerState === 5) {
-        this.navController.navigateRoot('/home/tabs/dinners/dinner-votes', { queryParams: dinner });
+        this.navController.navigateRoot('/home/tabs/my-dinners/dinner-votes', { queryParams: dinner });
       } else if (dinnerState === 6) {
-        this.navController.navigateRoot('/home/tabs/dinner-history/dinner-winners', { queryParams: dinner });
+        this.navController.navigateRoot('/home/tabs/my-dinners/dinner-winners', { queryParams: dinner });
       }
     } else {
       this.navController.navigateRoot('/home/tabs/dinners', { queryParams: { message: 'Non è più possibile iscriversi alla cena' } });
@@ -565,13 +588,13 @@ export class DinnersService {
     return dinnerWinners;
   }
 
-  // Funzioni di dinnerHistory
+  // Funzioni di myDinners
 
   // Ottengo le cene passate dell'utente
   async getDinnerHistory(): Promise<Dinner[]> {
     await this.spinner.create();
     return new Promise((resolve, reject) =>
-      this.http.post(this.rdConstants.getApiRoute('getDinnerHistory'), {})
+      this.http.get(this.rdConstants.getApiRoute('getDinnerHistory'))
         .toPromise()
         .then(
           res => {

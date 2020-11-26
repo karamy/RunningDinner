@@ -17,14 +17,18 @@ const routes: Routes = [
         loadChildren: () => import('./tabs/dinners/dinners.module').then(m => m.DinnersPageModule),
       },
       {
-        path: 'dinner-history',
-        loadChildren: () => import('./tabs/dinner-history/dinner-history.module').then(m => m.DinnerHistoryPageModule),
+        path: 'my-dinners',
+        loadChildren: () => import('./tabs/my-dinners/my-dinners.module').then(m => m.MyDinnersPageModule),
       }
     ]
   },
   {
     path: 'profile',
     loadChildren: () => import('./profile/profile.module').then(m => m.ProfilePageModule)
+  },
+  {
+    path: 'chat',
+    loadChildren: () => import('./chat/chat.module').then(m => m.ChatPageModule)
   }
 ];
 

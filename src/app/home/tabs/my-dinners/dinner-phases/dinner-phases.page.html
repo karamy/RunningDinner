@@ -1,11 +1,14 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home/tabs/dinners"></ion-back-button>
+      <ion-back-button defaultHref="/home/tabs/my-dinners"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button shape="round" size="large" slot="icon-only" (click)="getDinnerPhasesData()">
         <ion-icon size="large" name="refresh-circle-outline"></ion-icon>
+      </ion-button>
+      <ion-button shape="round" size="large" slot="icon-only" routerLink="/home/chat">
+        <ion-icon size="large" name="chatbubble-ellipses-outline"></ion-icon>
       </ion-button>
       <ion-button shape="round" size="large" slot="icon-only" (click)="presentPopover($event, dinner.time)">
         <ion-icon size="large" name="help-circle-outline"></ion-icon>

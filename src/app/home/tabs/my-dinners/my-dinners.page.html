@@ -1,8 +1,13 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Dinners Chat & History</ion-title>
+    <ion-title>My Dinners</ion-title>
     <ion-buttons slot="primary">
       <rd-profile></rd-profile>
+    </ion-buttons>
+    <ion-buttons slot="secondary">
+      <ion-button shape="round" size="large" routerLink="/home/chat" *ngIf="paramsService.getParams().dinnerId">
+        <ion-icon size="large" name="chatbubble-ellipses-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>

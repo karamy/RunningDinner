@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Vote } from 'src/app/home/tabs/dinners/dinner-votes/dinner-votes.page';
+import { Vote } from 'src/app/home/tabs/my-dinners/dinner-votes/dinner-votes.page';
 
 @Component({
   selector: 'app-star-rating',

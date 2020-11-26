@@ -33,29 +33,26 @@ export class DinnersPage implements OnInit {
       if (this.message) {
         this.presentAlert(this.message);
       }
-
-      this.loadDinners(); // Caricamento iniziale cene
     });
 
-    this.profileService.readPartner(); // Carica i dati del partner per poter inviare group_address
+    // Lascio readPartner per debug perchè sennò al refresh (senza rifare login) non funziona getDinnerDetails
+    // in quanto richiede address del partner
+    this.profileService.readPartner();
 
-    // Registrazione observable per reagire al ricaricamento cene (es. vengo aggiunto a una cena)
-    this.notificationsService.getUpdateParamsObservable().subscribe(() => {
-      console.log('Elenco cene - Ricarico cene');
-      this.loadDinners();
-    });
+    this.loadDinners(); // Caricamento iniziale cene
   }
 
   // Ricarico i parametri e l'elenco delle cene
   loadDinners(event?) {
     this.paramsService.loadParams().then(
       () => {
-        this.dinnersService.getDinners().then(
-          (response: DinnerResponse) => {
-            console.log(response);
+        this.dinnersService.getOtherDinners(this.paramsService.getParams().dinnerId).then(
+          (response) => {
 
             // Popolo la lista delle cene presenti
-            this.dinnerList = response.otherDinners;
+            this.dinnerList = response;
+            console.log(this.dinnerList);
+
             for (let i = 0; i < this.dinnerList.length; i++) {
               const dinnerDateTime = this.dinnersService.formatDate(this.dinnerList[i].date);
               this.dinnerList[i].dateString = dinnerDateTime[0];
@@ -100,40 +97,4 @@ export class DinnersPage implements OnInit {
   setFilter(event) {
     this.filterType = event;
   }
-
-  /*  Vecchio sistema di reindirizzamento basato sul calcolo dell'ora lato app
-  // Controllo quanto tempo manca alla cena per redirezionare alla page corretta
-    compareDate(dinner: Dinner) {
-      const timeLeft = this.dinnersService.getDinnerTimeLeft(dinner.date);
-      // Se giorni mancanti alla cena = 0 ma ore mancanti > 0 ed il mio groupid è presente mando a dinner-event
-      if (timeLeft[0] === 0 && timeLeft[1] > 0 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
-        return 'event';
-        // Se giorni mancanti alla cena = 0 e ore mancanti <= 0 ed il mio groupid è presente mando a dinner-phase
-      } else if (timeLeft[0] === 0 && timeLeft[1] <= 0 && dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
-        // Se sono passate 2 ore dall'inizio della cena
-        if (timeLeft[1] === -2) {
-          // controllo se sono passati anche 35 minuti
-          if (timeLeft[2] <= -35) {
-            return 'votes';
-          } else {
-            return 'phase';
-          }
-          // Altrimenti se sono passate più di 2 ore dall'inizio della cena
-        } else if (timeLeft[1] < -2) {
-          return 'votes';
-        } else {
-          return 'phase';
-        }
-      } else {
-        return 'details';
-      }
-    } */
-}
-
-// Rappresenta la risposta del metodo loadDinners
-export interface DinnerResponse {
-  // Scelto di separare la cena di cui faccio parte dalle altre
-  // per poterle in futuro caricare a pagine
-  myDinner: Dinner;
-  otherDinners: Dinner[];
 }
