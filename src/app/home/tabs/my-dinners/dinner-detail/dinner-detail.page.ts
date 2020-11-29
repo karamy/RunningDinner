@@ -74,10 +74,11 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
           (resp) => {
             this.dinnerDetails = resp;
 
-            // Sovrascrivo titolo e descrizione in quanto possono essere modificati
+            // Sovrascrivo titolo, descrizione e amministratore cena in quanto possono essere modificati
             const dinnerData = resp.dinnerData;
             this.dinner.title = dinnerData.title;
             this.dinner.description = dinnerData.description;
+            this.dinner.administrator = dinnerData.administrator;
 
             // Ottengo la tipologia
             this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type))[0];
