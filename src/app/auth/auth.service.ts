@@ -9,6 +9,7 @@ import { RDToastService } from '../rdtoast.service';
 import { ProfileService } from '../home/profile/profile.service';
 import { FoodAllergiesService } from '../rdmodals/food-allergies/food-allergies.service';
 import { BadgesService } from '../home/profile/badges.service';
+import { ContactsService } from '../home/tabs/contacts/contacts.service';
 
 @Injectable({
   providedIn: 'root'
@@ -26,8 +27,15 @@ export class AuthService {
     private rdParams: RDParamsService,
     private profileService: ProfileService,
     private foodAllergiesService: FoodAllergiesService,
-    private badgesService: BadgesService
+    private badgesService: BadgesService,
+    private contactsService: ContactsService
   ) {
+    this.readUser();
+  }
+
+  // Cancella dal localStorage le informazioni sull'utente
+  public clearUser() {
+    localStorage.setItem('user', null);
     this.readUser();
   }
 
@@ -44,7 +52,7 @@ export class AuthService {
   }
 
   // Aggiorna lo user in localStorage
-  public writeUser(user: AuthenticatedUser) {
+  private writeUser(user: AuthenticatedUser) {
     user.userData.profile_photo = 'data:image/jpeg;base64,' + user.userData.profile_photo;
     localStorage.setItem('user', JSON.stringify(user));
     this.readUser();
@@ -61,7 +69,7 @@ export class AuthService {
   }
 
   // Indica se l'utente ha una sessione di login attiva
-  isUserAuthenticated() {
+  public isUserAuthenticated() {
     return (
       this._user &&
       this._user.accessToken !== undefined &&
@@ -83,77 +91,64 @@ export class AuthService {
         .then(
           res => {
             this.writeUser(res as AuthenticatedUser);
-            console.log(this._user);
+            console.log("Login user", this._user);
 
-            // Carico i parametri utente prima di risolvere la promise
-            this.rdParams.loadParams().then(
-              () => {
-                // Carico la lista di tutte le intolleranze e le intolleranze dell'utente
-                this.foodAllergiesService.getAllFoodAllergiesData().then(() => {
-                  this.foodAllergiesService.getUserFoodAllergiesData(this.getUserData().userid).then(() => {
-                    this.badgesService.getUserBadges(this.getUserData().userid).then(() => {
-                      if (this.rdParams.getParams().groupId) {
-                        this.profileService.getPartnerData(this.getUserData()).then(() => {
-                          this.foodAllergiesService.getPartnerFoodAllergies(this.getUserData().userid).then(() => {
-                            this.badgesService.getPartnerBadges(this.getUserData().userid).then(() => {
-                              this.navController.navigateRoot('/home/tabs/dinners');
-                              resolve();
-                            },
-                              () => {
-                                console.log('Errore getPartnerBadges');
-                                this.navController.navigateRoot('/home/tabs/dinners');
-                                resolve();
-                              });
-                          },
-                            () => {
-                              console.log('Errore getPartnerFoodAllergies');
-                              this.navController.navigateRoot('/home/tabs/dinners');
-                              resolve();
-                            });
-                        },
-                          () => {
-                            console.log('Errore getPartnerData');
-                            this.navController.navigateRoot('/home/tabs/dinners');
-                            resolve();
-                          });
-                      } else {
-                        // Imposto groupFoodAllergies vuoto in maniera da evitare errori
-                        localStorage.setItem('groupFoodAllergies', '[]');
-                        this.foodAllergiesService.readGroupFoodAllergies();
-                        // Imposto groupBadges vuoto per evitare errore badgeFilter.pipe
-                        localStorage.setItem('groupBadges', '[]');
-                        this.badgesService.readGroupBadges();
-                        this.navController.navigateRoot('/home/tabs/dinners');
-                        resolve();
-                      }
-                    },
-                      () => {
-                        console.log('Errore getUserBadges');
-                      });
-                  },
-                    () => {
-                      console.log('Errore getUserFoodAllergiesData');
-                    });
-                },
-                  () => {
-                    console.log('Errore getAllFoodAllergiesData');
-                  });
-              },
-              (err) => {
-                this.doLogout();
-                reject(err);
-              }
-            ).finally(() => {
-              this.spinner.dismiss();
-            });
+            //Lascio in thread parallelo parte di caricamento iniziale Params, Food Allergies e Partner, parto subito su /dinners
+            this.navController.navigateRoot('/home/tabs/dinners');
+            resolve();
+
+            // Carico i parametri utente
+            this.loadOtherParamsInBackground();
           },
           err => {
+            this.doLogout();
             reject(err);
           }
         )
     ).finally(() => {
       this.spinner.dismiss();
     });
+  }
+
+  // Carica gli altri parametri in background
+  private loadOtherParamsInBackground() {
+    this.foodAllergiesService.getAllFoodAllergiesData().then(() => { // Tutte le intolleranze
+      this.foodAllergiesService.getUserFoodAllergiesData(this.getUserData().userid).then(() => { // Food allergies
+        this.badgesService.getUserBadges(this.getUserData().userid).then(() => { // Badges utente
+          if (this.rdParams.getParams().groupId) {
+            this.profileService.getPartnerData(this.getUserData()).then(() => { // Dati partner
+              this.foodAllergiesService.getPartnerFoodAllergies(this.getUserData().userid).then(() => { //Food allergies partner
+                this.badgesService.getPartnerBadges(this.getUserData().userid).catch( // Badges del partner
+                  () => {
+                    console.log('Errore getPartnerBadges');
+                    this.doLogout();
+                  });
+              },
+                () => {
+                  console.log('Errore getPartnerFoodAllergies');
+                  this.doLogout();
+                });
+            },
+              () => {
+                console.log('Errore getPartnerData');
+                this.doLogout();
+              });
+          }
+        },
+          () => {
+            console.log('Errore getUserBadges');
+            this.doLogout();
+          });
+      },
+        () => {
+          console.log('Errore getUserFoodAllergiesData');
+          this.doLogout();
+        });
+    },
+      () => {
+        console.log('Errore getAllFoodAllergiesData');
+        this.doLogout();
+      });
   }
 
   // Effettua il logout richiedendo la cancellazione del token
@@ -165,17 +160,21 @@ export class AuthService {
     this.http.post(this.rdConstants.getApiRoute('logout'), { userId: this.getUserData().userid })
       .toPromise()
       .then(
-        () => {
-          localStorage.setItem('user', null);
-          this.readUser();
+        async () => {
+          // Cancellazione di tutte le info
+          this.clearUser();
+          this.clearFirebaseToken();
+          this.rdParams.clearParams();
           this.profileService.clearPartner();
           this.foodAllergiesService.clearUserFoodAllergies();
           this.foodAllergiesService.clearAllFoodAllergies();
           this.foodAllergiesService.clearGroupFoodAllergies();
           this.badgesService.clearUserBadges();
           this.badgesService.clearGroupBadges();
-          this.rdParams.clearParams();
-          this.clearFirebaseToken();
+          await this.contactsService.clearLocalContacts();
+          await this.contactsService.clearMatchingContacts();
+
+          // Uscita dall'app
           this.navController.navigateRoot('/auth');
         },
         (err) => {
@@ -188,23 +187,23 @@ export class AuthService {
   }
 
   // Ritorna l'utente loggato completo
-  getUser() {
+  public getUser() {
     return this._user;
   }
 
   // Ritorna i dati dell'utente loggato
-  getUserData(): UserData {
+  public getUserData(): UserData {
     console.log(this._user.userData)
     return this._user.userData;
   }
 
   // Ritorna il token dell'utente loggato, se login attivo
-  getUserToken() {
+  public getUserToken() {
     return this.isUserAuthenticated() ? this._user.accessToken : null;
   }
 
   // Effettua chiamata per ottenere un accessToken passando il refreshToken
-  refreshToken() {
+  public refreshToken() {
     const dataToSend = {
       refreshToken: this.getRefreshToken()
     };

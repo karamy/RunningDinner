@@ -2,7 +2,6 @@ import { Component, OnInit, NgZone } from '@angular/core';
 import { AuthService, UserData, AuthenticatedUser } from 'src/app/auth/auth.service';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { RDParamsService } from 'src/app/rdparams.service';
-import { ContactsService } from '../tabs/contacts/contacts.service';
 import { ModalController } from '@ionic/angular';
 import { FoodAllergiesPage, UserAllergy } from 'src/app/rdmodals/food-allergies/food-allergies.page';
 import { UserService } from 'src/app/auth/user.service';
@@ -13,6 +12,8 @@ import { BadgesService } from './badges.service';
 import { FoodAllergiesService } from 'src/app/rdmodals/food-allergies/food-allergies.service';
 import { RDToastService } from 'src/app/rdtoast.service';
 import { NotificationsService } from '../notifications.service';
+import { HttpClient } from '@angular/common/http';
+import { RDConstantsService } from 'src/app/rdcostants.service';
 
 @Component({
   selector: 'app-profile',
@@ -44,7 +45,6 @@ export class ProfilePage implements OnInit {
     private userService: UserService,
     private spinner: RDSpinnerService,
     public paramsService: RDParamsService,
-    private contactsService: ContactsService,
     public profileService: ProfileService,
     public foodAllergiesService: FoodAllergiesService,
     private photoService: PhotoService,
@@ -52,7 +52,9 @@ export class ProfilePage implements OnInit {
     private rdToast: RDToastService,
     private zone: NgZone,
     private modalController: ModalController,
-    private notificationsService: NotificationsService) {
+    private http: HttpClient,
+    private notificationsService: NotificationsService,
+    private rdConstants: RDConstantsService) {
     defineCustomElements(window);
     this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
     this.autocompleteItems = [];
@@ -60,20 +62,6 @@ export class ProfilePage implements OnInit {
 
   ngOnInit() {
     this.getUser();
-    if (this.paramsService.getParams().groupId) {
-      // Per evitare errori se refresh della pagina
-      this.profileService.readPartner();
-      this.foodAllergiesService.readGroupFoodAllergies();
-      this.badgesService.readGroupBadges();
-    } else {
-      this.badgesService.readUserBadges();
-      this.foodAllergiesService.readUserFoodAllergies();
-      // Valorizzo groupFoodAllergies e groupBadges per evitare errori se refresh della pagina
-      localStorage.setItem('groupFoodAllergies', '[]');
-      this.foodAllergiesService.readGroupFoodAllergies();
-      localStorage.setItem('groupBadges', '[]');
-      this.badgesService.readGroupBadges();
-    }
   }
 
   getUser() {
@@ -187,21 +175,35 @@ export class ProfilePage implements OnInit {
     this.user.address = item.description;
   }
 
+  // Effettua il logout
   onLogout() {
     this.authService.doLogout();
   }
 
+  // Scioglie il gruppo di cui fa parte l'utente, anche qui in automatico
+  // invia una notifica all'altro partecipante, che viene informato dell'azione fatta
+  private async leaveGroup(groupId) {
+    const leaveGroupBody = {
+      groupId: groupId
+    };
+    await this.spinner.create();
+    return this.http.post(this.rdConstants.getApiRoute('leaveGroup'), leaveGroupBody)
+      .toPromise()
+      .finally(
+        () => { this.spinner.dismiss(); }
+      );
+  }
+
   // Abbandona gruppo
   onLeaveGroup() {
-    this.contactsService.leaveGroup(this.paramsService.getParams().groupId).then(
+    this.leaveGroup(this.paramsService.getParams().groupId).then(
       () => { // Gruppo abbandonato, ricarico parametri
         this.paramsService.loadParams().then(() => {
           this.profileService.clearPartner();
           this.foodAllergiesService.clearGroupFoodAllergies();
           this.badgesService.clearGroupBadges();
 
-          // Emetto l'evento di ricaricamento parametri anche se attualmente essendo
-          // utilizzato solo nella chat, è inutile ricaricarla dopo la creazione gruppo
+          // Emetto l'evento di ricaricamento parametri
           this.notificationsService.fireUpdateParamsEvent();
         });
       },

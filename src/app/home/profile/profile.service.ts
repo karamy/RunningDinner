@@ -13,8 +13,9 @@ export class ProfileService {
 
   constructor(
     public paramsService: RDParamsService,
-    private http: HttpClient,
-    private rdConstants: RDConstantsService) { }
+    private http: HttpClient, private rdConstants: RDConstantsService) {
+    this.readPartner();
+  }
 
   // Trasformo data in formato YYYY/MM/DD
   changeDateFormat(userBirthdate: any) {
@@ -80,7 +81,7 @@ export class ProfileService {
   }
 
   // Legge i parametri partner presenti in localStorage e le carica nel Service
-  readPartner() {
+  private readPartner() {
     this._partner = JSON.parse(
       localStorage.getItem('partner')
     ) as PartnerData;

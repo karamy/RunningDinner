@@ -15,7 +15,10 @@ export class BadgesService {
     private http: HttpClient,
     private rdConstants: RDConstantsService,
     public paramsService: RDParamsService
-  ) { }
+  ) {
+    this.readUserBadges();
+    this.readGroupBadges();
+  }
 
   // Carica le i badges da DB
   async getUserBadges(userId: number): Promise<UserBadge[]> {
@@ -64,10 +67,10 @@ export class BadgesService {
     this.readUserBadges();
   }
 
-  readUserBadges() {
+  private readUserBadges() {
     this._userBadges = JSON.parse(
       localStorage.getItem('badges')
-    ) as UserBadge[];
+    ) as UserBadge[] || [];
   }
 
   // Ritorna la lista di tutti i badges
@@ -79,23 +82,6 @@ export class BadgesService {
   clearUserBadges() {
     localStorage.setItem('badges', null);
     this.readUserBadges();
-  }
-
-  // Inserisce o aggiorna il badge dell'utente
-  async insertUserBadge(user_id: number, badge_id: number) {
-    return new Promise((resolve, reject) => {
-      this.http
-        .post(this.rdConstants.getApiRoute('insertUserBadge'), { user_id, badge_id })
-        .toPromise()
-        .then(
-          () => {
-            resolve();
-          },
-          err => {
-            reject(err);
-          }
-        );
-    });
   }
 
   // Ottengo da DB i badges del Partner
@@ -126,10 +112,12 @@ export class BadgesService {
     const userBadges = JSON.parse(
       localStorage.getItem('badges')
     ) as UserBadge[];
+    
     // Converto le immagini dei badge del partner in Jpeg
     partnerBadges = this.convertImagesToJpeg(partnerBadges);
     partnerBadges = this.setDescriptionProgress(partnerBadges);
     const groupBadges = [...userBadges];
+    
     // Confronto i badges dell'utente e del partner ed a parità di badge_id tengo quello con il progress maggiore
     for (let i = 0; i < groupBadges.length; i++) {
       for (let j = 0; j < partnerBadges.length; j++) {
@@ -138,17 +126,16 @@ export class BadgesService {
         }
       }
     }
-    console.log('groupBadges');
-    console.log(groupBadges);
+    
     localStorage.setItem('groupBadges', JSON.stringify(groupBadges));
     this.readGroupBadges();
   }
 
   // Legge il parametro groupBadges e lo carica nel Service
-  readGroupBadges() {
+  private readGroupBadges() {
     this._groupBadges = JSON.parse(
       localStorage.getItem('groupBadges')
-    ) as UserBadge[];
+    ) as UserBadge[] || [];
   }
 
   // Ritorna i badges del gruppo
@@ -158,7 +145,7 @@ export class BadgesService {
 
   // Cancella dal localStorage i badges del gruppo
   clearGroupBadges() {
-    localStorage.setItem('groupBadges', '[]');
+    localStorage.setItem('groupBadges', null);
     this.readGroupBadges();
   }
 

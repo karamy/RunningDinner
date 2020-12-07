@@ -34,7 +34,6 @@ export class ContactsDetailPage implements OnInit {
       () => {
         console.log('Errore getContactBadges');
       });
-
   }
 
   dismiss() {

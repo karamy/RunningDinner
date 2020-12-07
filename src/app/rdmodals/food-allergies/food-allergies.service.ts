@@ -19,9 +19,13 @@ export class FoodAllergiesService {
     private http: HttpClient,
     private rdConstants: RDConstantsService,
     public paramsService: RDParamsService
-  ) { }
+  ) {
+    this.readAllFoodAllergies();
+    this.readUserFoodAllergies();
+    this.readGroupFoodAllergies();
+  }
 
-  // Carica la lista di tutte le FoodAllergies dal DB
+  // Salva la lista di tutte le intolleranze su DB
   async getAllFoodAllergiesData(): Promise<FoodAllergy[]> {
     return new Promise((resolve, reject) => {
       this.http
@@ -46,6 +50,7 @@ export class FoodAllergiesService {
     this.readAllFoodAllergies();
   }
 
+  // Legge intolleranze da localStorage
   private readAllFoodAllergies() {
     this._allFoodAllergies = JSON.parse(
       localStorage.getItem('allFoodAllergies')
@@ -63,7 +68,7 @@ export class FoodAllergiesService {
     this.readAllFoodAllergies();
   }
 
-  // Carica le intolleranze dell'utente da DB
+  // Salva le intolleranze dell'utente su DB
   async getUserFoodAllergiesData(userId: number) {
     return new Promise((resolve, reject) => {
       this.http
@@ -81,6 +86,7 @@ export class FoodAllergiesService {
     });
   }
 
+  // Converte in formato utilizzabile da HTML i dati in base64 delle intolleranze
   public convertImagesToJpeg(userFoodAllergies: FoodAllergy[]) {
     for (let i = 0; i < userFoodAllergies.length; i++) {
       userFoodAllergies[i].allergy_photo = 'data:image/jpeg;base64,' + userFoodAllergies[i].allergy_photo;
@@ -116,7 +122,7 @@ export class FoodAllergiesService {
   }
 
   // Legge i parametri userFoodAllergies e userFoodAllergiesCategories presenti in localStorage e le carica nel Service
-  readUserFoodAllergies() {
+  private readUserFoodAllergies() {
     this._userFoodAllergies = JSON.parse(
       localStorage.getItem('userFoodAllergies')
     ) as UserAllergy[];
@@ -239,13 +245,13 @@ export class FoodAllergiesService {
   }
 
   // Legge i parametri groupFoodAllergies e groupFoodAllergiesCategories e li carica nel Service
-  readGroupFoodAllergies() {
+  private readGroupFoodAllergies() {
     this._groupFoodAllergies = JSON.parse(
       localStorage.getItem('groupFoodAllergies')
-    ) as UserAllergy[];
+    ) as UserAllergy[] || [];
     this._groupFoodAllergiesCategories = JSON.parse(
       localStorage.getItem('groupFoodAllergiesCategories')
-    );
+    ) as string[] || [];
   }
 
   // Ritorna le intolleranze del gruppo
@@ -260,7 +266,7 @@ export class FoodAllergiesService {
 
   // Cancella dal localStorage le intolleranze del gruppo e le categorie
   clearGroupFoodAllergies() {
-    localStorage.setItem('groupFoodAllergies', '[]');
+    localStorage.setItem('groupFoodAllergies', null);
     localStorage.setItem('groupFoodAllergiesCategories', null);
     this.readGroupFoodAllergies();
   }

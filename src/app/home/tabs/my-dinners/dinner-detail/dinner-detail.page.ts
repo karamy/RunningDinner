@@ -59,7 +59,6 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
 
   // Carica i dettagli della cena
   getDinnerDetails() {
-
     // Controllo lo state della cena
     this.dinnersService.getDinnerState(this.dinner.id).then(res => {
       if (!res) { // Può accadere se vengo rimosso da una cena che viene eliminata, ritorno alla home
@@ -96,7 +95,6 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
             console.log('Errore getDinnerDetails, ritorno alla home');
             this.navController.navigateRoot('/home');
           });
-
       } else {
         this.dinnersService.detDinnerStateRoute(this.dinner, this.state);
       }

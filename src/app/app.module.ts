@@ -14,6 +14,7 @@ import { Contacts } from "@ionic-native/contacts";
 import { RDModalsModule } from './rdmodals/rdmodals.module';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { LaunchNavigator } from '@ionic-native/launch-navigator/ngx';
+import { IonicStorageModule } from '@ionic/storage';
 
 @NgModule({
   declarations: [AppComponent],
@@ -22,8 +23,12 @@ import { LaunchNavigator } from '@ionic-native/launch-navigator/ngx';
     IonicModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,
+    IonicStorageModule.forRoot({
+      name: 'RD_DB',
+      driverOrder: ['indexeddb', 'sqlite', 'websql']
+    }),
     ServiceWorkerModule.register('capacitor-pwa-firebase-msg-sw.js', { enabled: true }), // Registrazione service-worker per utilizzo plugin push da web
-    RDModalsModule, // Importo qui il modulo dei modali per caricare gli entryComponents utilizzati in tutta l'app
+    RDModalsModule // Importo qui il modulo dei modali per caricare gli entryComponents utilizzati in tutta l'app
   ],
   providers: [
     StatusBar,
