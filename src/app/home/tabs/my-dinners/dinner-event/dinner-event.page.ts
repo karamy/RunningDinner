@@ -115,7 +115,6 @@ export class DinnerEventPage implements OnInit, OnDestroy {
           this.thirdDish = this.dinnersService.decodeType(Number(this.dinner.type))[3];
 
           // Ottengo dati del partner
-          this.profileService.readPartner();
           this.partnerName = this.profileService.getPartner().name;
 
           // Ottengo i dati relativi alla mia cena

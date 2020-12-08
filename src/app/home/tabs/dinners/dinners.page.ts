@@ -35,10 +35,6 @@ export class DinnersPage implements OnInit {
       }
     });
 
-    // Lascio readPartner per debug perchè sennò al refresh (senza rifare login) non funziona getDinnerDetails
-    // in quanto richiede address del partner
-    this.profileService.readPartner();
-
     this.loadDinners(); // Caricamento iniziale cene
   }
 
