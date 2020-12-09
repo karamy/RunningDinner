@@ -1,0 +1,32 @@
+<ion-content>
+  <ion-img class="sfondo" src="assets/Subtle-Prism.svg"></ion-img>
+  <div class="headerslide"></div>
+  <ion-slides color="secondary" #slider pager>
+    <ion-slide class="Slide1">
+      <ion-grid>
+        <ion-row class="FirstRow">
+          <h1 class="titlebottom">
+            Questo sarà il tuo nome utente in Running Dinner
+          </h1>
+        </ion-row>
+        <ion-row class="SecondRow">
+          <h1 class="titletop">
+            Mi <br />
+            chiamo
+          </h1>
+          <ion-input
+            class="inputusername"
+            placeholder="Inserisci qui il tuo nome"
+            [(ngModel)]="username"
+          ></ion-input>
+        </ion-row>
+        <ion-row class="ThirdRow"> </ion-row>
+      </ion-grid>
+    </ion-slide>
+    <ion-slide class="Slide2">
+      <h1>ciao</h1>
+    </ion-slide>
+    <ion-slide class="Slide3"> <h1>ciao</h1></ion-slide>
+    <ion-slide class="Slide4"> <h1>ciao</h1></ion-slide>
+  </ion-slides>
+</ion-content>
