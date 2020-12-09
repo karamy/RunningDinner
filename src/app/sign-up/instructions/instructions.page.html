@@ -1,15 +1,52 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>instructions</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-  <h1>PAGINA DI ISTRUZIONI DELL'APP</h1>
-  <ion-card>
-    RunningDinner è un app per fare cene con amici!
-  </ion-card>
-  <ion-button color="primary" fill="outline" (click)="goToGeolocation()">
-    Richiesta permessi
-  </ion-button>
+<ion-content class="prova">
+  <ion-img class="città" src="assets/città.svg"></ion-img>
+  <ion-img
+    *ngIf="this.index===1 || this.index===2"
+    class="animate__animated animate__fadeIn logo1"
+    src="assets/pinRD.png"
+  ></ion-img>
+  <ion-img
+    *ngIf="this.index===1 || this.index===2"
+    class="animate__animated animate__fadeIn logo2"
+    src="assets/pinRD.png"
+  ></ion-img>
+  <ion-img
+    *ngIf="this.index===2"
+    class="animate__animated animate__lightSpeedInLeft macchina"
+    src="assets/macchina.png"
+  ></ion-img>
+  <div class="footerslide"></div>
+  <ion-slides #slider (ionSlideDidChange)="prova()">
+    <ion-slide>
+      <h1 class="titletop">Benvenuto in Running Dinner!</h1>
+      <div class="titlebottom">
+        <h1 class="h1bottom">
+          Scopri un nuovo modo di condividere la tua cena in movimento
+        </h1>
+      </div>
+    </ion-slide>
+    <ion-slide>
+      <h1 class="titletop">Formata la coppia...</h1>
+      <div class="titlebottom">
+        <h2 class="h1bottom">
+          ...non ti resta che inserirti nella cena di gruppo ed organizzare il
+          tutto
+        </h2>
+      </div>
+    </ion-slide>
+    <ion-slide>
+      <h1 class="titletop">Al resto ci pensiamo noi!</h1>
+      <ion-button
+        class="buttonbottom"
+        fill="outline"
+        (click)="goToGeolocation()"
+      >
+        Continua
+      </ion-button>
+    </ion-slide>
+  </ion-slides>
+  <ion-progress-bar
+    color="secondary"
+    value="{{this.progressvalue}}"
+  ></ion-progress-bar>
 </ion-content>

@@ -1,14 +1,25 @@
-<ion-content >
-    <ion-item>
-      <h1 >My first <br> name is</h1> 
-      <ion-label position="floating">Name</ion-label>
-      <ion-input [(ngModel)]="username"></ion-input>
-    </ion-item>
-    <ion-item lines="none">
-      <ion-label color='medium'>
-        This is how it will appear on RunningDinner
-      </ion-label>
-    </ion-item>
-    <ion-row style="height: 10%"></ion-row>
-    <ion-button [disabled]="!username" expand="block" strong=true color='secondary' fill='outline' (click)=goToBirthDate()>Conferma</ion-button>
-  </ion-content>
+<ion-content>
+  <ion-item>
+    <h1>
+      My first <br />
+      name is
+    </h1>
+    <ion-label position="floating">Name</ion-label>
+    <ion-input [(ngModel)]="username"></ion-input>
+  </ion-item>
+  <ion-item lines="none">
+    <ion-label color="medium">
+      This is how it will appear on RunningDinner
+    </ion-label>
+  </ion-item>
+  <ion-row style="height: 10%"></ion-row>
+  <ion-button
+    [disabled]="!username"
+    expand="block"
+    strong="true"
+    color="secondary"
+    fill="outline"
+    (click)="goToBirthDate()"
+    >Conferma</ion-button
+  >
+</ion-content>
