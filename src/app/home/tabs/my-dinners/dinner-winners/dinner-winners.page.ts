@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ɵbypassSanitizationTrustStyle } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NotificationsService } from 'src/app/home/notifications.service';
@@ -30,14 +30,14 @@ export class DinnerWinnersPage implements OnInit, OnDestroy {
     this.route.queryParams.subscribe((dinner: Dinner) => {
       this.dinner = { ...dinner };
       this.detDinnerDate(); // Controllo se nascondere la chat o meno
-      this.getDinnerWinners();
+      this.getDinnerWinners(false);
     });
 
     // Registrazione observable per reagire al ricaricamento cena (es. vengo rimosso da una cena)
     this.subscription = this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Dinner Winners - Ricarico cena');
       this.detDinnerDate(); // Controllo se nascondere la chat o meno
-      this.getDinnerWinners();
+      this.getDinnerWinners(true);
     });
   }
 
@@ -47,9 +47,9 @@ export class DinnerWinnersPage implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  getDinnerWinners() {
+  getDinnerWinners(force: Boolean) {
     // Ottengo i vincitori della cena
-    this.dinnerService.getDinnerWinners(this.dinner).then(res => {
+    this.dinnerService.getDinnerWinners(this.dinner,force).then(res => {
 
       // Converto le immagini profilo e badge in JPEG
       this.dinnerWinnersList = this.dinnerService.convertWinnersImagesToJpeg(res);

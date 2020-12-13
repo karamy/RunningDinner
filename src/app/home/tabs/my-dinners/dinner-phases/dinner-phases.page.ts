@@ -3,12 +3,13 @@ import { ActivatedRoute } from '@angular/router';
 import { Dinner, DinnersService, DinnerDetails, MyDinnerDetails, DinnerDish } from 'src/app/home/tabs/dinners/dinners.service';
 import { ProfileService } from 'src/app/home/profile/profile.service';
 import { RDParamsService } from 'src/app/rdparams.service';
-import { NavController, PopoverController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { DinnerInfoPage } from 'src/app/rdmodals/dinner-info/dinner-info.page';
 import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator/ngx';
 import { NotificationsService } from 'src/app/home/notifications.service';
 import { Subscription } from 'rxjs';
 import { CupertinoPane, CupertinoSettings } from 'cupertino-pane';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-dinner-phases',
@@ -57,9 +58,9 @@ export class DinnerPhasesPage implements OnInit {
     public dinnersService: DinnersService,
     private profileService: ProfileService,
     private notificationsService: NotificationsService,
-    private navController: NavController,
     public paramsService: RDParamsService,
-    private launchNavigator: LaunchNavigator) { }
+    private launchNavigator: LaunchNavigator,
+    private authService: AuthService) { }
 
   async presentPopover(ev: any, dinnerTime) {
     const popover = await this.popoverController.create({
@@ -75,13 +76,13 @@ export class DinnerPhasesPage implements OnInit {
     // Ottengo i dati della cena dai parametri della rotta
     this.route.queryParams.subscribe((dinner: Dinner) => {
       this.dinner = { ...dinner };
-      this.getDinnerPhasesData();
+      this.getDinnerPhasesData(false);
     });
 
     // Registrazione observable per reagire al ricaricamento cena (es. vengo rimosso da una cena)
     this.subscription = this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Dinner Phases - Ricarico cena');
-      this.getDinnerPhasesData();
+      this.getDinnerPhasesData(true);
     });
   }
 
@@ -91,7 +92,7 @@ export class DinnerPhasesPage implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  getDinnerPhasesData() {
+  getDinnerPhasesData(force: Boolean) {
     this.dinnersService.getDinnerState(this.dinner.id).then(resp => {
       this.state = resp.dinner_state;
 
@@ -106,7 +107,7 @@ export class DinnerPhasesPage implements OnInit {
           this.presentBottomPanel();
         }
 
-        this.dinnersService.getDinnerDetails(this.dinner).then(res => {
+        this.dinnersService.getDinnerDetails(this.dinner, this.authService.getUserData(), force).then(res => {
           this.dinnerDetails = res;
 
           // Dal dinner_type ottengo nome della tipologia ed i piatti che verranno cucinati nella cena
@@ -117,7 +118,7 @@ export class DinnerPhasesPage implements OnInit {
           this.thirdDish = dishesArray[2];
 
           // Ottengo i dati relativi alla mia cena
-          this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId).then(response => {
+          this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId, force).then(response => {
             this.myDinnerDetails = response;
 
             // Imposto le variabili a seconda della fase

@@ -9,16 +9,27 @@ import { FoodAllergiesService } from 'src/app/rdmodals/food-allergies/food-aller
 import { RDParamsService } from 'src/app/rdparams.service';
 import { ProfileService } from '../../profile/profile.service';
 import { NavController } from '@ionic/angular';
+import { RDStorageService } from 'src/app/rdstorage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DinnersService {
 
-  _usersData: UserData[];
+  // Variabili per il caching
+  private _otherDinners: Dinner[];
+  private _myDinner: Dinner;
+  private _dinnerHistory: Dinner[];
+  private _dinnerDetailsDict: any;
+  private _myDinnerDetailsDict: any;
+  private _dinnerWinnersDict: any;
+  private syncInProgress = false;
+
+  usersData: UserData[];
   geocoder = new google.maps.Geocoder();
   directionsService: google.maps.DirectionsService;
 
+  // Tipologie cena, per ora scritte hardcoded
   dinnerTypes: DinnerType[] = [
     {
       code: 1,
@@ -46,12 +57,21 @@ export class DinnersService {
     private http: HttpClient,
     private rdConstants: RDConstantsService,
     private spinner: RDSpinnerService,
-    private authService: AuthService,
     private navController: NavController,
     private profileService: ProfileService,
     public paramsService: RDParamsService,
     private foodAllergiesService: FoodAllergiesService,
-    private badgesService: BadgesService) {
+    private badgesService: BadgesService,
+    private rdStorage: RDStorageService) {
+
+    // Lettura dati in cache
+    this.readMyDinner();
+    this.readOtherDinners();
+    this.readDinnerHistory();
+    this.readDinnerDetails();
+    this.readMyDinnerDetails();
+    this.readDinnerWinners();
+
     this.directionsService = new google.maps.DirectionsService();
   }
 
@@ -65,37 +85,97 @@ export class DinnersService {
       );
   }
 
-  // Ottiene l'eventuale cena a cui partecipo
-  async getMyDinner(): Promise<object> {
-    await this.spinner.create();
-    return this.http.get(this.rdConstants.getApiRoute('getMyDinner'))
-      .toPromise()
-      .finally(
-        () => { this.spinner.dismiss(); }
-      );
+  // Aggiorna la myDinner in localStorage
+  private async writeMyDinner(myDinner: Dinner) {
+    await this.rdStorage.setItem('myDinner', JSON.stringify(myDinner));
+    await this.readMyDinner();
   }
 
-  // Ottengo le cene disponibili esclusa l'eventuale myDinner
-  async getOtherDinners(dinnerId: number, index: number, filter: number): Promise<Dinner[]> {
-    if (!dinnerId) {
-      dinnerId = 0;
-    }
-    await this.spinner.create();
-    return new Promise((resolve, reject) =>
-      this.http.post(this.rdConstants.getApiRoute('getOtherDinners'), { dinnerId, index, filter })
-        .toPromise()
-        .then(
-          res => {
-            resolve(res as Dinner[]);
-          },
-          () => {
+  // Cancella dal localStorage la myDinner
+  public async clearMyDinner() {
+    await this.rdStorage.setItem('myDinner', null);
+    await this.readMyDinner();
+  }
+
+  // Legge la myDinner presente in localStorage e la carica nel Service
+  private async readMyDinner() {
+    this._myDinner = JSON.parse(
+      await this.rdStorage.getItem('myDinner')
+    ) as Dinner || null;
+  }
+
+  // Ottiene l'eventuale cena a cui partecipo
+  async getMyDinner(force: Boolean): Promise<object> {
+    return new Promise(async (resolve, reject) => {
+      if ((force || !this._myDinner) && !this.syncInProgress) {
+        this.syncInProgress = true;
+
+        await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
+        this.http.get(this.rdConstants.getApiRoute('getMyDinner'))
+          .toPromise()
+          .then(async res => {
+            this.syncInProgress = false;
+            await this.writeMyDinner(res as Dinner);
+            resolve(this._myDinner);
+          }, () => {
+            this.syncInProgress = false;
             reject();
-          }
-        )
-        .finally(
-          () => { this.spinner.dismiss(); }
-        )
-    );
+          }).finally(
+            () => {
+              this.spinner.dismiss();
+            });
+      } else {
+        resolve(this._myDinner);
+      }
+    })
+  }
+
+  // Ottengo le cene disponibili esclusa l'eventuale myDinner, eventualmente caricando il valore da cache
+  async getOtherDinners(dinnerId: number, force: Boolean, index: number, filter: number, notSave: Boolean): Promise<Dinner[]> {
+    return new Promise(async (resolve, reject) => {
+      if ((force || !this._otherDinners || !this._otherDinners.length) && !this.syncInProgress) {
+        this.syncInProgress = true;
+
+        await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
+        this.http.post(this.rdConstants.getApiRoute('getOtherDinners'), { dinnerId, index, filter })
+          .toPromise().then(
+            async res => {
+              this.syncInProgress = false;
+              if (notSave) {
+                resolve(res as Dinner[]);
+              } else {
+                await this.writeOtherDinners(res as Dinner[]);
+                resolve(this._otherDinners);
+              }
+            },
+            () => {
+              this.syncInProgress = false;
+              reject();
+            }
+          ).finally(() => { this.spinner.dismiss(); });
+      } else {
+        resolve(this._otherDinners);
+      }
+    });
+  }
+
+  // Aggiorna le otherDinners in localStorage
+  private async writeOtherDinners(otherDinners: Dinner[]) {
+    await this.rdStorage.setItem('otherDinners', JSON.stringify(otherDinners));
+    await this.readOtherDinners();
+  }
+
+  // Cancella dal localStorage le otherDinners
+  public async clearOtherDinners() {
+    await this.rdStorage.setItem('otherDinners', null);
+    await this.readOtherDinners();
+  }
+
+  // Legge le otherDinners presenti in localStorage e le carica nel Service
+  private async readOtherDinners() {
+    this._otherDinners = JSON.parse(
+      await this.rdStorage.getItem('otherDinners')
+    ) as Dinner[] || [];
   }
 
   // Abbandona cena, eliminandola se sono l'unico partecipante
@@ -109,7 +189,7 @@ export class DinnersService {
   }
 
   // Ottengo lo state della cena
-  async getDinnerState(dinnerId: number): Promise<any> {
+  public async getDinnerState(dinnerId: number): Promise<any> {
     await this.spinner.create();
     return new Promise((resolve, reject) =>
       this.http.post(this.rdConstants.getApiRoute('getDinnerState'), { dinnerId })
@@ -128,7 +208,7 @@ export class DinnersService {
     );
   }
 
-  detDinnerStateRoute(dinner: Dinner, dinnerState: any, navigationFrom?: string) {
+  public detDinnerStateRoute(dinner: Dinner, dinnerState: any, navigationFrom?: string) {
     if (dinnerState === -1) {
       this.navController.navigateRoot('/home/tabs/dinners', { queryParams: { message: 'Cena cancellata' } });
     } else if (dinnerState === 0) {
@@ -152,122 +232,192 @@ export class DinnersService {
     }
   }
 
+  // Aggiorna i dinnerDetails nel localStorage
+  private async writeDinnerDetails(dinnerDetails: DinnerDetails) {
+    await this.rdStorage.setItem('dinnerDetails', JSON.stringify(dinnerDetails));
+    await this.readDinnerDetails();
+  }
+
+  // Cancella dal localStorage i dinnerDetails
+  public async clearDinnerDetails() {
+    await this.rdStorage.setItem('dinnerDetails', null);
+    await this.readDinnerDetails();
+  }
+
+  // Legge i dinnerDetails presenti in localStorage e li carica nel Service
+  private async readDinnerDetails() {
+    this._dinnerDetailsDict = JSON.parse(
+      await this.rdStorage.getItem('dinnerDetails')
+    ) || {};
+  }
+
   // Ottiene i dettagli della cena selezionata
-  async getDinnerDetails(dinner: Dinner): Promise<DinnerDetails> {
+  public async getDinnerDetails(dinner: Dinner, userData: UserData, force: Boolean):
+    Promise<DinnerDetails> {
     const dinnerId = dinner.id;
-    let userAddress: string;
-    if (this.paramsService.getParams().groupId) {
-      userAddress = this.profileService.getPartner().group_address;
-    } else {
-      userAddress = this.authService.getUserData().address;
-    }
-    const userGroupId = this.paramsService.getParams().groupId;
-    const dataToSend = {
-      dinnerId: dinnerId,
-      userAddress: userAddress,
-      userGroupId: userGroupId
-    };
-    await this.spinner.create();
-    return new Promise((resolve, reject) =>
-      this.http.post(this.rdConstants.getApiRoute('getDinnerDetails'), dataToSend)
-        .toPromise()
-        .then(
-          res => {
-            const avgDistance = res['avgDistance'];
-            const dinnerData = res['dinnerData'];
-            const dinnerBadges = this.getDinnerBadges(res as DinnerDetails);
-            const allDinnerFoodAllergies = this.foodAllergiesService.convertImagesToJpeg(res['foodAllergies']);
-            const dinnerFoodAllergies = this.getDinnerFoodAllergies(res as DinnerDetails);
-            const dinnerMinMaxAges = this.getDinnerUsersData(res as DinnerDetails);
-            this._usersData = this.convertUserImagesToJpeg(res as DinnerDetails);
-            const addressesToDecode = {
-              groupid: [],
-              addresses: []
-            };
-            // Creo oggetto con i groupId e groupaddress per poi ottenere le coordinate
-            for (let i = 0; i < this._usersData.length; i++) {
-              if (addressesToDecode.groupid.includes(this._usersData[i].groupid) === false && this._usersData[i].groupid !== this.paramsService.getParams().groupId) {
-                addressesToDecode.addresses.push(this._usersData[i].group_address);
-                addressesToDecode.groupid.push(this._usersData[i].groupid);
-              }
-            }
-            let userAddressToDecode: string;
-            if (this.paramsService.getParams().groupId) {
-              userAddressToDecode = this.profileService.getPartner().group_address;
-            } else {
-              userAddressToDecode = this.authService.getUser().userData.address;
-            }
-            // Ottengo le coordinate degli indirizzi dei gruppi e dell'utente da utilizzare poi per calcolare le distanze
-            this.getCoordinates(addressesToDecode.addresses, userAddressToDecode).then(response => {
-              const addressesLatLng = response[0];
-              const userLatLng = response[1];
-              const dinnerDetails: DinnerDetails = {
-                usersData: this._usersData,
-                badges: dinnerBadges,
-                allFoodAllergies: allDinnerFoodAllergies,
-                foodAllergies: dinnerFoodAllergies[0],
-                foodAllergiesCategories: dinnerFoodAllergies[1],
-                minMaxAges: dinnerMinMaxAges,
-                addressesLatLng: addressesLatLng,
-                userLatLng: userLatLng,
-                groupAddresses: addressesToDecode,
-                dinnerData: dinnerData,
-                avgDistance: avgDistance
+
+    return new Promise(async (resolve, reject) => {
+      if ((force || !this._dinnerDetailsDict ||
+        !Object.keys(this._dinnerDetailsDict).includes(dinnerId.toString()))
+        && !this.syncInProgress) {
+        if (!Object.keys(this._dinnerDetailsDict).includes(dinnerId.toString()))
+          this.syncInProgress = true;
+
+        let userAddress: string;
+        if (this.paramsService.getParams().groupId) {
+          userAddress = this.profileService.getPartner().group_address;
+        } else {
+          userAddress = userData.address;
+        }
+        const userGroupId = this.paramsService.getParams().groupId;
+        const dataToSend = {
+          dinnerId: dinnerId,
+          userAddress: userAddress,
+          userGroupId: userGroupId
+        };
+
+        await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
+        this.http.post(this.rdConstants.getApiRoute('getDinnerDetails'), dataToSend)
+          .toPromise()
+          .then(
+            res => {
+              const avgDistance = res['avgDistance'];
+              const dinnerData = res['dinnerData'];
+              const dinnerBadges = this.getDinnerBadges(res as DinnerDetails);
+              const allDinnerFoodAllergies = this.foodAllergiesService.convertImagesToJpeg(res['foodAllergies']);
+              const dinnerFoodAllergies = this.getDinnerFoodAllergies(res as DinnerDetails);
+              const dinnerMinMaxAges = this.getDinnerUsersData(res as DinnerDetails);
+              this.usersData = this.convertUserImagesToJpeg(res as DinnerDetails);
+              const addressesToDecode = {
+                groupid: [],
+                addresses: []
               };
-              resolve(dinnerDetails);
-            });
-          },
-          () => {
-            reject();
-          }
-        )
-        .finally(
-          () => { this.spinner.dismiss(); }
-        )
-    );
+              // Creo oggetto con i groupId e groupaddress per poi ottenere le coordinate
+              for (let i = 0; i < this.usersData.length; i++) {
+                if (addressesToDecode.groupid.includes(this.usersData[i].groupid) === false && this.usersData[i].groupid !== this.paramsService.getParams().groupId) {
+                  addressesToDecode.addresses.push(this.usersData[i].group_address);
+                  addressesToDecode.groupid.push(this.usersData[i].groupid);
+                }
+              }
+              let userAddressToDecode: string;
+              if (this.paramsService.getParams().groupId) {
+                userAddressToDecode = this.profileService.getPartner().group_address;
+              } else {
+                userAddressToDecode = userData.address;
+              }
+              // Ottengo le coordinate degli indirizzi dei gruppi e dell'utente da utilizzare poi per calcolare le distanze
+              this.getCoordinates(addressesToDecode.addresses, userAddressToDecode).then(async response => {
+                const addressesLatLng = response[0];
+                const userLatLng = response[1];
+                const dinnerDetails: DinnerDetails = {
+                  usersData: this.usersData,
+                  badges: dinnerBadges,
+                  allFoodAllergies: allDinnerFoodAllergies,
+                  foodAllergies: dinnerFoodAllergies[0],
+                  foodAllergiesCategories: dinnerFoodAllergies[1],
+                  minMaxAges: dinnerMinMaxAges,
+                  addressesLatLng: addressesLatLng,
+                  userLatLng: userLatLng,
+                  groupAddresses: addressesToDecode,
+                  dinnerData: dinnerData,
+                  avgDistance: avgDistance
+                };
+
+                this.syncInProgress = false;
+                this._dinnerDetailsDict[dinnerId.toString()] = dinnerDetails;
+                await this.writeDinnerDetails(this._dinnerDetailsDict);
+                resolve(this._dinnerDetailsDict[dinnerId.toString()]);
+              });
+            }, () => {
+              this.syncInProgress = false;
+              reject();
+            }
+          )
+          .finally(
+            () => { this.spinner.dismiss(); }
+          )
+      } else {
+        resolve(this._dinnerDetailsDict[dinnerId.toString()]);
+      }
+    });
+  }
+
+  // Aggiorna i myDinnerDetails nel localStorage
+  private async writeMyDinnerDetails(myDinnerDetails: MyDinnerDetails) {
+    await this.rdStorage.setItem('myDinnerDetails', JSON.stringify(myDinnerDetails));
+    await this.readMyDinnerDetails();
+  }
+
+  // Cancella dal localStorage i myDinnerDetails
+  public async clearMyDinnerDetails() {
+    await this.rdStorage.setItem('myDinnerDetails', null);
+    await this.readMyDinnerDetails();
+  }
+
+  // Legge i myDinnerDetails presenti in localStorage e li carica nel Service
+  private async readMyDinnerDetails() {
+    this._myDinnerDetailsDict = JSON.parse(
+      await this.rdStorage.getItem('myDinnerDetails')
+    ) || {};
   }
 
   // Ottiene i piatti della cena per l'evento cena e gli utenti corrispondenti
-  async getMyDinnerDetails(dinner: Dinner, groupId: number): Promise<MyDinnerDetails> {
-    const dataToSend = {
-      dinnerId: dinner.id,
-      groupId: groupId
-    };
-    await this.spinner.create();
-    return new Promise((resolve, reject) =>
-      this.http.post(this.rdConstants.getApiRoute('getDinnerHouses'), dataToSend)
-        .toPromise()
-        .then(
-          res => {
-            const myDinnerDetails = {
-              houses: res as DinnerHouses,
-              myDish: undefined,
-              houseDistances: [],
-              foodAllergies: [],
-              addressesLatLng: []
-            };
-            myDinnerDetails.houses = this.convertHouseImagesToJpeg(myDinnerDetails.houses);
-            const addressesToDecode = this.detAddressesToDecode(myDinnerDetails.houses);
+  async getMyDinnerDetails(dinner: Dinner, groupId: number, force: Boolean):
+    Promise<MyDinnerDetails> {
 
-            this.getCoordinates(addressesToDecode, this.profileService.getPartner().group_address).then(response => {
-              myDinnerDetails.addressesLatLng = response[0];
-              this.getHouseDistances(myDinnerDetails.houses).then(resp => {
-                myDinnerDetails.houseDistances = resp as string[];
-                resolve(myDinnerDetails);
+    const dinnerId = dinner.id;
+
+    return new Promise(async (resolve, reject) => {
+      if ((force || !this._myDinnerDetailsDict ||
+        !Object.keys(this._myDinnerDetailsDict).includes(dinnerId.toString()))
+        && !this.syncInProgress) {
+        this.syncInProgress = true;
+
+        const dataToSend = {
+          dinnerId: dinner.id,
+          groupId: groupId
+        };
+
+        await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
+        this.http.post(this.rdConstants.getApiRoute('getDinnerHouses'), dataToSend)
+          .toPromise()
+          .then(
+            res => {
+              const myDinnerDetails = {
+                houses: res as DinnerHouses,
+                myDish: undefined,
+                houseDistances: [],
+                foodAllergies: [],
+                addressesLatLng: []
+              };
+              myDinnerDetails.houses = this.convertHouseImagesToJpeg(myDinnerDetails.houses);
+              const addressesToDecode = this.detAddressesToDecode(myDinnerDetails.houses);
+
+              this.getCoordinates(addressesToDecode, this.profileService.getPartner().group_address).then(response => {
+                myDinnerDetails.addressesLatLng = response[0];
+                this.getHouseDistances(myDinnerDetails.houses).then(async resp => {
+                  myDinnerDetails.houseDistances = resp as string[];
+
+                  this.syncInProgress = false;
+                  this._myDinnerDetailsDict[dinnerId.toString()] = myDinnerDetails;
+                  await this.writeMyDinnerDetails(this._myDinnerDetailsDict);
+                  resolve(this._myDinnerDetailsDict[dinnerId.toString()]);
+                });
               });
-            });
-          },
-          () => {
-            reject();
-          }
-        )
-        .finally(
-          () => { this.spinner.dismiss(); }
-        )
-    );
+            }, () => {
+              this.syncInProgress = false;
+              reject();
+            })
+          .finally(
+            () => { this.spinner.dismiss(); }
+          );
+      } else {
+        resolve(this._myDinnerDetailsDict[dinnerId.toString()]);
+      }
+    });
   }
 
-  // Funzioni di Dinner
+  // Funzioni di Dinner Details
 
   // Ottengo i Badges della cena selezionata
   getDinnerBadges(dinnerDetails: DinnerDetails) {
@@ -454,23 +604,6 @@ export class DinnersService {
     return phase;
   }
 
-  /* setPhase vecchio, che si basava sulla data dei singoli piatti
-  setPhase(firstDish: DinnerDish, secondDish: DinnerDish, thirdDish: DinnerDish) {
-      const now = new Date();
-      let phase: number;
-      if (now.getTime() <= firstDish.endTime.getTime() - 7200000) {
-        phase = 1;
-      } else if (now.getTime() <= secondDish.endTime.getTime() - 7200000) {
-        phase = 2;
-      } else if (now.getTime() <= thirdDish.endTime.getTime() - 7200000) {
-        phase = 3;
-      } else {
-        phase = 4;
-      }
-      return phase;
-    }
-    */
-
   // Imposto le variabili della fase ritornando la distanza tra le due case, il tempo di viaggio e l'oggetto DirectionsRenderer che disegna il percorso sulla mappa
   setVariables(firstAddress: string, secondAddress: string) {
     const variablesArray = [];
@@ -561,57 +694,112 @@ export class DinnersService {
 
   // Funzioni di dinnerWinners
 
+  // Aggiorna i dinnerWinners nel localStorage
+  private async writeDinnerWinners(dinnerWinners: DinnerWinner[]) {
+    await this.rdStorage.setItem('dinnerWinners', JSON.stringify(dinnerWinners));
+    await this.readDinnerWinners();
+  }
+
+  // Cancella dal localStorage i dinnerWinners
+  public async clearDinnerWinners() {
+    await this.rdStorage.setItem('dinnerWinners', null);
+    await this.readDinnerWinners();
+  }
+
+  // Legge i dinnerWinners presenti in localStorage e li carica nel Service
+  private async readDinnerWinners() {
+    this._dinnerWinnersDict = JSON.parse(
+      await this.rdStorage.getItem('dinnerWinners')
+    ) || {};
+  }
+
   // Ottengo i vincitori della cena selezionata
-  async getDinnerWinners(dinner: Dinner): Promise<DinnerWinner[]> {
+  async getDinnerWinners(dinner: Dinner, force: Boolean): Promise<DinnerWinner[]> {
     const dinnerId = dinner.id;
 
-    await this.spinner.create();
-    return new Promise((resolve, reject) =>
-      this.http.post(this.rdConstants.getApiRoute('getDinnerWinners'), { dinnerId })
-        .toPromise()
-        .then(
-          res => {
-            resolve(res as DinnerWinner[]);
-          },
-          () => {
-            reject();
-          }
-        )
-        .finally(
-          () => { this.spinner.dismiss(); }
-        )
-    );
+    return new Promise(async (resolve, reject) => {
+      if ((force || !this._dinnerWinnersDict ||
+        !Object.keys(this._dinnerWinnersDict).includes(dinnerId.toString()))
+        && !this.syncInProgress) {
+        this.syncInProgress = true;
+
+        await this.spinner.create();
+        this.http.post(this.rdConstants.getApiRoute('getDinnerWinners'), { dinnerId })
+          .toPromise()
+          .then(
+            async (res) => {
+              this.syncInProgress = false;
+              this._dinnerWinnersDict[dinnerId.toString()] = res;
+              await this.writeDinnerWinners(this._dinnerWinnersDict);
+              resolve(this._dinnerWinnersDict[dinnerId.toString()]);
+            },
+            () => {
+              this.syncInProgress = false;
+              reject();
+            }
+          )
+          .finally(() => { this.spinner.dismiss(); });
+      } else {
+        resolve(this._dinnerWinnersDict[dinnerId.toString()]);
+      }
+    });
   }
 
   // Converto le immagini dei vincitori e dei badges in JPEG
   convertWinnersImagesToJpeg(dinnerWinners: DinnerWinner[]) {
     for (let i = 0; i < dinnerWinners.length; i++) {
-      dinnerWinners[i].profile_photo = 'data:image/jpeg;base64,' + dinnerWinners[i].profile_photo;
-      dinnerWinners[i].badge_photo = 'data:image/jpeg;base64,' + dinnerWinners[i].badge_photo;
+      if (!dinnerWinners[i].profile_photo.startsWith('data:image/jpeg;base64,')) dinnerWinners[i].profile_photo = 'data:image/jpeg;base64,' + dinnerWinners[i].profile_photo;
+      if (!dinnerWinners[i].badge_photo.startsWith('data:image/jpeg;base64,')) dinnerWinners[i].badge_photo = 'data:image/jpeg;base64,' + dinnerWinners[i].badge_photo;
     }
     return dinnerWinners;
   }
 
   // Funzioni di myDinners
 
+  // Aggiorna la dinnerHistory in localStorage
+  private async writeDinnerHistory(dinnerHistory: Dinner[]) {
+    await this.rdStorage.setItem('dinnerHistory', JSON.stringify(dinnerHistory));
+    await this.readDinnerHistory();
+  }
+
+  // Cancella dal localStorage la dinnerHistory
+  public async clearDinnerHistory() {
+    await this.rdStorage.setItem('dinnerHistory', null);
+    await this.readDinnerHistory();
+  }
+
+  // Legge la dinnerHistory presente in localStorage e la carica nel Service
+  private async readDinnerHistory() {
+    this._dinnerHistory = JSON.parse(
+      await this.rdStorage.getItem('dinnerHistory')
+    ) as Dinner[] || [];
+  }
+
   // Ottengo le cene passate dell'utente
-  async getDinnerHistory(): Promise<Dinner[]> {
-    await this.spinner.create();
-    return new Promise((resolve, reject) =>
-      this.http.get(this.rdConstants.getApiRoute('getDinnerHistory'))
-        .toPromise()
-        .then(
-          res => {
-            resolve(res as Dinner[]);
-          },
-          () => {
-            reject();
-          }
-        )
-        .finally(
-          () => { this.spinner.dismiss(); }
-        )
-    );
+  async getDinnerHistory(force: Boolean): Promise<Dinner[]> {
+    return new Promise(async (resolve, reject) => {
+      if ((force || !this._dinnerHistory || !this._dinnerHistory.length) && !this.syncInProgress) {
+        this.syncInProgress = true;
+
+        await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
+        this.http.get(this.rdConstants.getApiRoute('getDinnerHistory'))
+          .toPromise()
+          .then(
+            async res => {
+              this.syncInProgress = false;
+              await this.writeDinnerHistory(res as Dinner[]);
+              resolve(this._dinnerHistory);
+            }, () => {
+              this.syncInProgress = false;
+              reject();
+            })
+          .finally(
+            () => { this.spinner.dismiss(); }
+          )
+      } else {
+        resolve(this._dinnerHistory);
+      }
+    });
   }
 
   // Calcolo età utente
@@ -764,7 +952,7 @@ export class DinnersService {
         const existingMarker = markers[i];
         const pos = existingMarker.getPosition();
 
-        if (address.equals(pos)) {
+        if (address.lat == pos.lat && address.lng == pos.lng) {
           // Applico un offset al secondo marker
           const newLat = address.lat() + (Math.random() - .5) / 1500;
           const newLng = address.lng() + (Math.random() - .5) / 1500;

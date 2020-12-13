@@ -43,14 +43,14 @@ export class ContactsService {
     await this.readLocalContacts();
   }
 
-  // Legge le informazioni utente presenti in localStorage e le carica nel Service
+  // Legge le informazioni sui contatti presenti in localStorage e le carica nel Service
   private async readLocalContacts() {
     this._localContacts = JSON.parse(
       await this.rdStorage.getItem('localContacts')
     ) as RDContact[] || [];
   }
 
-  // Legge le informazioni utente presenti in localStorage e le carica nel Service
+  // Legge le informazioni sui contatti presenti in localStorage e le carica nel Service
   private async readMatchingContacts() {
     this._matchingContacts = JSON.parse(
       await this.rdStorage.getItem('matchingContacts')
@@ -138,7 +138,7 @@ export class ContactsService {
           ];
           await this.writeLocalContacts(testContacts);
           this.syncInProgress = false;
-          resolve(testContacts);
+          resolve(this._localContacts);
         } else {
           const importedContacts: RDContact[] = [];
           const userPhone: any = phone_number;
@@ -192,7 +192,7 @@ export class ContactsService {
                 } else {
                   await this.writeLocalContacts(importedContacts);
                   this.syncInProgress = false;
-                  resolve(importedContacts);
+                  resolve(this._localContacts);
                 }
               }
             });

@@ -123,8 +123,6 @@ export class ProfilePage implements OnInit {
           },
           () => {
             console.log('Errore updateUser');
-            this.authService.readUser();
-            this.getUser();
           }
         )
         .finally(() => { this.spinner.dismiss(); });

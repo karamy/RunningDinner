@@ -13,8 +13,8 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-refresher slot="fixed" (ionRefresh)="loadDinners($event)">
+<ion-content class="padding">
+  <ion-refresher slot="fixed" (ionRefresh)="loadDinners($event,true)">
     <ion-refresher-content pullingIcon="lines" refreshingSpinner="lines">
     </ion-refresher-content>
   </ion-refresher>
@@ -29,7 +29,7 @@
       Non sono presenti cene attive in questo momento :(
     </ion-card>
   </div>
-  <ion-infinite-scroll threshold="5%" (ionInfinite)="loadDinners($event, 'infinite')">
+  <ion-infinite-scroll threshold="5%" (ionInfinite)="loadDinners($event, true, 'infinite')">
     <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Carico altre cene...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>

@@ -7,7 +7,7 @@ import { NotificationsService } from 'src/app/home/notifications.service';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { ProfileService } from 'src/app/home/profile/profile.service';
 import { AuthService } from 'src/app/auth/auth.service';
-import { AlertController, NavController } from '@ionic/angular';
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-dinner-votes',
@@ -66,7 +66,6 @@ export class DinnerVotesPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private notificationsService: NotificationsService,
-    private navController: NavController,
     private alertController: AlertController,
     public dinnersService: DinnersService,
     public paramsService: RDParamsService,
@@ -83,13 +82,13 @@ export class DinnerVotesPage implements OnInit {
     // Ottengo i dati della cena dai parametri della rotta
     this.route.queryParams.subscribe((dinner: Dinner) => {
       this.dinner = { ...dinner };
-      this.detDinnerVotes();
+      this.detDinnerVotes(false);
     });
 
     // Registrazione observable per reagire al ricaricamento cena (es. vengo rimosso da una cena)
     this.subscription = this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Dinner Votes - Ricarico cena');
-      this.detDinnerVotes();
+      this.detDinnerVotes(true);
     });
   }
 
@@ -99,7 +98,7 @@ export class DinnerVotesPage implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  detDinnerVotes(event?) {
+  detDinnerVotes(force: Boolean) {
     this.dinnersService.getDinnerState(this.dinner.id).then(resp => {
       this.state = resp.dinner_state;
 
@@ -115,11 +114,11 @@ export class DinnerVotesPage implements OnInit {
               this.presentBottomPanel();
             }
 
-            this.dinnersService.getDinnerDetails(this.dinner).then(res => {
+            this.dinnersService.getDinnerDetails(this.dinner, this.authService.getUserData(), force).then(res => {
               this.dinnerDetails = res;
 
               // Ottengo i dati relativi alla mia cena
-              this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId).then(response => {
+              this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId, force).then(response => {
                 this.myDinnerDetails = response;
 
                 // Creo array con i due gruppi da votare

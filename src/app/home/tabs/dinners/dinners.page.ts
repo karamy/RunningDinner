@@ -24,8 +24,6 @@ export class DinnersPage implements OnInit {
     private route: ActivatedRoute,
     private alertController: AlertController,
     private dinnersService: DinnersService,
-    private profileService: ProfileService,
-    private notificationsService: NotificationsService,
     private ref: ChangeDetectorRef) { }
 
   ngOnInit() {
@@ -37,12 +35,13 @@ export class DinnersPage implements OnInit {
         this.presentAlert(this.message);
       }
 
-      this.loadDinners(); // Caricamento iniziale cene
     });
+
+    this.loadDinners(null, false, '', false); // Caricamento iniziale cene
   }
 
   // Ricarico i parametri e l'elenco delle cene
-  loadDinners(event?, loadFrom?: string) {
+  loadDinners(event, force: Boolean, loadFrom: string, notSave: Boolean) {
     this.paramsService.loadParams().then(
       () => {
 
@@ -55,7 +54,7 @@ export class DinnersPage implements OnInit {
           this.index = 0;
         }
 
-        this.dinnersService.getOtherDinners(this.paramsService.getParams().dinnerId, this.index, this.filterType).then(
+        this.dinnersService.getOtherDinners(this.paramsService.getParams().dinnerId || 0, force, this.index, this.filterType, notSave).then(
           (response) => {
 
             // Popolo la lista delle cene presenti
@@ -73,8 +72,8 @@ export class DinnersPage implements OnInit {
               event.target.complete();
             }
 
-            // Se non ci sono più cene da caricare disabilito l'ion infinite, altrimenti lo ri-abilito
-            // Sennò una volta caricate tutte, refreshando la pagina rimaneva disabilitato
+            // Se non ci sono piu cene da caricare disabilito l'ion infinite, altrimenti lo ri-abilito
+            // Senno una volta caricate tutte, refreshando la pagina rimaneva disabilitato
             if (response.length === 0) {
               this.infiniteScroll.disabled = true;
             } else {
@@ -87,11 +86,10 @@ export class DinnersPage implements OnInit {
           },
           (err) => {
             console.warn(err);
-          }
-        );
-      }
-    );
+          });
+      });
   }
+
 
   // Apre i dettagli della cena selezionata
   goToDinner(dinner: Dinner) {
@@ -115,6 +113,6 @@ export class DinnersPage implements OnInit {
 
   setFilter(event) {
     this.filterType = event;
-    this.loadDinners();
+    this.loadDinners(null, true, '', true);
   }
 }

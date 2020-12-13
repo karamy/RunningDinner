@@ -36,7 +36,7 @@ export class RDParamsService {
 
   // Carica i parametri utente da DB
   async loadParams() {
-    this.spinner.create();
+    await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
     return new Promise((resolve, reject) => {
       this.http
         .get(this.rdConstants.getApiRoute("params"))
@@ -57,7 +57,7 @@ export class RDParamsService {
   }
 
   // Cancella dal localStorage i parametri
-  clearParams(){
+  clearParams() {
     localStorage.setItem("rdparams", null);
     this.readParams();
   }

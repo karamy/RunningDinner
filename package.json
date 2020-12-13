@@ -46,6 +46,7 @@
     "@ionic/storage": "^2.2.0",
     "angular-cli-ghpages": "^0.6.2",
     "angular-svg-round-progressbar": "^3.0.1",
+    "animate.css": "^4.1.1",
     "capacitor-firebase-auth": "^0.3.1",
     "capacitor-pwa-firebase-msg": "0.0.1",
     "cordova-plugin-actionsheet": "^2.3.3",
