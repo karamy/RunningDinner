@@ -27,7 +27,7 @@ export class MyDinnersPage implements OnInit {
     public paramsService: RDParamsService,
     private ref: ChangeDetectorRef,
     private notificationsService: NotificationsService,
-    public profileService: ProfileService,
+    public profileService: ProfileService
   ) { }
 
   ngOnInit() {

@@ -18,4 +18,11 @@ export class HomePage implements OnInit {
   ngOnInit() {
     this.notificationsService.init(); // Inizializzo notifiche push
   }
+
+  tabChange(event) { // Se passo al tab my-dinners viene cancellato lo stack
+    if (event.tab === 'my-dinners') {
+      console.log('verificato');
+      this.navController.navigateRoot('/home/tabs/my-dinners');
+    }
+  }
 }

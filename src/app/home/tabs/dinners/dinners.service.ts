@@ -76,13 +76,13 @@ export class DinnersService {
   }
 
   // Ottengo le cene disponibili esclusa l'eventuale myDinner
-  async getOtherDinners(dinnerId: number): Promise<Dinner[]> {
+  async getOtherDinners(dinnerId: number, index: number, filter: number): Promise<Dinner[]> {
     if (!dinnerId) {
       dinnerId = 0;
     }
     await this.spinner.create();
     return new Promise((resolve, reject) =>
-      this.http.post(this.rdConstants.getApiRoute('getOtherDinners'), { dinnerId })
+      this.http.post(this.rdConstants.getApiRoute('getOtherDinners'), { dinnerId, index, filter })
         .toPromise()
         .then(
           res => {
@@ -128,11 +128,15 @@ export class DinnersService {
     );
   }
 
-  detDinnerStateRoute(dinner: Dinner, dinnerState: any) {
+  detDinnerStateRoute(dinner: Dinner, dinnerState: any, navigationFrom?: string) {
     if (dinnerState === -1) {
       this.navController.navigateRoot('/home/tabs/dinners', { queryParams: { message: 'Cena cancellata' } });
     } else if (dinnerState === 0) {
-      this.navController.navigateRoot('/home/tabs/my-dinners/dinner-detail', { queryParams: dinner });
+      if (navigationFrom === 'dinners') {
+        this.navController.navigateForward('/home/tabs/dinners/dinner-detail', { queryParams: dinner });
+      } else {
+        this.navController.navigateForward('/home/tabs/my-dinners/dinner-detail', { queryParams: dinner });
+      }
     } else if (dinner.groupIds.includes(this.paramsService.getParams().groupId) === true) {
       if (dinnerState === 1) {
         this.navController.navigateRoot('/home/tabs/my-dinners/dinner-event', { queryParams: dinner });

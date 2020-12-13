@@ -1,10 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { DinnersService, Dinner } from './dinners.service';
 import { NotificationsService } from '../../notifications.service';
 import { ProfileService } from '../../profile/profile.service';
 import { ActivatedRoute } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, IonInfiniteScroll } from '@ionic/angular';
 
 @Component({
   selector: 'app-dinners',
@@ -12,10 +12,13 @@ import { AlertController } from '@ionic/angular';
   styleUrls: ['./dinners.page.scss']
 })
 export class DinnersPage implements OnInit {
-  dinnerList: Dinner[];
+  @ViewChild(IonInfiniteScroll, { static: false }) infiniteScroll: IonInfiniteScroll;
+
+  dinnerList: Dinner[] = [];
   myDinner: Dinner;
   message: string;
   filterType = 0;
+  index = 0;
 
   constructor(public paramsService: RDParamsService,
     private route: ActivatedRoute,
@@ -33,33 +36,49 @@ export class DinnersPage implements OnInit {
       if (this.message) {
         this.presentAlert(this.message);
       }
+
+      this.loadDinners(); // Caricamento iniziale cene
     });
-
-    // Lascio readPartner per debug perchè sennò al refresh (senza rifare login) non funziona getDinnerDetails
-    // in quanto richiede address del partner
-    this.profileService.readPartner();
-
-    this.loadDinners(); // Caricamento iniziale cene
   }
 
   // Ricarico i parametri e l'elenco delle cene
-  loadDinners(event?) {
+  loadDinners(event?, loadFrom?: string) {
     this.paramsService.loadParams().then(
       () => {
-        this.dinnersService.getOtherDinners(this.paramsService.getParams().dinnerId).then(
+
+        // Se caricato dall'ion infinite aumento l'index di 10
+        // In questo modo se ricarico la pagina (normale o con refresher), mi mostra sempre le prime 10 cene
+        if (loadFrom === 'infinite') {
+          this.index = this.index + 10;
+        } else {
+          this.dinnerList = [];
+          this.index = 0;
+        }
+
+        this.dinnersService.getOtherDinners(this.paramsService.getParams().dinnerId, this.index, this.filterType).then(
           (response) => {
 
             // Popolo la lista delle cene presenti
-            this.dinnerList = response;
-            console.log(this.dinnerList);
+            for (let i = 0; i < response.length; i++) {
+              this.dinnerList.push(response[i]);
+            }
 
             for (let i = 0; i < this.dinnerList.length; i++) {
               const dinnerDateTime = this.dinnersService.formatDate(this.dinnerList[i].date);
               this.dinnerList[i].dateString = dinnerDateTime[0];
               this.dinnerList[i].time = Number(dinnerDateTime[1]);
             }
-            if (event) { // Se lanciato dal refresher emetto evento di completamento
+
+            if (event) { // Se lanciato dal refresher o dall'infinite scroll emetto evento di completamento
               event.target.complete();
+            }
+
+            // Se non ci sono più cene da caricare disabilito l'ion infinite, altrimenti lo ri-abilito
+            // Sennò una volta caricate tutte, refreshando la pagina rimaneva disabilitato
+            if (response.length === 0) {
+              this.infiniteScroll.disabled = true;
+            } else {
+              this.infiniteScroll.disabled = false;
             }
 
             // Lancio la change detection, altrimenti all'arrivo della notifica
@@ -74,12 +93,12 @@ export class DinnersPage implements OnInit {
     );
   }
 
-  // In base allo state della cena selezionata ti manda sui dettagli/evento/fasi
+  // Apre i dettagli della cena selezionata
   goToDinner(dinner: Dinner) {
     this.dinnersService.getDinnerState(dinner.id).then(res => {
       const dinnerState = res.dinner_state;
       console.log('Dinner State: ' + dinnerState);
-      this.dinnersService.detDinnerStateRoute(dinner, dinnerState);
+      this.dinnersService.detDinnerStateRoute(dinner, dinnerState, 'dinners');
     });
   }
 
@@ -96,5 +115,6 @@ export class DinnersPage implements OnInit {
 
   setFilter(event) {
     this.filterType = event;
+    this.loadDinners();
   }
 }

@@ -15,7 +15,9 @@
   <ion-grid>
     <ion-row class="ion-align-items-center">
       <ion-col class="ion-text-center">
-        <ion-button fill="clear" (click)="onAddToGroupRequest()">Aggiungi a gruppo</ion-button>
+        <ion-button *ngIf="isInGroup === false" fill="clear" (click)="onAddToGroupRequest()">Aggiungi a gruppo
+        </ion-button>
+        <h3 *ngIf="isInGroup === true" style="margin-top: 10px;">{{contactName}} è già in un gruppo</h3>
       </ion-col>
     </ion-row>
   </ion-grid>

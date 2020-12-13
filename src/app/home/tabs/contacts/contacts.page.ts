@@ -39,7 +39,7 @@ export class ContactsPage implements OnInit {
     });
   }
 
-  loadContacts(): Promise<any> {
+  loadContacts(): Promise<void> {
     return new Promise((resolve, reject) => {
       this.contactsService.getLocalContacts(true, this.authService.getUserData().phone_number).then(
         // Ottengo i contatti del device
@@ -66,13 +66,13 @@ export class ContactsPage implements OnInit {
   }
 
   // Mostra i dettagli del contatto
-  async onShowContact(contactName: string, contactImage: string, contactId: number) {
+  async onShowContact(contactName: string, contactImage: string, contactId: number, isInGroup: boolean) {
     this.modalOpen = true;
     const modal = await this.modalController.create({
       component: ContactsDetailPage,
       swipeToClose: true,
       backdropDismiss: true,
-      componentProps: { contactName, contactImage, contactId },
+      componentProps: { contactName, contactImage, contactId, isInGroup },
       cssClass: "modal-style"
     });
     modal.onWillDismiss().then(() => {

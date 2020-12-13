@@ -10,7 +10,11 @@ const routes: Routes = [
   {
     path: 'create-dinner',
     loadChildren: () => import('./create-dinner/create-dinner.module').then(m => m.CreateDinnerPageModule)
-  }
+  },
+  {
+    path: 'dinner-detail',
+    loadChildren: () => import('../my-dinners/dinner-detail/dinner-detail.module').then(m => m.DinnerDetailPageModule)
+  },
 ];
 
 @NgModule({

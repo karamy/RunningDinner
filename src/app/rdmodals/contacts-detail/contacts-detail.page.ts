@@ -15,6 +15,7 @@ export class ContactsDetailPage implements OnInit {
   @Input() contactName: string;
   @Input() contactImage: string;
   @Input() contactId: number;
+  @Input() isInGroup: boolean;
 
   contactBadges: UserBadge[] = [];
 

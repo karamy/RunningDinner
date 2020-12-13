@@ -1,4 +1,4 @@
-<ion-tabs>
+<ion-tabs (ionTabsWillChange)="tabChange($event)">
   <ion-tab-bar #myTabBar id="myTabBar" slot="bottom">
     <ion-tab-button tab="contacts">
       <ion-label>Contacts</ion-label>

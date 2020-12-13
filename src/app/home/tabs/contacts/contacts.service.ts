@@ -101,7 +101,7 @@ export class ContactsService {
             },
             {
               name: 'Nadia',
-              phoneNumbers: ['+393450166161'],
+              phoneNumbers: ['3450166161'],
               imageUrl: 'assets/dummy.png',
               userId: 0
             },
@@ -243,6 +243,7 @@ export class ContactsService {
               localContacts[i].phoneNumbers = []
               localContacts[i].phoneNumbers.push(tempPhoneNumber)
               localContacts[i].userId = returnedNumbers[x].userId;
+              localContacts[i].isInGroup = returnedNumbers[x].isInGroup;
               contactList.push(localContacts[i]);
               break;
             }
@@ -280,4 +281,5 @@ export class RDContact {
   name: string;
   imageUrl: SafeUrl;
   userId: number;
+  isInGroup?: boolean;
 }
