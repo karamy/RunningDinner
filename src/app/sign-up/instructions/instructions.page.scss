@@ -1,0 +1,78 @@
+ion-slides {
+  height: 97% !important;
+  margin-top: 0%;
+}
+ion-progress-bar {
+  position: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 40%;
+}
+.titletop {
+  position: absolute;
+  top: 1.5%;
+  font-size: 1.7em;
+  color: #50976a;
+  width: 60%;
+}
+.titlebottom {
+  position: absolute;
+  bottom: 0%;
+  width: 80%;
+  height: 20%;
+  color: white;
+  text-align: center;
+  display: table;
+}
+.h1bottom {
+  display: table-cell;
+  vertical-align: middle;
+}
+.buttonbottom {
+  position: absolute;
+  bottom: 5%;
+  background: linear-gradient(to bottom, white, #e2f4de);
+  border-radius: 0.5em;
+  width: 40%;
+  height: 10%;
+  box-shadow: 0px 0px 7px 7px #e2f4de;
+  font-size: 1.7em;
+  border-width: 0px;
+}
+.città {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover !important;
+}
+.macchina {
+  position: absolute;
+  top: 60%;
+  width: 40%;
+  margin-left: 45%;
+}
+.logo1 {
+  position: absolute;
+  top: 28%;
+  width: 13%;
+  margin-left: 5%;
+}
+.logo2 {
+  position: absolute;
+  top: 14%;
+  width: 18%;
+  margin-left: 72%;
+}
+.footerslide {
+  position: absolute;
+  bottom: 0%;
+  width: 100%;
+  height: 23%;
+  border-top-right-radius: 2em;
+  border-top-left-radius: 2em;
+  box-shadow: 0px 5px 20px 20px #f5f5f5;
+  background-color: var(--ion-color-primary);
+}
+.animate__animated.lightSpeedInLeft {
+  --animate-duration: 4s;
+}

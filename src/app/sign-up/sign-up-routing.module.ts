@@ -23,7 +23,11 @@ const routes: Routes = [
   {
     path: 'address-map',
     loadChildren: () => import('./address-map/address-map.module').then(m => m.AddressMapPageModule)
+  },  {
+    path: 'registration',
+    loadChildren: () => import('./registration/registration.module').then( m => m.RegistrationPageModule)
   }
+
 ];
 
 @NgModule({

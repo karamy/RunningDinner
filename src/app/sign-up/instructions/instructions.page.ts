@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { IonSlides, NavController } from '@ionic/angular';
+import { ViewChild } from '@angular/core';
+
 
 @Component({
   selector: 'app-instructions',
@@ -7,6 +9,11 @@ import { NavController } from '@ionic/angular';
   styleUrls: ['./instructions.page.scss'],
 })
 export class InstructionsPage implements OnInit {
+
+  @ViewChild('slider', {static: false}) Slider: IonSlides;
+
+  index=0;
+  progressvalue =0;
 
   constructor(private navController: NavController) { }
 
@@ -17,4 +24,12 @@ export class InstructionsPage implements OnInit {
     this.navController.navigateRoot('/auth/geolocation');
   }
 
+  prova(){
+    this.Slider.getActiveIndex()
+    .then(activeIndex => {
+      console.log('active index = ', activeIndex );
+      this.index=activeIndex;
+      this.progressvalue= (activeIndex*0.5);
+   });
+  }
 }

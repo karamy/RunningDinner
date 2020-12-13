@@ -11,14 +11,14 @@ export class ProfileComponent implements OnInit {
 
   constructor(private paramsService: RDParamsService) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   // Ottengo l'icona corretta se appartengo a un gruppo o no
   getIconName() {
     if (this.paramsService.getParams().groupId) {
-      return "people-outline" // Gruppo
+      return "people-outline"; // Gruppo
     } else {
-      return "person-circle-outline" // Singolo
+      return "person-circle-outline"; // Singolo
     }
   }
 

@@ -73,8 +73,8 @@ export class DinnersPage implements OnInit {
               event.target.complete();
             }
 
-            // Se non ci sono piÃ¹ cene da caricare disabilito l'ion infinite, altrimenti lo ri-abilito
-            // SennÃ² una volta caricate tutte, refreshando la pagina rimaneva disabilitato
+            // Se non ci sono più cene da caricare disabilito l'ion infinite, altrimenti lo ri-abilito
+            // Sennò una volta caricate tutte, refreshando la pagina rimaneva disabilitato
             if (response.length === 0) {
               this.infiniteScroll.disabled = true;
             } else {
