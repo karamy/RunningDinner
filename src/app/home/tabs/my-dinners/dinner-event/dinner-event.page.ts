@@ -9,6 +9,7 @@ import { FoodAllergiesInfoPage } from 'src/app/rdmodals/food-allergies-info/food
 import { CupertinoPane, CupertinoSettings } from 'cupertino-pane';
 import { NotificationsService } from 'src/app/home/notifications.service';
 import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-dinner-event',
@@ -52,7 +53,8 @@ export class DinnerEventPage implements OnInit, OnDestroy {
     private dinnersService: DinnersService,
     private profileService: ProfileService,
     public paramsService: RDParamsService,
-    private notificationsService: NotificationsService) { }
+    private notificationsService: NotificationsService,
+    private authService: AuthService) { }
 
   async presentPopover(ev: any, dinnerTime) {
     const popover = await this.popoverController.create({
@@ -78,13 +80,13 @@ export class DinnerEventPage implements OnInit, OnDestroy {
     // Ottengo i dati della cena dai parametri della rotta
     this.route.queryParams.subscribe((dinner: Dinner) => {
       this.dinner = { ...dinner };
-      this.getDinnerEventData();
+      this.getDinnerEventData(false);
     });
 
     // Registrazione observable per reagire al ricaricamento cena (es. vengo rimosso da una cena)
     this.subscription = this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Dinner Event - Ricarico cena');
-      this.getDinnerEventData();
+      this.getDinnerEventData(true);
     });
   }
 
@@ -94,7 +96,7 @@ export class DinnerEventPage implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  getDinnerEventData() {
+  getDinnerEventData(force: Boolean) {
     this.dinnersService.getDinnerState(this.dinner.id).then(resp => {
       this.state = resp.dinner_state;
 
@@ -105,7 +107,7 @@ export class DinnerEventPage implements OnInit, OnDestroy {
           this.presentBottomPanel();
         }
 
-        this.dinnersService.getDinnerDetails(this.dinner).then(res => {
+        this.dinnersService.getDinnerDetails(this.dinner, this.authService.getUserData(), force).then(res => {
           this.dinnerDetails = res;
 
           // Dal dinner_type ottengo nome della tipologia ed i piatti che verranno cucinati nella cena
@@ -118,7 +120,7 @@ export class DinnerEventPage implements OnInit, OnDestroy {
           this.partnerName = this.profileService.getPartner().name;
 
           // Ottengo i dati relativi alla mia cena
-          this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId).then(response => {
+          this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId, force).then(response => {
             this.myDinnerDetails = response;
             this.myDish = this.dinnersService.detMyDish(this.myDinnerDetails.houses, this.firstDish, this.secondDish, this.thirdDish);
             const myDinnerFoodAllergies = this.dinnersService.getMyDinnerFoodAllergies(this.myDinnerDetails.houses, this.dinnerDetails.allFoodAllergies);

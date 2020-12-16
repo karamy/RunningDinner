@@ -5,6 +5,7 @@ import { AlertController, NavController } from '@ionic/angular';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { NotificationsService } from 'src/app/home/notifications.service';
 import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-dinner-detail',
@@ -35,19 +36,20 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
     private dinnersService: DinnersService,
     public paramsService: RDParamsService,
     private notificationsService: NotificationsService,
-    private navController: NavController) { }
+    private navController: NavController,
+    private authService: AuthService) { }
 
   ngOnInit() {
     // Ottengo i dati di testate della cena dai parametri della rotta
     this.route.queryParams.subscribe((dinner: Dinner) => {
       this.dinner = { ...dinner }; // Clono l'oggetto passato come parametro in quanto, essendo immutabile, darebbe errore nell'edit della cena
-      this.getDinnerDetails();
+      this.getDinnerDetails(false);
     });
 
     // Registrazione observable per reagire al ricaricamento cena (es. vengo rimosso da una cena)
     this.subscription = this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Dinner Detail - Ricarico cena');
-      this.getDinnerDetails();
+      this.getDinnerDetails(true);
     });
   }
 
@@ -58,7 +60,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
   }
 
   // Carica i dettagli della cena
-  getDinnerDetails() {
+  getDinnerDetails(force: Boolean) {
     // Controllo lo state della cena
     this.dinnersService.getDinnerState(this.dinner.id).then(res => {
       if (!res) { // Può accadere se vengo rimosso da una cena che viene eliminata, ritorno alla home
@@ -69,7 +71,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
 
       this.state = res.dinner_state;
       if (this.state === 0) {
-        this.dinnersService.getDinnerDetails(this.dinner).then(
+        this.dinnersService.getDinnerDetails(this.dinner, this.authService.getUserData(), force).then(
           (resp) => {
             this.dinnerDetails = resp;
 
@@ -106,7 +108,6 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
     const bounds = new google.maps.LatLngBounds();
     const markers: google.maps.Marker[] = [];
 
-
     const mapElement = document.getElementById('mapDetails');
     if (mapElement) { // Istanzio la mappa solo se sono sulla pagina, altrimenti da errore
       const map = new google.maps.Map(mapElement, {
@@ -136,7 +137,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
         icon: userMarker
       });
       markers.push(mapUserMarker);
-      const userCircle = new google.maps.Circle({
+      /* const userCircle = new google.maps.Circle({
         center: userAddress[0],
         radius: 100,
         fillColor: '#0000FF',
@@ -145,18 +146,18 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
         strokeColor: '#FFFFFF',
         strokeOpacity: 0.1,
         strokeWeight: 2
-      });
+      }); */
 
       // Imposto la posizione sulla mappa per le cene
       for (let i = 0; i < addresses.length; i++) {
-        const markerAddress = this.dinnersService.checkIfExistingMarker(markers, addresses[i])
+        const markerAddress = this.dinnersService.checkIfExistingMarker(markers, addresses[i]);
         const mapDinnerMarker = new google.maps.Marker({
           position: markerAddress,
           map: map,
           icon: dinnerMarker
         });
         markers.push(mapDinnerMarker);
-        const dinnerCircle = new google.maps.Circle({
+        /* const dinnerCircle = new google.maps.Circle({
           center: markerAddress,
           radius: 100,
           fillColor: '#0000FF',
@@ -165,7 +166,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
           strokeColor: '#FFFFFF',
           strokeOpacity: 0.1,
           strokeWeight: 2
-        });
+        }); */
       }
 
       for (var j = 0; j < markers.length; j++) {
@@ -257,7 +258,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
     this.dinnersService.updateDinner(updateDinnerBody)
       .then(
         () => {
-          this.getDinnerDetails(); // Ricarico la cena in caso di esito positivo
+          this.getDinnerDetails(true); // Ricarico la cena in caso di esito positivo
         },
         (err) => {
           console.log(err);

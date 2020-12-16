@@ -10,6 +10,7 @@ import { ProfileService } from '../home/profile/profile.service';
 import { FoodAllergiesService } from '../rdmodals/food-allergies/food-allergies.service';
 import { BadgesService } from '../home/profile/badges.service';
 import { ContactsService } from '../home/tabs/contacts/contacts.service';
+import { DinnersService } from '../home/tabs/dinners/dinners.service';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,8 @@ export class AuthService {
     private profileService: ProfileService,
     private foodAllergiesService: FoodAllergiesService,
     private badgesService: BadgesService,
-    private contactsService: ContactsService
+    private contactsService: ContactsService,
+    private dinnersService: DinnersService
   ) {
     this.readUser();
   }
@@ -40,7 +42,7 @@ export class AuthService {
   }
 
   // Legge le informazioni utente presenti in localStorage e le carica nel Service
-  public readUser() {
+  private readUser() {
     this._user = JSON.parse(
       localStorage.getItem('user')
     ) as AuthenticatedUser;
@@ -173,6 +175,12 @@ export class AuthService {
           this.badgesService.clearGroupBadges();
           await this.contactsService.clearLocalContacts();
           await this.contactsService.clearMatchingContacts();
+          await this.dinnersService.clearOtherDinners();
+          await this.dinnersService.clearMyDinner();
+          await this.dinnersService.clearDinnerHistory();
+          await this.dinnersService.clearDinnerDetails();
+          await this.dinnersService.clearDinnerWinners();
+          await this.dinnersService.clearMyDinnerDetails();
 
           // Uscita dall'app
           this.navController.navigateRoot('/auth');

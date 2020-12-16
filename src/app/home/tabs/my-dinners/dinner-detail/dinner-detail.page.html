@@ -4,7 +4,7 @@
       <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="primary">
-      <ion-button shape="round" size="large" slot="icon-only" (click)="getDinnerDetails()">
+      <ion-button shape="round" size="large" slot="icon-only" (click)="getDinnerDetails(true)">
         <ion-icon size="large" name="refresh-circle-outline"></ion-icon>
       </ion-button>
       <ion-button shape="round" size="large" routerLink="/home/chat" *ngIf="isMyDinner()">
@@ -56,7 +56,7 @@
             <ion-icon name="people-circle-outline"></ion-icon>
           </ion-col>
           <ion-col class="ion-text-start" style="padding-left: 2%;">
-            <div *ngIf="dinnerDetails.minMaxAges.length > 0">
+            <div *ngIf="dinnerDetails && dinnerDetails.minMaxAges.length > 0">
               <h6 *ngIf="dinnerDetails.minMaxAges[0] !== dinnerDetails.minMaxAges[1]" class="dinner-info">Età
                 partecipanti
                 dai
@@ -73,7 +73,7 @@
             <ion-icon name="map-outline"></ion-icon>
           </ion-col>
           <ion-col class="ion-text-start" style="padding-left: 2%;">
-            <div *ngIf="dinnerDetails.avgDistance >= 0">
+            <div *ngIf="dinnerDetails && dinnerDetails.avgDistance >= 0">
               <h6 class="dinner-info">Distanza media {{dinnerDetails.avgDistance}} km da te</h6>
             </div>
           </ion-col>

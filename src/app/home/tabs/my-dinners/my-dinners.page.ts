@@ -33,23 +33,23 @@ export class MyDinnersPage implements OnInit {
   ngOnInit() {
     this.route.queryParams.subscribe(() => {
       if (!this.dinnerLoaded) { // Utilizzo boolean perchè i queryParams scattano anche se torno indietro es. dal profilo, quindi evito di ricaricare
-        this.loadDinners(); // Caricamento della myDinner e cene passate
+        this.loadDinners(null, false); // Caricamento della myDinner e cene passate
       }
     });
 
     // Registrazione observable per reagire al ricaricamento cene (es. vengo aggiunto a una cena)
     this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Dinner History - Ricarico cene');
-      this.loadDinners();
+      this.loadDinners(null, true);
     });
   }
 
   // Ricarico i parametri, ottengo l'eventuale myDinner e cene passate
-  loadDinners(event?) {
+  loadDinners(event, force: Boolean) {
     this.paramsService.loadParams().then(
       () => {
         // Ottengo l'eventuale mia cena
-        this.dinnersService.getMyDinner().then(
+        this.dinnersService.getMyDinner(force).then(
           (response: Dinner) => {
             this.myDinner = response;
             if (this.myDinner) {
@@ -58,7 +58,7 @@ export class MyDinnersPage implements OnInit {
               this.myDinner.time = Number(myDinnerDateTime[1]);
             }
             // Ottengo le cene passate
-            this.dinnersService.getDinnerHistory().then(res => {
+            this.dinnersService.getDinnerHistory(force).then(res => {
               this.dinnerHistoryList = res;
 
               if (event) { // Se lanciato dal refresher emetto evento di completamento
