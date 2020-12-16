@@ -190,7 +190,7 @@ export class DinnersService {
 
   // Ottengo lo state della cena
   public async getDinnerState(dinnerId: number): Promise<any> {
-    await this.spinner.create();
+    //await this.spinner.create();
     return new Promise((resolve, reject) =>
       this.http.post(this.rdConstants.getApiRoute('getDinnerState'), { dinnerId })
         .toPromise()
@@ -203,7 +203,9 @@ export class DinnersService {
           }
         )
         .finally(
-          () => { this.spinner.dismiss(); }
+          () => { 
+            //this.spinner.dismiss();
+           }
         )
     );
   }

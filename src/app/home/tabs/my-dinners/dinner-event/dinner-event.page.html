@@ -7,7 +7,7 @@
       <ion-button shape="round" size="large" slot="icon-only" routerLink="/home/chat">
         <ion-icon size="large" name="chatbubble-ellipses-outline"></ion-icon>
       </ion-button>
-      <ion-button shape="round" size="large" slot="icon-only" (click)="getDinnerEventData()">
+      <ion-button shape="round" size="large" slot="icon-only" (click)="getDinnerEventData(true)">
         <ion-icon size="large" name="refresh-circle-outline"></ion-icon>
       </ion-button>
       <ion-button shape="round" size="large" slot="icon-only" (click)="presentPopover($event, dinner.time)">
