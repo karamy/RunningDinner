@@ -42,7 +42,7 @@ export class DinnersPage implements OnInit {
 
   // Ricarico i parametri e l'elenco delle cene
   loadDinners(event, force: Boolean, loadFrom: string, notSave: Boolean) {
-    this.paramsService.loadParams().then(
+    this.paramsService.loadParams(force).then(
       () => {
 
         // Se caricato dall'ion infinite aumento l'index di 10

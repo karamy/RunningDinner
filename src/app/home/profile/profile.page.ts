@@ -196,7 +196,7 @@ export class ProfilePage implements OnInit {
   onLeaveGroup() {
     this.leaveGroup(this.paramsService.getParams().groupId).then(
       () => { // Gruppo abbandonato, ricarico parametri
-        this.paramsService.loadParams().then(() => {
+        this.paramsService.loadParams(true).then(() => {
           this.profileService.clearPartner();
           this.foodAllergiesService.clearGroupFoodAllergies();
           this.badgesService.clearGroupBadges();

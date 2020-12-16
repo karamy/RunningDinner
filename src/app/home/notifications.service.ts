@@ -113,7 +113,7 @@ export class NotificationsService {
         this.presentAlertAddToGroup(notificationContent.userIdThatInvites as number, notificationContent.userNameThatInvites as string, notificationContent.userIdThatInvitesHouse as boolean);
         break;
       case "updateParams": // Richiesta di ricaricamento parametri
-        this.paramsService.loadParams()
+        this.paramsService.loadParams(true)
           .then(() => {
             if (this.paramsService.getParams().groupId) {
               this.profileService.getPartnerData(this.authService.getUserData()).then(() => {
@@ -174,7 +174,7 @@ export class NotificationsService {
             this.sendGroupConfirm(userIdThatInvites, houseUserId).then(
               () => {
                 // Gruppo creato, ricarico parametri e carico i dati del partner
-                this.paramsService.loadParams().then(() => {
+                this.paramsService.loadParams(true).then(() => {
                   this.profileService.getPartnerData(this.authService.getUserData()).then(
                     () => {
                       this.foodAllergiesService.getPartnerFoodAllergies(this.authService.getUserData().userid);

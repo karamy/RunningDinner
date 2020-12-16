@@ -279,7 +279,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
     this.dinnersService.leaveDinner(leaveDinnerBody).then(
       () => {
         // Ricarico parametri e vado in /dinners
-        this.paramsService.loadParams().then(() => {
+        this.paramsService.loadParams(true).then(() => {
           this.notificationsService.fireUpdateParamsEvent();
         });
         this.navController.navigateRoot('/home');
@@ -325,7 +325,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
     this.dinnersService.joinDinner(joinDinnerBody).then(
       () => {
         // Ricarico parametri e vado in /dinners
-        this.paramsService.loadParams().then(() => {
+        this.paramsService.loadParams(true).then(() => {
           this.notificationsService.fireUpdateParamsEvent();
         });
         this.navController.navigateRoot('/home');

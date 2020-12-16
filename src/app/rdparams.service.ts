@@ -8,6 +8,7 @@ import { RDConstantsService } from './rdcostants.service';
 })
 export class RDParamsService {
   private _params: RDParams;
+  private syncInProgress = false;
 
   constructor(
     private http: HttpClient,
@@ -35,24 +36,30 @@ export class RDParamsService {
   }
 
   // Carica i parametri utente da DB
-  async loadParams() {
-    await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
-    return new Promise((resolve, reject) => {
-      this.http
-        .get(this.rdConstants.getApiRoute("params"))
-        .toPromise()
-        .then(
-          res => {
-            this.writeParams(res as RDParams);
-            console.log(this._params);
-            resolve();
-          },
-          err => {
-            reject(err);
-          }
-        ).finally(() => {
-          this.spinner.dismiss();
-        });
+  async loadParams(force?) {
+    return new Promise(async (resolve, reject) => {
+      if ((force || !this._params) && !this.syncInProgress) {
+        this.syncInProgress = true;
+
+        await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
+        this.http.get(this.rdConstants.getApiRoute("params"))
+          .toPromise()
+          .then(
+            res => {
+              this.syncInProgress = false;
+              this.writeParams(res as RDParams);
+              resolve();
+            },
+            err => {
+              this.syncInProgress = false;
+              reject(err);
+            }
+          ).finally(() => {
+            this.spinner.dismiss();
+          });
+      } else {
+        resolve(this._params);
+      }
     });
   }
 

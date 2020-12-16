@@ -46,7 +46,7 @@ export class MyDinnersPage implements OnInit {
 
   // Ricarico i parametri, ottengo l'eventuale myDinner e cene passate
   loadDinners(event, force: Boolean) {
-    this.paramsService.loadParams().then(
+    this.paramsService.loadParams(force).then(
       () => {
         // Ottengo l'eventuale mia cena
         this.dinnersService.getMyDinner(force).then(

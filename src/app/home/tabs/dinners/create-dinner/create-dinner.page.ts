@@ -82,7 +82,7 @@ export class CreateDinnerPage implements OnInit {
       () => {
         // Ricarico parametri e vado in /dinners effettuando
         // reset della history per ricaricare in automatico le cene
-        this.paramsService.loadParams().then(() => {
+        this.paramsService.loadParams(true).then(() => {
           this.notificationsService.fireUpdateParamsEvent();
         });
         this.navController.navigateRoot('/home');
