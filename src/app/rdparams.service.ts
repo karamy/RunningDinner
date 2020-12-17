@@ -36,7 +36,7 @@ export class RDParamsService {
   }
 
   // Carica i parametri utente da DB
-  async loadParams(force?) {
+  async loadParams(force?: Boolean) {
     return new Promise(async (resolve, reject) => {
       if ((force || !this._params) && !this.syncInProgress) {
         this.syncInProgress = true;

@@ -29,7 +29,7 @@
       Non sono presenti cene attive in questo momento :(
     </ion-card>
   </div>
-  <ion-infinite-scroll threshold="5%" (ionInfinite)="loadDinners($event, true, 'infinite', false)">
+  <ion-infinite-scroll threshold="5%" (ionInfinite)="loadDinners($event, true, 'infinite', true)">
     <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Carico altre cene...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>

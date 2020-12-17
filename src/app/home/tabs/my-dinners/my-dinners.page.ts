@@ -15,10 +15,8 @@ import { Dinner, DinnersService } from '../dinners/dinners.service';
 
 export class MyDinnersPage implements OnInit {
 
-  private dinnerLoaded = false;
   dinnerHistoryList: Dinner[];
   myDinner: Dinner;
-
 
   constructor(
     private dinnersService: DinnersService,
@@ -32,9 +30,7 @@ export class MyDinnersPage implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe(() => {
-      if (!this.dinnerLoaded) { // Utilizzo boolean perchè i queryParams scattano anche se torno indietro es. dal profilo, quindi evito di ricaricare
         this.loadDinners(null, false); // Caricamento della myDinner e cene passate
-      }
     });
 
     // Registrazione observable per reagire al ricaricamento cene (es. vengo aggiunto a una cena)
@@ -67,8 +63,6 @@ export class MyDinnersPage implements OnInit {
               // Lancio la change detection, altrimenti all'arrivo della notifica
               // non aggiornava la videata
               this.ref.detectChanges();
-
-              this.dinnerLoaded = true;
             });
           },
           (err) => {
