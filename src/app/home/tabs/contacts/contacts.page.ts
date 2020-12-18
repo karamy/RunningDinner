@@ -26,7 +26,7 @@ export class ContactsPage implements OnInit {
     this.loadContacts().finally(() => {
       setTimeout(() => { // Necessario perchè altrimenti in caso di valore cache-ato non viene chiamato il finally
         this.spinner.dismiss();
-      }, 200);
+      }, 2000);
     });
   }
 

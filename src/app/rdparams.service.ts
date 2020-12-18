@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { RDSpinnerService } from './rdspinner.service';
 import { RDConstantsService } from './rdcostants.service';
 
 @Injectable({
@@ -12,7 +11,6 @@ export class RDParamsService {
 
   constructor(
     private http: HttpClient,
-    private spinner: RDSpinnerService,
     private rdConstants: RDConstantsService) {
     this.readParams();
   }
@@ -41,7 +39,6 @@ export class RDParamsService {
       if ((force || !this._params) && !this.syncInProgress) {
         this.syncInProgress = true;
 
-        await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
         this.http.get(this.rdConstants.getApiRoute("params"))
           .toPromise()
           .then(
@@ -54,9 +51,7 @@ export class RDParamsService {
               this.syncInProgress = false;
               reject(err);
             }
-          ).finally(() => {
-            this.spinner.dismiss();
-          });
+          );
       } else {
         resolve(this._params);
       }

@@ -1,10 +1,9 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { DinnersService, Dinner } from './dinners.service';
-import { NotificationsService } from '../../notifications.service';
-import { ProfileService } from '../../profile/profile.service';
 import { ActivatedRoute } from '@angular/router';
 import { AlertController, IonInfiniteScroll } from '@ionic/angular';
+import { NotificationsService } from '../../notifications.service';
 
 @Component({
   selector: 'app-dinners',
@@ -16,7 +15,6 @@ export class DinnersPage implements OnInit {
 
   dinnerList: Dinner[] = [];
   myDinner: Dinner;
-  message: string;
   filterType = 0;
   index = 0;
 
@@ -24,20 +22,23 @@ export class DinnersPage implements OnInit {
     private route: ActivatedRoute,
     private alertController: AlertController,
     private dinnersService: DinnersService,
+    private notificationsService: NotificationsService,
     private ref: ChangeDetectorRef) { }
 
   ngOnInit() {
-    // Ottengo l'eventuale messaggio dai parametri della rotta
     this.route.queryParams.subscribe((params) => {
-      this.message = params.message;
-
-      if (this.message) {
-        this.presentAlert(this.message);
+      if (params.message) {
+        this.presentAlert(params.message);
       }
 
+      // Registrazione observable per reagire al ricaricamento cene (es. vengo aggiunto a una cena)
+      this.notificationsService.getUpdateParamsObservable().subscribe(() => {
+        console.log('Dinners - Ricarico cene');
+        this.loadDinners(null, true, '', false);
+      });
     });
 
-    this.loadDinners(null, false, '', false); // Caricamento iniziale cene
+    this.loadDinners(null, false, '', false);
   }
 
   // Ricarico i parametri e l'elenco delle cene
@@ -89,7 +90,6 @@ export class DinnersPage implements OnInit {
           });
       });
   }
-
 
   // Apre i dettagli della cena selezionata
   goToDinner(dinner: Dinner) {

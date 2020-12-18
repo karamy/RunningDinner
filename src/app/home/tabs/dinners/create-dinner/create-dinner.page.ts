@@ -80,12 +80,11 @@ export class CreateDinnerPage implements OnInit {
     };
     this.dinnersService.createDinner(createDinnerBody).then(
       () => {
-        // Ricarico parametri e vado in /dinners effettuando
-        // reset della history per ricaricare in automatico le cene
+        // Ricarico parametri e vado in /dinners
         this.paramsService.loadParams(true).then(() => {
           this.notificationsService.fireUpdateParamsEvent();
         });
-        this.navController.navigateRoot('/home');
+        this.navController.navigateRoot('/home/tabs/dinners');
       },
       (err) => {
         console.warn(err);

@@ -1,26 +1,21 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { NotificationsService } from '../../notifications.service';
 import { ProfileService } from '../../profile/profile.service';
 import { Dinner, DinnersService } from '../dinners/dinners.service';
 
-
 @Component({
   selector: 'app-my-dinners',
   templateUrl: './my-dinners.page.html',
   styleUrls: ['./my-dinners.page.scss'],
 })
-
 export class MyDinnersPage implements OnInit {
-
   dinnerHistoryList: Dinner[];
   myDinner: Dinner;
 
   constructor(
     private dinnersService: DinnersService,
-    private route: ActivatedRoute,
     private navController: NavController,
     public paramsService: RDParamsService,
     private ref: ChangeDetectorRef,
@@ -28,11 +23,14 @@ export class MyDinnersPage implements OnInit {
     public profileService: ProfileService
   ) { }
 
-  ngOnInit() {
-    this.route.queryParams.subscribe(() => {
-        this.loadDinners(null, false); // Caricamento della myDinner e cene passate
-    });
+  // Imposto qui il ricaricamento cene perchè, probabilmente per effetto del reset della history,
+  // se uscivo da una cena la pagina non lanciava il ricaricamento, invece questo metodo viene
+  // sempre eseguito e quando mi tolgo da una cena cancello la cache e quindi ricarico
+  ionViewWillEnter() {
+    this.loadDinners(null, false); // Caricamento della myDinner e cene passate
+  }
 
+  ngOnInit() {
     // Registrazione observable per reagire al ricaricamento cene (es. vengo aggiunto a una cena)
     this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Dinner History - Ricarico cene');
