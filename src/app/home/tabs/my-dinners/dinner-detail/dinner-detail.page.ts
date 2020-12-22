@@ -283,7 +283,6 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
           this.notificationsService.fireUpdateParamsEvent();
         });
 
-        await this.dinnersService.clearMyDinner();
         this.navController.navigateRoot('/home/tabs/dinners');
       },
       (err) => {

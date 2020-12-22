@@ -23,19 +23,15 @@ export class MyDinnersPage implements OnInit {
     public profileService: ProfileService
   ) { }
 
-  // Imposto qui il ricaricamento cene perchè, probabilmente per effetto del reset della history,
-  // se uscivo da una cena la pagina non lanciava il ricaricamento, invece questo metodo viene
-  // sempre eseguito e quando mi tolgo da una cena cancello la cache e quindi ricarico
-  ionViewWillEnter() {
-    this.loadDinners(null, false); // Caricamento della myDinner e cene passate
-  }
-
   ngOnInit() {
     // Registrazione observable per reagire al ricaricamento cene (es. vengo aggiunto a una cena)
     this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Dinner History - Ricarico cene');
       this.loadDinners(null, true);
-    });
+    }); 
+
+    this.loadDinners(null, false); // Caricamento della myDinner e cene passate
+
   }
 
   // Ricarico i parametri, ottengo l'eventuale myDinner e cene passate
@@ -58,9 +54,6 @@ export class MyDinnersPage implements OnInit {
               if (event) { // Se lanciato dal refresher emetto evento di completamento
                 event.target.complete();
               }
-              // Lancio la change detection, altrimenti all'arrivo della notifica
-              // non aggiornava la videata
-              this.ref.detectChanges();
             });
           },
           (err) => {

@@ -30,12 +30,12 @@ export class DinnersPage implements OnInit {
       if (params.message) {
         this.presentAlert(params.message);
       }
+    });
 
-      // Registrazione observable per reagire al ricaricamento cene (es. vengo aggiunto a una cena)
-      this.notificationsService.getUpdateParamsObservable().subscribe(() => {
-        console.log('Dinners - Ricarico cene');
-        this.loadDinners(null, true, '', false);
-      });
+    // Registrazione observable per reagire al ricaricamento cene (es. vengo aggiunto a una cena)
+    this.notificationsService.getUpdateParamsObservable().subscribe(() => {
+      console.log('Dinners - Ricarico cene');
+      this.loadDinners(null, true, '', false);
     });
 
     this.loadDinners(null, false, '', false);
