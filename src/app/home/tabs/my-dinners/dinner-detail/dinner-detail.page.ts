@@ -65,7 +65,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
     this.dinnersService.getDinnerState(this.dinner.id).then(res => {
       if (!res) { // Può accadere se vengo rimosso da una cena che viene eliminata, ritorno alla home
         console.log('Errore getDinnerDetails, ritorno alla home');
-        this.navController.navigateRoot('/home');
+        this.navController.navigateRoot('/home/tabs/dinners');
         return;
       }
 
@@ -95,7 +95,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
           },
           () => {
             console.log('Errore getDinnerDetails, ritorno alla home');
-            this.navController.navigateRoot('/home');
+            this.navController.navigateRoot('/home/tabs/dinners');
           });
       } else {
         this.dinnersService.detDinnerStateRoute(this.dinner, this.state);
@@ -277,12 +277,13 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
     };
 
     this.dinnersService.leaveDinner(leaveDinnerBody).then(
-      () => {
+      async () => {
         // Ricarico parametri e vado in /dinners
         this.paramsService.loadParams(true).then(() => {
           this.notificationsService.fireUpdateParamsEvent();
         });
-        this.navController.navigateRoot('/home');
+
+        this.navController.navigateRoot('/home/tabs/dinners');
       },
       (err) => {
         console.warn(err);
@@ -328,7 +329,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
         this.paramsService.loadParams(true).then(() => {
           this.notificationsService.fireUpdateParamsEvent();
         });
-        this.navController.navigateRoot('/home');
+        this.navController.navigateRoot('/home/tabs/dinners');
       },
       (err) => {
         console.warn(err);

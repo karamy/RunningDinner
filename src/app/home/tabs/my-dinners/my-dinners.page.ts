@@ -1,26 +1,21 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { NotificationsService } from '../../notifications.service';
 import { ProfileService } from '../../profile/profile.service';
 import { Dinner, DinnersService } from '../dinners/dinners.service';
 
-
 @Component({
   selector: 'app-my-dinners',
   templateUrl: './my-dinners.page.html',
   styleUrls: ['./my-dinners.page.scss'],
 })
-
 export class MyDinnersPage implements OnInit {
-
   dinnerHistoryList: Dinner[];
   myDinner: Dinner;
 
   constructor(
     private dinnersService: DinnersService,
-    private route: ActivatedRoute,
     private navController: NavController,
     public paramsService: RDParamsService,
     private ref: ChangeDetectorRef,
@@ -29,15 +24,14 @@ export class MyDinnersPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.route.queryParams.subscribe(() => {
-        this.loadDinners(null, false); // Caricamento della myDinner e cene passate
-    });
-
     // Registrazione observable per reagire al ricaricamento cene (es. vengo aggiunto a una cena)
     this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Dinner History - Ricarico cene');
       this.loadDinners(null, true);
-    });
+    }); 
+
+    this.loadDinners(null, false); // Caricamento della myDinner e cene passate
+
   }
 
   // Ricarico i parametri, ottengo l'eventuale myDinner e cene passate
@@ -60,9 +54,6 @@ export class MyDinnersPage implements OnInit {
               if (event) { // Se lanciato dal refresher emetto evento di completamento
                 event.target.complete();
               }
-              // Lancio la change detection, altrimenti all'arrivo della notifica
-              // non aggiornava la videata
-              this.ref.detectChanges();
             });
           },
           (err) => {

@@ -92,15 +92,11 @@ export class AuthService {
         .toPromise()
         .then(
           res => {
-            this.writeUser(res as AuthenticatedUser);
             console.log("Login user", this._user);
 
-            //Lascio in thread parallelo parte di caricamento iniziale Params, Food Allergies e Partner, parto subito su /dinners
-            this.navController.navigateRoot('/home/tabs/dinners');
+            this.writeUser(res as AuthenticatedUser);
+            this.navController.navigateRoot('/home');
             resolve();
-
-            // Carico i parametri utente
-            this.loadOtherParamsInBackground();
           },
           err => {
             this.doLogout();
@@ -113,10 +109,10 @@ export class AuthService {
   }
 
   // Carica gli altri parametri in background
-  private loadOtherParamsInBackground() {
-    this.foodAllergiesService.getAllFoodAllergiesData().then(() => { // Tutte le intolleranze
-      this.foodAllergiesService.getUserFoodAllergiesData(this.getUserData().userid).then(() => { // Food allergies
-        this.badgesService.getUserBadges(this.getUserData().userid).then(() => { // Badges utente
+  public loadOtherParamsInBackground() {
+    this.rdParams.loadParams(true)
+      .then(
+        () => {
           if (this.rdParams.getParams().groupId) {
             this.profileService.getPartnerData(this.getUserData()).then(() => { // Dati partner
               this.foodAllergiesService.getPartnerFoodAllergies(this.getUserData().userid).then(() => { //Food allergies partner
@@ -125,32 +121,37 @@ export class AuthService {
                     console.log('Errore getPartnerBadges');
                     this.doLogout();
                   });
-              },
-                () => {
-                  console.log('Errore getPartnerFoodAllergies');
-                  this.doLogout();
-                });
-            },
-              () => {
-                console.log('Errore getPartnerData');
+              }, () => {
+                console.log('Errore getPartnerFoodAllergies');
                 this.doLogout();
               });
+            }, () => {
+              console.log('Errore getPartnerData');
+              this.doLogout();
+            });
           }
-        },
-          () => {
-            console.log('Errore getUserBadges');
-            this.doLogout();
-          });
-      },
-        () => {
-          console.log('Errore getUserFoodAllergiesData');
+
+          this.foodAllergiesService.getAllFoodAllergiesData()
+            .catch(() => {
+              console.log('Errore getAllFoodAllergiesData');
+              this.doLogout();
+            });
+
+          this.foodAllergiesService.getUserFoodAllergiesData(this.getUserData().userid)
+            .catch(() => {
+              console.log('Errore getUserFoodAllergiesData');
+              this.doLogout();
+            });
+
+          this.badgesService.getUserBadges(this.getUserData().userid)
+            .catch(() => {
+              console.log('Errore getUserBadges');
+              this.doLogout();
+            });
+        }, () => {
+          console.log('Errore getParams');
           this.doLogout();
         });
-    },
-      () => {
-        console.log('Errore getAllFoodAllergiesData');
-        this.doLogout();
-      });
   }
 
   // Effettua il logout richiedendo la cancellazione del token

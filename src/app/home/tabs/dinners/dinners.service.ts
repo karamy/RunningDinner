@@ -23,7 +23,6 @@ export class DinnersService {
   private _dinnerDetailsDict: any;
   private _myDinnerDetailsDict: any;
   private _dinnerWinnersDict: any;
-  private syncInProgress = false;
 
   usersData: UserData[];
   geocoder = new google.maps.Geocoder();
@@ -107,18 +106,15 @@ export class DinnersService {
   // Ottiene l'eventuale cena a cui partecipo
   async getMyDinner(force: Boolean): Promise<object> {
     return new Promise(async (resolve, reject) => {
-      if ((force || !this._myDinner) && !this.syncInProgress) {
-        this.syncInProgress = true;
+      if (force || !this._myDinner) {
 
         await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
         this.http.get(this.rdConstants.getApiRoute('getMyDinner'))
           .toPromise()
           .then(async res => {
-            this.syncInProgress = false;
             await this.writeMyDinner(res as Dinner);
             resolve(this._myDinner);
           }, () => {
-            this.syncInProgress = false;
             reject();
           }).finally(
             () => {
@@ -133,14 +129,11 @@ export class DinnersService {
   // Ottengo le cene disponibili esclusa l'eventuale myDinner, eventualmente caricando il valore da cache
   async getOtherDinners(dinnerId: number, force: Boolean, index: number, filter: number, notSave: Boolean): Promise<Dinner[]> {
     return new Promise(async (resolve, reject) => {
-      if ((force || !this._otherDinners || !this._otherDinners.length) && !this.syncInProgress) {
-        this.syncInProgress = true;
-
+      if (force || !this._otherDinners || !this._otherDinners.length) {
         await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
         this.http.post(this.rdConstants.getApiRoute('getOtherDinners'), { dinnerId, index, filter })
           .toPromise().then(
             async res => {
-              this.syncInProgress = false;
               if (notSave) {
                 resolve(res as Dinner[]);
               } else {
@@ -149,7 +142,6 @@ export class DinnersService {
               }
             },
             () => {
-              this.syncInProgress = false;
               reject();
             }
           ).finally(() => { this.spinner.dismiss(); });
@@ -261,9 +253,7 @@ export class DinnersService {
     return new Promise(async (resolve, reject) => {
       if ((force || !this._dinnerDetailsDict ||
         !Object.keys(this._dinnerDetailsDict).includes(dinnerId.toString()))
-        && !this.syncInProgress) {
-        if (!Object.keys(this._dinnerDetailsDict).includes(dinnerId.toString()))
-          this.syncInProgress = true;
+      ) {
 
         let userAddress: string;
         if (this.paramsService.getParams().groupId) {
@@ -325,13 +315,11 @@ export class DinnersService {
                   avgDistance: avgDistance
                 };
 
-                this.syncInProgress = false;
                 this._dinnerDetailsDict[dinnerId.toString()] = dinnerDetails;
                 await this.writeDinnerDetails(this._dinnerDetailsDict);
                 resolve(this._dinnerDetailsDict[dinnerId.toString()]);
               });
             }, () => {
-              this.syncInProgress = false;
               reject();
             }
           )
@@ -372,8 +360,7 @@ export class DinnersService {
     return new Promise(async (resolve, reject) => {
       if ((force || !this._myDinnerDetailsDict ||
         !Object.keys(this._myDinnerDetailsDict).includes(dinnerId.toString()))
-        && !this.syncInProgress) {
-        this.syncInProgress = true;
+      ) {
 
         const dataToSend = {
           dinnerId: dinner.id,
@@ -403,14 +390,12 @@ export class DinnersService {
                 this.getHouseDistances(myDinnerDetails.houses).then(async resp => {
                   myDinnerDetails.houseDistances = resp as string[];
 
-                  this.syncInProgress = false;
                   this._myDinnerDetailsDict[dinnerId.toString()] = myDinnerDetails;
                   await this.writeMyDinnerDetails(this._myDinnerDetailsDict);
                   resolve(this._myDinnerDetailsDict[dinnerId.toString()]);
                 });
               });
             }, () => {
-              this.syncInProgress = false;
               reject();
             })
           .finally(
@@ -725,21 +710,18 @@ export class DinnersService {
     return new Promise(async (resolve, reject) => {
       if ((force || !this._dinnerWinnersDict ||
         !Object.keys(this._dinnerWinnersDict).includes(dinnerId.toString()))
-        && !this.syncInProgress) {
-        this.syncInProgress = true;
+      ) {
 
         await this.spinner.create();
         this.http.post(this.rdConstants.getApiRoute('getDinnerWinners'), { dinnerId })
           .toPromise()
           .then(
             async (res) => {
-              this.syncInProgress = false;
               this._dinnerWinnersDict[dinnerId.toString()] = res;
               await this.writeDinnerWinners(this._dinnerWinnersDict);
               resolve(this._dinnerWinnersDict[dinnerId.toString()]);
             },
             () => {
-              this.syncInProgress = false;
               reject();
             }
           )
@@ -783,19 +765,16 @@ export class DinnersService {
   // Ottengo le cene passate dell'utente
   async getDinnerHistory(force: Boolean): Promise<Dinner[]> {
     return new Promise(async (resolve, reject) => {
-      if ((force || !this._dinnerHistory || !this._dinnerHistory.length) && !this.syncInProgress) {
-        this.syncInProgress = true;
+      if ((force || !this._dinnerHistory || !this._dinnerHistory.length)) {
 
         await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
         this.http.get(this.rdConstants.getApiRoute('getDinnerHistory'))
           .toPromise()
           .then(
             async res => {
-              this.syncInProgress = false;
               await this.writeDinnerHistory(res as Dinner[]);
               resolve(this._dinnerHistory);
             }, () => {
-              this.syncInProgress = false;
               reject();
             })
           .finally(

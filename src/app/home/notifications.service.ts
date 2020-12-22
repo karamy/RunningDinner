@@ -12,7 +12,7 @@ import "capacitor-pwa-firebase-msg";
 import { Plugins, PushNotificationToken, PushNotification, PushNotificationActionPerformed } from '@capacitor/core';
 import { RDParamsService } from '../rdparams.service';
 import { FoodAllergiesService } from '../rdmodals/food-allergies/food-allergies.service';
-import { Observable, Subscriber } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { BadgesService } from './profile/badges.service';
 const { PushNotifications } = Plugins;
 
@@ -22,8 +22,8 @@ const { PushNotifications } = Plugins;
 export class NotificationsService {
   private lastNotificationTime: Date; // Utilizzato per evitare la gestione multipla della stessa notifica
   private readonly notificationLatencySec: number = 1; // Tempo di latenza (in secondi) per cui, se minore, ignoro la notifica
-  private updateParamsObserver: Subscriber<any>;
-  updateParamsObservable: Observable<any>; // Observable utilizzato per gestire l'evento 'updateParams' nelle videate 
+  
+  public updateParamsObservable: Subject<any>; // Observable utilizzato per gestire l'evento 'updateParams' nelle videate
 
   constructor(private spinner: RDSpinnerService, private rdConstants: RDConstantsService,
     private http: HttpClient, private alertController: AlertController,
@@ -35,9 +35,7 @@ export class NotificationsService {
     private rdToast: RDToastService) {
 
     // Inizializzo l'observable per gestire evento di ricaricamento parametri
-    this.updateParamsObservable = new Observable((observer) => {
-      this.updateParamsObserver = observer;
-    });
+    this.updateParamsObservable = new Subject<any>();
   }
 
   // Inizializza la gestione notifiche push
@@ -147,8 +145,8 @@ export class NotificationsService {
 
   // Scateno evento di ricaricamento parametri (undefined se non ci sono sottoscrizioni)
   fireUpdateParamsEvent() {
-    if (this.updateParamsObserver) {
-      this.updateParamsObserver.next();
+    if (this.updateParamsObservable) {
+      this.updateParamsObservable.next();
     }
   }
 
