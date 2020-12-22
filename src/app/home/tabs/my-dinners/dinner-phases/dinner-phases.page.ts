@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Dinner, DinnersService, DinnerDetails, MyDinnerDetails, DinnerDish } from 'src/app/home/tabs/dinners/dinners.service';
+import { Dinner, DinnersService, MyDinnerDetails, DinnerDish } from 'src/app/home/tabs/dinners/dinners.service';
 import { ProfileService } from 'src/app/home/profile/profile.service';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { PopoverController } from '@ionic/angular';
@@ -18,12 +18,6 @@ import { AuthService } from 'src/app/auth/auth.service';
 })
 export class DinnerPhasesPage implements OnInit {
   dinner: Dinner;
-  dinnerDetails: DinnerDetails = {
-    badges: [],
-    foodAllergies: [],
-    minMaxAges: [],
-    avgDistance: -1
-  };
   dinnerType: string;
   firstDish: DinnerDish = { name: null, startTime: null, endTime: null };
   secondDish: DinnerDish = { name: null, startTime: null, endTime: null };
@@ -107,65 +101,61 @@ export class DinnerPhasesPage implements OnInit {
           this.presentBottomPanel();
         }
 
-        this.dinnersService.getDinnerDetails(this.dinner, this.authService.getUserData(), force).then(res => {
-          this.dinnerDetails = res;
+        // Dal dinner_type ottengo nome della tipologia ed i piatti che verranno cucinati nella cena
+        this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type))[0];
+        const dishesArray = this.dinnersService.setDinnerDishes(this.dinner);
+        this.firstDish = dishesArray[0];
+        this.secondDish = dishesArray[1];
+        this.thirdDish = dishesArray[2];
 
-          // Dal dinner_type ottengo nome della tipologia ed i piatti che verranno cucinati nella cena
-          this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type))[0];
-          const dishesArray = this.dinnersService.setDinnerDishes(this.dinner);
-          this.firstDish = dishesArray[0];
-          this.secondDish = dishesArray[1];
-          this.thirdDish = dishesArray[2];
+        // Ottengo i dati relativi alla mia cena
+        this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId, force).then(response => {
+          this.myDinnerDetails = response;
 
-          // Ottengo i dati relativi alla mia cena
-          this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId, force).then(response => {
-            this.myDinnerDetails = response;
-
-            // Imposto le variabili a seconda della fase
-            if (this.phase === 1) {
-              if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.firstHouse.groupid) {
-                this.distanceFromUser = 'Sei a casa tua! Preparati ad accogliere gli ospiti';
-                this.travelTime = 'Beh direi che non devi spostarti xD';
-                this.initMap([], this.dinnerDetails.userLatLng);
-              } else {
-                this.dinnersService.setVariables(this.profileService.getPartner().group_address, this.myDinnerDetails.houses.firstHouse.groupAddress).then(res => {
-                  this.phaseVariables = res as [];
-                  this.distanceFromUser = this.phaseVariables[0];
-                  this.travelTime = this.phaseVariables[1];
-                  this.directionsRenderer = this.phaseVariables[2];
-                  this.initMap([this.myDinnerDetails.addressesLatLng[0]], this.dinnerDetails.userLatLng, this.directionsRenderer);
-                });
-              }
-            } else if (this.phase === 2) {
-              this.dinnersService.setVariables(this.myDinnerDetails.houses.firstHouse.groupAddress, this.myDinnerDetails.houses.secondHouse.groupAddress).then(res => {
+          // Imposto le variabili a seconda della fase
+          if (this.phase === 1) {
+            if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.firstHouse.groupid) {
+              this.distanceFromUser = 'Sei a casa tua! Preparati ad accogliere gli ospiti';
+              this.travelTime = 'Beh direi che non devi spostarti xD';
+              this.initMap([], this.myDinnerDetails.userLatLng);
+            } else {
+              this.dinnersService.setVariables(this.profileService.getPartner().group_address, this.myDinnerDetails.houses.firstHouse.groupAddress).then(res => {
                 this.phaseVariables = res as [];
                 this.distanceFromUser = this.phaseVariables[0];
                 this.travelTime = this.phaseVariables[1];
                 this.directionsRenderer = this.phaseVariables[2];
-                if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.firstHouse.groupid) {
-                  this.initMap([this.myDinnerDetails.addressesLatLng[0]], this.dinnerDetails.userLatLng, this.directionsRenderer);
-                } else if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.secondHouse.groupid) {
-                  this.initMap(this.dinnerDetails.userLatLng, [this.myDinnerDetails.addressesLatLng[0]], this.directionsRenderer);
-                } else {
-                  this.initMap([this.myDinnerDetails.addressesLatLng[1]], [this.myDinnerDetails.addressesLatLng[0]], this.directionsRenderer);
-                }
-              });
-            } else if (this.phase === 3) {
-              this.dinnersService.setVariables(this.myDinnerDetails.houses.secondHouse.groupAddress, this.myDinnerDetails.houses.thirdHouse.groupAddress).then(res => {
-                this.phaseVariables = res as [];
-                this.distanceFromUser = this.phaseVariables[0];
-                this.travelTime = this.phaseVariables[1];
-                this.directionsRenderer = this.phaseVariables[2];
-                if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.thirdHouse.groupid) {
-                  this.initMap(this.dinnerDetails.userLatLng, [this.myDinnerDetails.addressesLatLng[1]], this.directionsRenderer);
-                } else if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.secondHouse.groupid) {
-                  this.initMap([this.myDinnerDetails.addressesLatLng[1]], this.dinnerDetails.userLatLng, this.directionsRenderer);
-                } else {
-                  this.initMap([this.myDinnerDetails.addressesLatLng[1]], [this.myDinnerDetails.addressesLatLng[0]], this.directionsRenderer);
-                }
+                this.initMap([this.myDinnerDetails.addressesLatLng[0]], this.myDinnerDetails.userLatLng, this.directionsRenderer);
               });
             }
-          });
+          } else if (this.phase === 2) {
+            this.dinnersService.setVariables(this.myDinnerDetails.houses.firstHouse.groupAddress, this.myDinnerDetails.houses.secondHouse.groupAddress).then(res => {
+              this.phaseVariables = res as [];
+              this.distanceFromUser = this.phaseVariables[0];
+              this.travelTime = this.phaseVariables[1];
+              this.directionsRenderer = this.phaseVariables[2];
+              if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.firstHouse.groupid) {
+                this.initMap([this.myDinnerDetails.addressesLatLng[0]], this.myDinnerDetails.userLatLng, this.directionsRenderer);
+              } else if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.secondHouse.groupid) {
+                this.initMap(this.myDinnerDetails.userLatLng, [this.myDinnerDetails.addressesLatLng[0]], this.directionsRenderer);
+              } else {
+                this.initMap([this.myDinnerDetails.addressesLatLng[1]], [this.myDinnerDetails.addressesLatLng[0]], this.directionsRenderer);
+              }
+            });
+          } else if (this.phase === 3) {
+            this.dinnersService.setVariables(this.myDinnerDetails.houses.secondHouse.groupAddress, this.myDinnerDetails.houses.thirdHouse.groupAddress).then(res => {
+              this.phaseVariables = res as [];
+              this.distanceFromUser = this.phaseVariables[0];
+              this.travelTime = this.phaseVariables[1];
+              this.directionsRenderer = this.phaseVariables[2];
+              if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.thirdHouse.groupid) {
+                this.initMap(this.myDinnerDetails.userLatLng, [this.myDinnerDetails.addressesLatLng[1]], this.directionsRenderer);
+              } else if (this.paramsService.getParams().groupId === this.myDinnerDetails.houses.secondHouse.groupid) {
+                this.initMap([this.myDinnerDetails.addressesLatLng[1]], this.myDinnerDetails.userLatLng, this.directionsRenderer);
+              } else {
+                this.initMap([this.myDinnerDetails.addressesLatLng[1]], [this.myDinnerDetails.addressesLatLng[0]], this.directionsRenderer);
+              }
+            });
+          }
         });
       } else {
         this.dinnersService.detDinnerStateRoute(this.dinner, this.state);

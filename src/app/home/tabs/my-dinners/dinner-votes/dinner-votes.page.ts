@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CupertinoPane, CupertinoSettings } from 'cupertino-pane';
-import { Dinner, DinnersService, DinnerDetails, MyDinnerDetails, DinnerHouse } from 'src/app/home/tabs/dinners/dinners.service';
+import { Dinner, DinnersService, MyDinnerDetails, DinnerHouse } from 'src/app/home/tabs/dinners/dinners.service';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NotificationsService } from 'src/app/home/notifications.service';
@@ -19,12 +19,6 @@ export class DinnerVotesPage implements OnInit {
   dinner: Dinner;
   state: number;
   hasVoted: boolean;
-  dinnerDetails: DinnerDetails = {
-    badges: [],
-    foodAllergies: [],
-    minMaxAges: [],
-    avgDistance: -1
-  };
   myDinnerDetails: MyDinnerDetails = {
     houses: {
       firstHouse: { groupid: null, firstUserId: null, firstName: "", secondUserId: null, secondName: "", firstImage: "", secondImage: "", groupAddress: "" },
@@ -114,23 +108,19 @@ export class DinnerVotesPage implements OnInit {
               this.presentBottomPanel();
             }
 
-            this.dinnersService.getDinnerDetails(this.dinner, this.authService.getUserData(), force).then(res => {
-              this.dinnerDetails = res;
+            // Ottengo i dati relativi alla mia cena
+            this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId, force).then(response => {
+              this.myDinnerDetails = response;
 
-              // Ottengo i dati relativi alla mia cena
-              this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId, force).then(response => {
-                this.myDinnerDetails = response;
+              // Creo array con i due gruppi da votare
+              this.groupsToVote = this.dinnersService.detGroupsToVote(this.myDinnerDetails);
 
-                // Creo array con i due gruppi da votare
-                this.groupsToVote = this.dinnersService.detGroupsToVote(this.myDinnerDetails);
+              // Determino le categorie di voto
+              this.voteCategories = this.dinnersService.detVoteCategories(this.dinner.type);
 
-                // Determino le categorie di voto
-                this.voteCategories = this.dinnersService.detVoteCategories(this.dinner.type);
-
-                // Valorizzo i groupId dei due oggetti che rappresentano i voti del primo e del secondo gruppo
-                this.firstGroupVotes.groupId = this.groupsToVote[0].groupid;
-                this.secondGroupVotes.groupId = this.groupsToVote[1].groupid;
-              });
+              // Valorizzo i groupId dei due oggetti che rappresentano i voti del primo e del secondo gruppo
+              this.firstGroupVotes.groupId = this.groupsToVote[0].groupid;
+              this.secondGroupVotes.groupId = this.groupsToVote[1].groupid;
             });
           }
         });

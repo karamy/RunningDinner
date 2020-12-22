@@ -4,7 +4,7 @@ import { RDConstantsService } from 'src/app/rdcostants.service';
 import { RDSpinnerService } from 'src/app/rdspinner.service';
 import { UserBadge, BadgesService } from '../../profile/badges.service';
 import { UserAllergy } from 'src/app/rdmodals/food-allergies/food-allergies.page';
-import { UserData, AuthService } from 'src/app/auth/auth.service';
+import { UserData } from 'src/app/auth/auth.service';
 import { FoodAllergiesService } from 'src/app/rdmodals/food-allergies/food-allergies.service';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { ProfileService } from '../../profile/profile.service';
@@ -203,9 +203,9 @@ export class DinnersService {
           }
         )
         .finally(
-          () => { 
+          () => {
             //this.spinner.dismiss();
-           }
+          }
         )
     );
   }
@@ -289,7 +289,7 @@ export class DinnersService {
               const allDinnerFoodAllergies = this.foodAllergiesService.convertImagesToJpeg(res['foodAllergies']);
               const dinnerFoodAllergies = this.getDinnerFoodAllergies(res as DinnerDetails);
               const dinnerMinMaxAges = this.getDinnerUsersData(res as DinnerDetails);
-              this.usersData = this.convertUserImagesToJpeg(res as DinnerDetails);
+              this.usersData = res['usersData'];
               const addressesToDecode = {
                 groupid: [],
                 addresses: []
@@ -385,18 +385,21 @@ export class DinnersService {
           .toPromise()
           .then(
             res => {
+              const dinnerFoodAllergies = this.foodAllergiesService.convertImagesToJpeg(res['foodAllergies']);
               const myDinnerDetails = {
-                houses: res as DinnerHouses,
+                houses: res['dinnerHouses'],
                 myDish: undefined,
                 houseDistances: [],
-                foodAllergies: [],
-                addressesLatLng: []
+                foodAllergies: dinnerFoodAllergies,
+                addressesLatLng: [],
+                userLatLng: undefined
               };
               myDinnerDetails.houses = this.convertHouseImagesToJpeg(myDinnerDetails.houses);
               const addressesToDecode = this.detAddressesToDecode(myDinnerDetails.houses);
 
               this.getCoordinates(addressesToDecode, this.profileService.getPartner().group_address).then(response => {
                 myDinnerDetails.addressesLatLng = response[0];
+                myDinnerDetails.userLatLng = response[1];
                 this.getHouseDistances(myDinnerDetails.houses).then(async resp => {
                   myDinnerDetails.houseDistances = resp as string[];
 

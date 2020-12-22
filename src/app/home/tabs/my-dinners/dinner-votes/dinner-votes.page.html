@@ -19,7 +19,7 @@
     <ion-grid>
       <ion-row>
         <ion-col class="ion-text-center">
-          <h3 *ngIf="dinnerDetails.dinnerData" class="dinner-title">Spero che la cena {{dinnerDetails.dinnerData.title}}
+          <h3 *ngIf="dinner" class="dinner-title">Spero che la cena {{dinner.title}}
             vi sia piaciuta {{authService.getUser().userData.name}} & {{profileService.getPartner().name}}</h3>
         </ion-col>
       </ion-row>

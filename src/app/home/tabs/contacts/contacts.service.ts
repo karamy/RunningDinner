@@ -101,6 +101,12 @@ export class ContactsService {
             },
             {
               name: 'Nadia',
+              phoneNumbers: ['+393450166161'],
+              imageUrl: 'assets/dummy.png',
+              userId: 0
+            },
+            {
+              name: 'Nadia',
               phoneNumbers: ['3450166161'],
               imageUrl: 'assets/dummy.png',
               userId: 0
@@ -147,7 +153,7 @@ export class ContactsService {
 
           // Importo contatti dal telefono
           this.contacts
-            .find(['displayName', 'phoneNumbers', 'photos'])
+            .find(['phoneNumbers'], { multiple: true, desiredFields: ['name', 'phoneNumbers'] })
             .then(async localContacts => {
               if (localContacts.length === 0) { // Se non trovo contatti rifiuto la promise
                 console.warn('No contacts found');

@@ -30,7 +30,7 @@
         <ion-col style="height: 100%;">
           <h3 class="dinner-name">Cena di {{dinnerType}}</h3>
         </ion-col>
-        <ion-col *ngIf="dinnerDetails.foodAllergies.length > 0">
+        <ion-col *ngIf="myDinnerDetails.foodAllergies.length > 0">
           <div class="foodAllergies">
             <ion-button style="margin: 0%; color: black;" size="small" fill="clear"
               (click)="presentModalFoodAllergies(myDinnerDetails.foodAllergies, myDinnerDetails.foodAllergiesCategories)">

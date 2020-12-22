@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Dinner, DinnersService, DinnerDetails, MyDinnerDetails } from 'src/app/home/tabs/dinners/dinners.service';
+import { Dinner, DinnersService, MyDinnerDetails } from 'src/app/home/tabs/dinners/dinners.service';
 import { ProfileService } from 'src/app/home/profile/profile.service';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { PopoverController, ModalController } from '@ionic/angular';
@@ -19,12 +19,6 @@ import { AuthService } from 'src/app/auth/auth.service';
 export class DinnerEventPage implements OnInit, OnDestroy {
   dinner: Dinner;
   state: number;
-  dinnerDetails: DinnerDetails = {
-    badges: [],
-    foodAllergies: [],
-    minMaxAges: [],
-    avgDistance: -1
-  };
   dinnerType: string;
   firstDish: string;
   secondDish: string;
@@ -107,29 +101,26 @@ export class DinnerEventPage implements OnInit, OnDestroy {
           this.presentBottomPanel();
         }
 
-        this.dinnersService.getDinnerDetails(this.dinner, this.authService.getUserData(), force).then(res => {
-          this.dinnerDetails = res;
+        // Dal dinner_type ottengo nome della tipologia ed i piatti che verranno cucinati nella cena
+        this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type))[0];
+        this.firstDish = this.dinnersService.decodeType(Number(this.dinner.type))[1];
+        this.secondDish = this.dinnersService.decodeType(Number(this.dinner.type))[2];
+        this.thirdDish = this.dinnersService.decodeType(Number(this.dinner.type))[3];
 
-          // Dal dinner_type ottengo nome della tipologia ed i piatti che verranno cucinati nella cena
-          this.dinnerType = this.dinnersService.decodeType(Number(this.dinner.type))[0];
-          this.firstDish = this.dinnersService.decodeType(Number(this.dinner.type))[1];
-          this.secondDish = this.dinnersService.decodeType(Number(this.dinner.type))[2];
-          this.thirdDish = this.dinnersService.decodeType(Number(this.dinner.type))[3];
+        // Ottengo dati del partner
+        this.partnerName = this.profileService.getPartner().name;
 
-          // Ottengo dati del partner
-          this.partnerName = this.profileService.getPartner().name;
+        // Ottengo i dati relativi alla mia cena
+        this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId, force).then(response => {
+          this.myDinnerDetails = response;
 
-          // Ottengo i dati relativi alla mia cena
-          this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId, force).then(response => {
-            this.myDinnerDetails = response;
-            this.myDish = this.dinnersService.detMyDish(this.myDinnerDetails.houses, this.firstDish, this.secondDish, this.thirdDish);
-            const myDinnerFoodAllergies = this.dinnersService.getMyDinnerFoodAllergies(this.myDinnerDetails.houses, this.dinnerDetails.allFoodAllergies);
-            this.myDinnerDetails.foodAllergies = myDinnerFoodAllergies[0];
-            this.myDinnerDetails.foodAllergiesCategories = myDinnerFoodAllergies[1];
+          this.myDish = this.dinnersService.detMyDish(this.myDinnerDetails.houses, this.firstDish, this.secondDish, this.thirdDish);
+          const myDinnerFoodAllergies = this.dinnersService.getMyDinnerFoodAllergies(this.myDinnerDetails.houses, this.myDinnerDetails.foodAllergies);
+          this.myDinnerDetails.foodAllergies = myDinnerFoodAllergies[0];
+          this.myDinnerDetails.foodAllergiesCategories = myDinnerFoodAllergies[1];
 
-            // Istanzio la mappa
-            this.initMap(this.myDinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
-          });
+          // Istanzio la mappa
+          this.initMap(this.myDinnerDetails.addressesLatLng, this.myDinnerDetails.userLatLng);
         });
       } else {
         this.dinnersService.detDinnerStateRoute(this.dinner, this.state);
@@ -166,8 +157,8 @@ export class DinnerEventPage implements OnInit, OnDestroy {
   // Inizializza la mappa per mostrare l'utente e gli altri partecipanti alla cena
   initMap(addresses: google.maps.LatLng[], userAddress: google.maps.LatLng[]) {
     const markers: google.maps.Marker[] = [];
-
     const mapElement = document.getElementById('mapEvent');
+
     if (mapElement) { // Istanzio la mappa solo se sono sulla pagina, altrimenti da errore
       const map = new google.maps.Map(mapElement, {
         disableDefaultUI: true
