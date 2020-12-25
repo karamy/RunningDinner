@@ -24,9 +24,91 @@
       </ion-grid>
     </ion-slide>
     <ion-slide class="Slide2">
-      <h1>ciao</h1>
+      <ion-grid>
+        <ion-row class="FirstRow">
+          <h1 class="titlebottom">
+            Verrà visualizzata unicamente l'età dell'utente
+          </h1>
+        </ion-row>
+        <ion-row class="SecondRow">
+          <h1 class="titletop">
+            Sono <br />
+            nato
+          </h1>
+          <ion-datetime
+            class="inputusername"
+            placeholder="Inserisci la tua data di nascita"
+            [(ngModel)]="birthdate"
+          ></ion-datetime>
+        </ion-row>
+        <ion-row class="ThirdRow"> </ion-row>
+      </ion-grid>
     </ion-slide>
-    <ion-slide class="Slide3"> <h1>ciao</h1></ion-slide>
-    <ion-slide class="Slide4"> <h1>ciao</h1></ion-slide>
+    <ion-slide class="Slide3">
+      <ion-grid>
+        <ion-row class="FirstRow">
+          <h1 class="titlebottom">
+            La foto profilo sarà visibile sono in forma di icona
+          </h1>
+        </ion-row>
+        <ion-row class="SecondRow">
+          <h1 class="titletop">
+            Foto <br />
+            Profilo
+          </h1>
+          <ion-avatar
+            *ngIf="photoData"
+            style="margin: auto"
+            class="profilephoto"
+          >
+            <ion-img class="profilephoto" src="{{ photoData }}"> </ion-img>
+          </ion-avatar>
+        </ion-row>
+        <ion-row class="ThirdRow">
+          <ion-button
+            class="photobutton"
+            color="secondary"
+            (click)="getPicture()"
+          >
+            <ion-icon name="camera"></ion-icon>
+          </ion-button>
+        </ion-row>
+      </ion-grid>
+    </ion-slide>
+    <ion-slide class="Slide4">
+      <ion-grid>
+        <ion-row class="FirstRow">
+          <h1 class="titlebottom">
+            Verrà visualizzata unicamente durante la scelta della casa
+          </h1>
+        </ion-row>
+        <ion-row class="SecondRow">
+          <h1 class="titletop">
+            Mi <br />
+            trovo
+          </h1>
+          <ion-input
+            class="inputusername"
+            placeholder="Inserisci qui l'indirizzo"
+            [(ngModel)]="autocomplete.input"
+            (keyup)="updateSearchResults()"
+          ></ion-input>
+          <ion-list
+            [hidden]="autocompleteItems.length == 0"
+            *ngFor="let item of autocompleteItems; let i = index"
+          >
+            <ion-item *ngIf="i<3" tappable (click)="selectSearchResult(item)">
+              {{ item.description }}
+            </ion-item>
+          </ion-list>
+        </ion-row>
+        <ion-row class="ThirdRow">
+          <!-- <div class="map" #map></div> -->
+          <img
+            class="map-preview animate__animated animate__fadeIn"
+            [hidden]="!mapPreview"
+            src="{{ mapPreview }}"
+        /></ion-row> </ion-grid
+    ></ion-slide>
   </ion-slides>
 </ion-content>
