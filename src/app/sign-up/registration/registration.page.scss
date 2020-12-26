@@ -56,10 +56,11 @@ ion-grid {
   font-size: 1.5em;
   background-color: white;
   border: solid grey 1px;
-  border-radius: 0.7em;
+  border-radius: 0.5em;
   width: 90%;
   margin-left: auto;
   margin-right: auto;
+  padding-left: 10px;
 }
 .profilephoto {
   border-radius: 50%;
@@ -100,4 +101,14 @@ ion-row {
 
 .map.visible {
   opacity: 1;
+}
+ion-list.autocomplete {
+  border-bottom-left-radius: 1em !important;
+  border-bottom-right-radius: 1em !important;
+  width: 86%;
+  margin-left: 7%;
+}
+ion-input {
+  --padding-start: 9% !important;
+  --padding-end: 9% !important;
 }

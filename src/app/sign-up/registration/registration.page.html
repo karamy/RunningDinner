@@ -92,13 +92,15 @@
             [(ngModel)]="autocomplete.input"
             (keyup)="updateSearchResults()"
           ></ion-input>
-          <ion-list
-            [hidden]="autocompleteItems.length == 0"
-            *ngFor="let item of autocompleteItems; let i = index"
-          >
-            <ion-item *ngIf="i<3" tappable (click)="selectSearchResult(item)">
-              {{ item.description }}
-            </ion-item>
+          <ion-list class="autocomplete">
+            <ion-list
+              [hidden]="autocompleteItems.length == 0"
+              *ngFor="let item of autocompleteItems; let i = index"
+            >
+              <ion-item *ngIf="i<3" tappable (click)="selectSearchResult(item)">
+                {{ item.description }}
+              </ion-item>
+            </ion-list>
           </ion-list>
         </ion-row>
         <ion-row class="ThirdRow">
