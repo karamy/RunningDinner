@@ -78,7 +78,7 @@ export class PhonePage implements OnInit {
       if (!data) {
         // Utente non esiste a DB, inizio registrazione
         this.signupService.setPhoneNumber(this.phoneNumber);
-        this.navController.navigateRoot('/sign-up/instructions');
+        this.navController.navigateRoot('/sign-up/registration');
       } else {
         // Effettua il login in automatico
         this.authService.doLogin(this.phoneNumber);

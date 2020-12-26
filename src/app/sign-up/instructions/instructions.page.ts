@@ -24,7 +24,7 @@ export class InstructionsPage implements OnInit {
     this.navController.navigateRoot('/auth/geolocation');
   }
 
-  prova(){
+  activeIndex(){
     this.Slider.getActiveIndex()
     .then(activeIndex => {
       console.log('active index = ', activeIndex );

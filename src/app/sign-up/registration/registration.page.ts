@@ -6,6 +6,7 @@ import { defineCustomElements } from '@ionic/pwa-elements/loader';
 import { RDSpinnerService } from 'src/app/rdspinner.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { environment } from 'src/environments/environment';
+import { IonSlides } from '@ionic/angular';
 
 @Component({
   selector: 'app-registration',
@@ -14,6 +15,7 @@ import { environment } from 'src/environments/environment';
 })
 export class RegistrationPage implements OnInit,AfterViewInit {
 
+  @ViewChild('slider', {static: false}) Slider: IonSlides;
   @ViewChild('map', { static: false }) mapElementRef: ElementRef;
 
   GoogleAutocomplete: google.maps.places.AutocompleteService;
@@ -24,10 +26,13 @@ export class RegistrationPage implements OnInit,AfterViewInit {
   map: any;
   service: google.maps.places.PlacesService;
   mapPreview: any = null;
+  progressvalue =0.25;
+
 
   username: string;
   birthdate: Date;
   photoData: string; // Rappresenta i dati da mostrare a video
+  index= 0;
 
   constructor(public photoService: PhotoService, private signupService: SignupService, private router: Router,private render: Renderer2,
     private zone: NgZone, private authService: AuthService, private spinner: RDSpinnerService) {
@@ -59,6 +64,15 @@ export class RegistrationPage implements OnInit,AfterViewInit {
     this.username = null;
     this.loadPicture();
   }
+
+  activeIndex(){
+    this.Slider.getActiveIndex()
+    .then(activeIndex => {
+      console.log('active index = ', activeIndex );
+      this.index=activeIndex;
+      this.progressvalue= 0.25 + (activeIndex*0.25);
+   });
+  }
   
    // Ottengo foto da camera o galleria
    async getPicture() {
@@ -82,6 +96,12 @@ export class RegistrationPage implements OnInit,AfterViewInit {
 
    // Effettua la registrazione utente, e in caso positivo entra nella home
    onSignup() {
+
+    // Inserisco tutte le informazioni delle slide nel signupservice
+    this.signupService.setName(this.username);
+    this.signupService.setBirthDate(this.birthdate);
+    this.signupService.setProfilePhoto(this.photoService.profilePhotoData);
+
 
     // Dichiaro la funzione qui perchè altrimenti VS Code non la riconosceva all'interno dello scope
     // Esegue la registrazione e il successivo login

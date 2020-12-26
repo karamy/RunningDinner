@@ -48,9 +48,10 @@ ion-grid {
 }
 .ThirdRow {
   height: 40% !important;
-  width: 100% !important;
   text-align: center;
-  display: flex;
+  display: table;
+  margin-left: auto;
+  margin-right: auto;
 }
 .inputusername {
   font-size: 1.5em;
@@ -91,7 +92,7 @@ ion-row {
   margin: auto;
   align-items: center;
   margin-top: 2rem;
-  width: 70%;
+  width: 50%;
   background-color: transparent;
   opacity: 0;
   transition: opacity 150ms ease-in;
@@ -111,4 +112,20 @@ ion-list.autocomplete {
 ion-input {
   --padding-start: 9% !important;
   --padding-end: 9% !important;
+}
+ion-progress-bar {
+  position: absolute;
+  top: 0%;
+  height: 3%;
+}
+.buttonbottom {
+  background: linear-gradient(to bottom, white, #e2f4de);
+  border-radius: 0.5em;
+  width: 40%;
+  height: 20%;
+  box-shadow: 0px 0px 7px 7px #e2f4de;
+  font-size: 1.7em;
+  border-width: 0px;
+  margin-left: auto;
+  margin-right: auto;
 }

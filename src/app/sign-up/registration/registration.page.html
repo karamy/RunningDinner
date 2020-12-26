@@ -1,6 +1,11 @@
 <ion-content>
-  <div class="headerslide"></div>
-  <ion-slides color="secondary" #slider pager>
+  <div class="headerslide">
+    <ion-progress-bar
+      color="secondary"
+      value="{{this.progressvalue}}"
+    ></ion-progress-bar>
+  </div>
+  <ion-slides #slider color="secondary" (ionSlideDidChange)="activeIndex()">
     <ion-slide class="Slide1">
       <ion-grid>
         <ion-row class="FirstRow">
@@ -109,7 +114,19 @@
             class="map-preview animate__animated animate__fadeIn"
             [hidden]="!mapPreview"
             src="{{ mapPreview }}"
-        /></ion-row> </ion-grid
-    ></ion-slide>
+          />
+          <br />
+          <ion-button
+            *ngIf="autocomplete.input && username && birthdate && photoService.profilePhotoData"
+            expand="block"
+            strong="true"
+            fill="outline"
+            (click)="onSignup()"
+            class="buttonbottom"
+            >Conferma</ion-button
+          >
+        </ion-row>
+      </ion-grid>
+    </ion-slide>
   </ion-slides>
 </ion-content>
