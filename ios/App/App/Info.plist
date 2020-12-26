@@ -60,6 +60,8 @@
 	<string>Allow Contacts Usage</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Consentire accesso ai contatti?</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>

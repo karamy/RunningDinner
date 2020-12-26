@@ -4,6 +4,7 @@ import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthService } from './auth/auth.service';
 import { PermissionsService } from './auth/permissions.service';
+import { TabsService } from './home/tabs/tabs.service';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,8 @@ export class AppComponent {
     private authService: AuthService,
     private permissionService: PermissionsService,
     private platform: Platform,
-    private navController: NavController
+    private navController: NavController,
+    private tabsService: TabsService // Devo injectare (anche se non lo uso) qui il service in modo che Angular lo inizializzi
   ) {
     this.initializeApp();
 

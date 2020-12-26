@@ -86,16 +86,20 @@ export class AuthService {
     };
 
     this.spinner.create('Effettuo login...');
-    return new Promise((resolve, reject) =>
+    return new Promise<void>((resolve, reject) =>
       this.http
         .post(this.rdConstants.getApiRoute('login'), dataToSend)
         .toPromise()
         .then(
           res => {
+            this.writeUser(res as AuthenticatedUser);
             console.log("Login user", this._user);
 
-            this.writeUser(res as AuthenticatedUser);
-            this.navController.navigateRoot('/home');
+            this.rdParams.loadParams(true) // Carico i params prima di andare in home
+              .then(() => {
+                this.navController.navigateRoot('/home');
+              });
+
             resolve();
           },
           err => {

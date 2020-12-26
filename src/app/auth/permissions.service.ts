@@ -14,7 +14,7 @@ export class PermissionsService {
       console.warn("Su browser, do sempre permesso");
       return Promise.resolve();
     } else {
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         console.warn("Info se utente ha permesso GPS");
         this.diagnostic.getLocationAuthorizationStatus().then(status => {
           console.warn("Auth status" + status);
@@ -36,7 +36,7 @@ export class PermissionsService {
       console.warn("Su browser, do sempre permesso");
       return Promise.resolve();
     } else {
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         this.diagnostic.requestLocationAuthorization().then(status => {
           console.log("Status: " + status);
           status = status.toLowerCase();
@@ -52,7 +52,7 @@ export class PermissionsService {
 
   // Richiesta di accesso a impostazioni per attivazione manuale GPS
   forcePermissions() {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       function handleResume() {
         resolve();
       }
@@ -74,7 +74,7 @@ export class PermissionsService {
       console.warn("Su ios, vado avanti");
       return Promise.resolve();
     } else {
-      return new Promise((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         this.diagnostic.isRemoteNotificationsEnabled().then(status => {
           console.warn("Auth status: " + status);
           if (status === true) {
@@ -89,7 +89,7 @@ export class PermissionsService {
 
   // Richiesta di attivare le notifiche
   requestNotificationPermission() {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.diagnostic
         .requestRemoteNotificationsAuthorization()
         .then(() => {

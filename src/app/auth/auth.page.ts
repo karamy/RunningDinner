@@ -31,6 +31,14 @@ export class AuthPage implements OnInit {
         userNumber: "+393495339159"
       },
       {
+        userName: "Pippo Franco",
+        userNumber: "+393403323"
+      },
+      {
+        userName: "Marco Zuccaro",
+        userNumber: "+393386799226"
+      },
+      {
         userName: "Chiara",
         userNumber: "+393496824393"
       },

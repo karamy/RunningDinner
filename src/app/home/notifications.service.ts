@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { RDSpinnerService } from '../rdspinner.service';
 import { RDConstantsService } from '../rdcostants.service';
 import { HttpClient } from '@angular/common/http';
-import { AlertController } from '@ionic/angular';
+import { AlertController, IonicModule, Platform } from '@ionic/angular';
 import { ProfileService } from './profile/profile.service';
 import { RDToastService } from '../rdtoast.service';
 import { AuthService } from '../auth/auth.service';
@@ -22,7 +22,7 @@ const { PushNotifications } = Plugins;
 export class NotificationsService {
   private lastNotificationTime: Date; // Utilizzato per evitare la gestione multipla della stessa notifica
   private readonly notificationLatencySec: number = 1; // Tempo di latenza (in secondi) per cui, se minore, ignoro la notifica
-  
+
   public updateParamsObservable: Subject<any>; // Observable utilizzato per gestire l'evento 'updateParams' nelle videate
 
   constructor(private spinner: RDSpinnerService, private rdConstants: RDConstantsService,
@@ -32,7 +32,8 @@ export class NotificationsService {
     private authService: AuthService,
     private foodAllergiesService: FoodAllergiesService,
     private badgesService: BadgesService,
-    private rdToast: RDToastService) {
+    private rdToast: RDToastService,
+    private platform: Platform) {
 
     // Inizializzo l'observable per gestire evento di ricaricamento parametri
     this.updateParamsObservable = new Subject<any>();
@@ -41,17 +42,24 @@ export class NotificationsService {
   // Inizializza la gestione notifiche push
   init() {
     // Richiedo permission a ricevere notifiche per compatibilità web, su mobile già richiesto in precedenza
-    PushNotifications.requestPermissions().then(
-      (result) => {
-        if (result) {
-          // Registrazione a servizi Apple / Google per ricevere notifiche push via APNS/FCM
-          PushNotifications.register();
-        } else {
-          console.warn("Permesso notifiche non dato, non saranno attive");
+    if (!this.platform.is('ios')) { // Disabilito temporaneamente notifiche su ios
+      PushNotifications.requestPermissions().then(
+        (result) => {
+          if (result) {
+            // Registrazione a servizi Apple / Google per ricevere notifiche push via APNS/FCM
+            PushNotifications.register();
+          } else {
+            console.warn("Permesso notifiche non dato, non saranno attive");
+          }
+        },
+        (err) => {
+          console.log(err);
         }
-      },
-      (err) => console.log(err)
-    );
+      );
+
+
+    }
+
 
     // Gestione evento 'registration' per ottenere token
     PushNotifications.addListener('registration',

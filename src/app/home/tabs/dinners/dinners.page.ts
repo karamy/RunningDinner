@@ -83,7 +83,11 @@ export class DinnersPage implements OnInit {
 
             // Lancio la change detection, altrimenti all'arrivo della notifica
             // non aggiornava la videata
-            this.ref.detectChanges();
+            try {
+              this.ref.detectChanges();
+            } catch (e) {
+              console.log("Change detection su una view destroyed");
+            }
           },
           (err) => {
             console.warn(err);

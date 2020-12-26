@@ -5,6 +5,7 @@ import { RDToastService } from 'src/app/rdtoast.service';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { BadgesService, UserBadge } from 'src/app/home/profile/badges.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { PermissionsService } from 'src/app/auth/permissions.service';
 
 @Component({
   selector: 'app-contacts-detail',
@@ -25,7 +26,8 @@ export class ContactsDetailPage implements OnInit {
     private rdToast: RDToastService,
     public paramsService: RDParamsService, // Utilizzato nell'html della pagina, non rimuovere
     private alertController: AlertController,
-    private authService: AuthService
+    private authService: AuthService,
+    private permissionService: PermissionsService
   ) { }
 
   ngOnInit() {
@@ -43,26 +45,36 @@ export class ContactsDetailPage implements OnInit {
 
   // Richiede l'invio di notifica lato server al contatto per aggiungerlo al gruppo
   async onAddToGroupRequest() {
-    const alert = await this.alertController.create({
-      header: 'Nuovo invito',
-      message: 'In quale casa ospiterai i tuoi amici?',
-      buttons: [
-        { // Casa mia
-          text: 'Casa mia',
-          handler: () => {
-            this.sendInvite(this.authService.getUserData().userid);
-          }
-        },
-        { // Casa dell'utente nel mio gruppo
-          text: 'Casa di ' + this.contactName,
-          handler: () => {
-            this.sendInvite(this.contactId);
-          }
-        },
-        'Annulla'
-      ]
-    });
-    await alert.present();
+
+    // Verifico se utente ha disabilitato le notifiche perchè non riuscirebbe a ricevere la conferma di invio a gruppo
+    try {
+      await this.permissionService.hasNotificationPermission();
+
+      const alert = await this.alertController.create({
+        header: 'Nuovo invito',
+        message: 'In quale casa ospiterai i tuoi amici?',
+        buttons: [
+          { // Casa mia
+            text: 'Casa mia',
+            handler: () => {
+              this.sendInvite(this.authService.getUserData().userid);
+            }
+          },
+          { // Casa dell'utente nel mio gruppo
+            text: 'Casa di ' + this.contactName,
+            handler: () => {
+              this.sendInvite(this.contactId);
+            }
+          },
+          'Annulla'
+        ]
+      });
+      await alert.present();
+    } catch (e) {
+      console.log("AddToGroupRequest - Login attivo ma permission non date");
+      this.rdToast.show("Notifiche disabilitare, impossibile aggiungere a gruppo");
+      return;
+    }
   }
 
   // Effettua la richiesta
