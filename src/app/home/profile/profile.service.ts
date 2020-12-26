@@ -44,7 +44,7 @@ export class ProfileService {
     const dataToSend = {
       groupId: groupId
     };
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.http
         .post(this.rdConstants.getApiRoute('getGroupPartner'), dataToSend)
         .toPromise()

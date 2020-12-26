@@ -127,7 +127,7 @@ export class NotificationsService {
                 this.badgesService.getPartnerBadges(this.authService.getUserData().userid);
               },
                 () => {
-                  console.log("Errore getPartnerData")
+                  console.log("Errore getPartnerData");
                 })
             } else {
               this.profileService.clearPartner();
