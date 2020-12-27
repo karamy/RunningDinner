@@ -19,7 +19,7 @@
         <ion-img class="notification" src="assets/notification.svg"></ion-img>
       </div>
     </ion-row>
-    <ion-button *ngIf="permissionGranted === 'true'" class="buttonbottom" expand="block" routerLink="/auth/phone">
+    <ion-button *ngIf="permissionGranted === 'true'" class="buttonbottom" expand="block" (click)="endPermissionCheck()">
       CONTINUA
     </ion-button>
     <ion-button *ngIf="permissionGranted === 'false'" class="buttonbottom" expand="block" (click)="requestPermission()">
