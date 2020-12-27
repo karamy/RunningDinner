@@ -21,8 +21,8 @@ export class BadgesService {
   }
 
   // Carica le i badges da DB
-  async getUserBadges(userId: number): Promise<UserBadge[]> {
-    return new Promise((resolve, reject) => {
+  async getUserBadges(userId: number): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
       this.http
         .post(this.rdConstants.getApiRoute('getUserBadges'), { userId })
         .toPromise()
@@ -91,7 +91,7 @@ export class BadgesService {
       groupId: groupId,
       userId: userId
     };
-    return new Promise((resolve, reject) =>
+    return new Promise<void>((resolve, reject) =>
       this.http
         .post(this.rdConstants.getApiRoute('getPartnerBadges'), dataToSend)
         .toPromise()
@@ -112,12 +112,12 @@ export class BadgesService {
     const userBadges = JSON.parse(
       localStorage.getItem('badges')
     ) as UserBadge[];
-    
+
     // Converto le immagini dei badge del partner in Jpeg
     partnerBadges = this.convertImagesToJpeg(partnerBadges);
     partnerBadges = this.setDescriptionProgress(partnerBadges);
     const groupBadges = [...userBadges];
-    
+
     // Confronto i badges dell'utente e del partner ed a parità di badge_id tengo quello con il progress maggiore
     for (let i = 0; i < groupBadges.length; i++) {
       for (let j = 0; j < partnerBadges.length; j++) {
@@ -126,7 +126,7 @@ export class BadgesService {
         }
       }
     }
-    
+
     localStorage.setItem('groupBadges', JSON.stringify(groupBadges));
     this.readGroupBadges();
   }

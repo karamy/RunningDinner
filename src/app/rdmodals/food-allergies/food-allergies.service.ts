@@ -26,8 +26,8 @@ export class FoodAllergiesService {
   }
 
   // Salva la lista di tutte le intolleranze su DB
-  async getAllFoodAllergiesData(): Promise<FoodAllergy[]> {
-    return new Promise((resolve, reject) => {
+  async getAllFoodAllergiesData(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
       this.http
         .get(this.rdConstants.getApiRoute('getFoodAllergies'))
         .toPromise()
@@ -70,7 +70,7 @@ export class FoodAllergiesService {
 
   // Salva le intolleranze dell'utente su DB
   async getUserFoodAllergiesData(userId: number) {
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.http
         .post(this.rdConstants.getApiRoute('getUserFoodAllergies'), { userId })
         .toPromise()
@@ -157,7 +157,7 @@ export class FoodAllergiesService {
         userId: userId
       }
     };
-    return new Promise((resolve, reject) =>
+    return new Promise<void>((resolve, reject) =>
       this.http
         .post(this.rdConstants.getApiRoute('insertFoodAllergies'), dataToSend)
         .toPromise()
@@ -181,7 +181,7 @@ export class FoodAllergiesService {
         userId: userId
       }
     };
-    return new Promise((resolve, reject) =>
+    return new Promise<void>((resolve, reject) =>
       this.http
         .post(this.rdConstants.getApiRoute('deleteFoodAllergies'), dataToSend)
         .toPromise()
@@ -203,7 +203,7 @@ export class FoodAllergiesService {
       groupId: groupId,
       userId: userId
     };
-    return new Promise((resolve, reject) =>
+    return new Promise<void>((resolve, reject) =>
       this.http
         .post(this.rdConstants.getApiRoute('getPartnerFoodAllergies'), dataToSend)
         .toPromise()
@@ -223,10 +223,12 @@ export class FoodAllergiesService {
   private writeGroupFoodAllergies(partnerFoodAllergies: UserAllergy[]) {
     const userFoodAllergies = JSON.parse(
       localStorage.getItem('userFoodAllergies')
-    ) as UserAllergy[];
+    ) as UserAllergy[] || [];
+
     // Converto le immagini delle FoodAllergies del partner in Jpeg
     partnerFoodAllergies = this.convertImagesToJpeg(partnerFoodAllergies);
-    let groupFoodAllergies = [...userFoodAllergies]
+    let groupFoodAllergies = [...userFoodAllergies];
+
     // Controllo che in groupFoodAllergies non siano presenti elementi con stesso nome e stessa categoria di quelli in partnerFoodAllergies
     for (let i = 0; i < partnerFoodAllergies.length; i++) {
       if (groupFoodAllergies.find(x => x.allergy_name.toLowerCase() === partnerFoodAllergies[i].allergy_name.toLowerCase()) !== undefined) {
@@ -239,6 +241,7 @@ export class FoodAllergiesService {
       }
     }
     groupFoodAllergies = this.orderFoodAllergies(groupFoodAllergies);
+
     localStorage.setItem('groupFoodAllergies', JSON.stringify(groupFoodAllergies));
     localStorage.setItem('groupFoodAllergiesCategories', JSON.stringify(this.createCategoryArray(groupFoodAllergies)));
     this.readGroupFoodAllergies();
