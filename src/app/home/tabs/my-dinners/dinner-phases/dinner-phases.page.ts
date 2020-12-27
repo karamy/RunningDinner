@@ -70,13 +70,13 @@ export class DinnerPhasesPage implements OnInit {
     // Ottengo i dati della cena dai parametri della rotta
     this.route.queryParams.subscribe((dinner: Dinner) => {
       this.dinner = { ...dinner };
-      this.getDinnerPhasesData(false);
+      this.getDinnerPhasesData();
     });
 
     // Registrazione observable per reagire al ricaricamento cena (es. vengo rimosso da una cena)
     this.subscription = this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Dinner Phases - Ricarico cena');
-      this.getDinnerPhasesData(true);
+      this.getDinnerPhasesData();
     });
   }
 
@@ -86,7 +86,7 @@ export class DinnerPhasesPage implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  getDinnerPhasesData(force: Boolean) {
+  getDinnerPhasesData() {
     this.dinnersService.getDinnerState(this.dinner.id).then(resp => {
       this.state = resp.dinner_state;
 
@@ -109,7 +109,7 @@ export class DinnerPhasesPage implements OnInit {
         this.thirdDish = dishesArray[2];
 
         // Ottengo i dati relativi alla mia cena
-        this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId, force).then(response => {
+        this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId).then(response => {
           this.myDinnerDetails = response;
 
           // Imposto le variabili a seconda della fase

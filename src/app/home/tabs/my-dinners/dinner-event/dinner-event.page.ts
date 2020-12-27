@@ -74,13 +74,13 @@ export class DinnerEventPage implements OnInit, OnDestroy {
     // Ottengo i dati della cena dai parametri della rotta
     this.route.queryParams.subscribe((dinner: Dinner) => {
       this.dinner = { ...dinner };
-      this.getDinnerEventData(false);
+      this.getDinnerEventData();
     });
 
     // Registrazione observable per reagire al ricaricamento cena (es. vengo rimosso da una cena)
     this.subscription = this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Dinner Event - Ricarico cena');
-      this.getDinnerEventData(true);
+      this.getDinnerEventData();
     });
   }
 
@@ -90,7 +90,7 @@ export class DinnerEventPage implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  getDinnerEventData(force: Boolean) {
+  getDinnerEventData() {
     this.dinnersService.getDinnerState(this.dinner.id).then(resp => {
       this.state = resp.dinner_state;
 
@@ -111,7 +111,7 @@ export class DinnerEventPage implements OnInit, OnDestroy {
         this.partnerName = this.profileService.getPartner().name;
 
         // Ottengo i dati relativi alla mia cena
-        this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId, force).then(response => {
+        this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId).then(response => {
           this.myDinnerDetails = response;
 
           this.myDish = this.dinnersService.detMyDish(this.myDinnerDetails.houses, this.firstDish, this.secondDish, this.thirdDish);

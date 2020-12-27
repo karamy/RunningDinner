@@ -76,13 +76,13 @@ export class DinnerVotesPage implements OnInit {
     // Ottengo i dati della cena dai parametri della rotta
     this.route.queryParams.subscribe((dinner: Dinner) => {
       this.dinner = { ...dinner };
-      this.detDinnerVotes(false);
+      this.detDinnerVotes();
     });
 
     // Registrazione observable per reagire al ricaricamento cena (es. vengo rimosso da una cena)
     this.subscription = this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Dinner Votes - Ricarico cena');
-      this.detDinnerVotes(true);
+      this.detDinnerVotes();
     });
   }
 
@@ -92,7 +92,7 @@ export class DinnerVotesPage implements OnInit {
     this.subscription.unsubscribe();
   }
 
-  detDinnerVotes(force: Boolean) {
+  detDinnerVotes() {
     this.dinnersService.getDinnerState(this.dinner.id).then(resp => {
       this.state = resp.dinner_state;
 
@@ -109,7 +109,7 @@ export class DinnerVotesPage implements OnInit {
             }
 
             // Ottengo i dati relativi alla mia cena
-            this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId, force).then(response => {
+            this.dinnersService.getMyDinnerDetails(this.dinner, this.paramsService.getParams().groupId).then(response => {
               this.myDinnerDetails = response;
 
               // Creo array con i due gruppi da votare

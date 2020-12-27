@@ -352,13 +352,13 @@ export class DinnersService {
   }
 
   // Ottiene i piatti della cena per l'evento cena e gli utenti corrispondenti
-  async getMyDinnerDetails(dinner: Dinner, groupId: number, force: Boolean):
+  async getMyDinnerDetails(dinner: Dinner, groupId: number):
     Promise<MyDinnerDetails> {
 
     const dinnerId = dinner.id;
 
     return new Promise(async (resolve, reject) => {
-      if ((force || !this._myDinnerDetailsDict ||
+      if ((!this._myDinnerDetailsDict ||
         !Object.keys(this._myDinnerDetailsDict).includes(dinnerId.toString()))
       ) {
 
