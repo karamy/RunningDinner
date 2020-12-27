@@ -4,13 +4,15 @@
       <ion-back-button defaultHref="/home/tabs/dinners"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="primary">
-      <ion-button *ngIf="!editMode" shape="round" size="large" slot="icon-only" (click)="onLoadOtherParamsInBackground()">
+      <ion-button *ngIf="!onRefresh" shape="round" size="large" slot="icon-only"
+        (click)="onLoadOtherParamsInBackground()">
         <ion-icon size="large" name="refresh-circle-outline"></ion-icon>
       </ion-button>
-      <ion-button *ngIf="!editMode && !profileService.getPartner()" fill="clear" (click)="triggerEditMode()">
+      <ion-button *ngIf="!onRefresh && !editMode && !profileService.getPartner()" fill="clear"
+        (click)="triggerEditMode()">
         <ion-icon name="create-outline"></ion-icon>
       </ion-button>
-      <ion-button *ngIf="editMode" fill="clear" (click)="saveChanges()">
+      <ion-button *ngIf="!onRefresh && editMode" fill="clear" (click)="saveChanges()">
         <ion-icon name="save-outline"></ion-icon>
       </ion-button>
     </ion-buttons>

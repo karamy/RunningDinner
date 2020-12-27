@@ -31,6 +31,7 @@ export class ProfilePage implements OnInit {
   user: UserData;
   userAge: number;
   editMode = false;
+  onRefresh = false;
   badgeExpand = false;
   foodExpand = false;
   GoogleAutocomplete: google.maps.places.AutocompleteService;
@@ -270,10 +271,24 @@ export class ProfilePage implements OnInit {
 
   // Ricaricamento parametri secondari, utile se ad esempio non ricevo la notifica di aggiunta a gruppo
   onLoadOtherParamsInBackground() {
+    this.onRefresh = true;
     this.profileService.clearPartner();
     this.foodAllergiesService.clearGroupFoodAllergies();
     this.badgesService.clearGroupBadges();
 
-    this.authService.loadOtherParamsInBackground();
+    this.rdToast.show(
+      "Ricaricamento profilo...",
+      4000
+    );
+
+    this.authService.loadOtherParamsInBackground().then( // Attendo con la then solo la prima chiamata 'loadParams'
+      () => {
+        // Imposto timeout di 5s perchè non posso sapere quando finirà la chiamata in parallelo agli altri parametri,
+        // verosimilmente dopo quel tempo dovrà essersi aggiornato il profilo e si potrà nuovamente fare le operazioni
+        setTimeout(() => {
+          this.onRefresh = false;
+        }, 5000);
+      }
+    );
   }
 }

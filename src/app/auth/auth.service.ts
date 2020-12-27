@@ -116,7 +116,7 @@ export class AuthService {
 
   // Carica gli altri parametri in background
   public loadOtherParamsInBackground() {
-    this.rdParams.loadParams(true)
+    return this.rdParams.loadParams(true)
       .then(
         () => {
           if (this.rdParams.getParams().groupId) {
