@@ -78,6 +78,10 @@ export class NotificationPage {
   // Valuto, in base alla presenza di un login attivo, se proseguire con la registrazione
   // o entrare direttamente (caso in cui un utente a posteriori disabilita le autorizzazioni)
   endPermissionCheck() {
+    if (this.authService.isUserAuthenticated()) {
+      this.navController.navigateRoot('/home');
+    } else {
       this.navController.navigateRoot('/auth/phone');
+    }
   }
 }
