@@ -11,6 +11,7 @@ import { FoodAllergiesService } from '../rdmodals/food-allergies/food-allergies.
 import { BadgesService } from '../home/profile/badges.service';
 import { ContactsService } from '../home/tabs/contacts/contacts.service';
 import { DinnersService } from '../home/tabs/dinners/dinners.service';
+import { ChatService } from '../home/chat/chat.service';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,8 @@ export class AuthService {
     private foodAllergiesService: FoodAllergiesService,
     private badgesService: BadgesService,
     private contactsService: ContactsService,
-    private dinnersService: DinnersService
+    private dinnersService: DinnersService,
+    private chatService: ChatService
   ) {
     this.readUser();
   }
@@ -186,6 +188,7 @@ export class AuthService {
           await this.dinnersService.clearDinnerDetails();
           await this.dinnersService.clearDinnerWinners();
           await this.dinnersService.clearMyDinnerDetails();
+          await this.chatService.clearChatImages();
 
           // Uscita dall'app
           this.navController.navigateRoot('/auth');

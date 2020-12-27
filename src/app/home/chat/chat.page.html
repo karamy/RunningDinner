@@ -5,6 +5,9 @@
     </ion-buttons>
     <ion-title>chat</ion-title>
     <ion-buttons slot="primary">
+      <ion-button shape="round" size="large" slot="icon-only" (click)="onReinitChat()">
+        <ion-icon size="large" name="refresh-circle-outline"></ion-icon>
+      </ion-button>
       <rd-profile></rd-profile>
     </ion-buttons>
   </ion-toolbar>
@@ -15,20 +18,20 @@
     <ion-list lines="none">
 
       <ion-item *ngFor="let item of dinnerMessages" text-wrap>
-        <div *ngIf="item.sentby != user.name" class="message">
-          <!-- <ion-avatar > <img [src]="profileService.getUserbyName(item.sentby).profile_photo"></ion-avatar> -->
-          <ion-avatar> <img [src]="user.profile_photo"></ion-avatar>
+        <div *ngIf="item.userid != user.userid" class="message">
+          <ion-avatar> <img [src]="this.chatService.getUserChatImage(item.userid)"></ion-avatar>
           <div class="bubble">
-            <span style="color: lightcoral">{{item.sentby}}</span> <br> {{item.message}}
+            <span style="color: lightcoral">{{this.chatService.getUserChatName(item.userid)}}</span> <br>
+            {{item.message}}
             <div class="corner"></div>
             <span class="time">{{item.timeofmsg}}</span>
           </div>
         </div>
 
-        <div *ngIf="item.sentby === user.name" class="message right">
+        <div *ngIf="item.userid === user.userid" class="message right">
           <ion-avatar> <img [src]="user.profile_photo"></ion-avatar>
           <div class="bubble">
-            <span style="color: green">{{item.sentby}}</span> <br> {{item.message}}
+            <span style="color: green">{{this.chatService.getUserChatName(item.userid)}}</span> <br> {{item.message}}
             <div class="corner"></div>
             <span class="time">{{item.timeofmsg}}</span>
           </div>

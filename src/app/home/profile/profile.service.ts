@@ -60,13 +60,6 @@ export class ProfileService {
     });
   }
 
-  async getUserbyName(username: string) {
-
-    //dati user ricavato dal nome inserito
-
-  }
-
-
   // Aggiunge i parametri avgAge e distance al partner e lo scrive in localStorage
   private writePartner(partner: PartnerData, user: UserData) {
     const userAge = this.calcAge(user.birth_date); // Ottengo l'età dello user

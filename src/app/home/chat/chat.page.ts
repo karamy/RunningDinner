@@ -14,12 +14,13 @@ import { NotificationsService } from 'src/app/home/notifications.service';
 export class ChatPage implements OnInit {
   // Recupero attraverso annotation @ViewChild il riferimento all'elemento del DOM su cui effettuare lo scroll
   @ViewChild('chatContent', { static: false }) chatContent: IonContent;
+
   newMsgText: string;
   dinnerMessages: ChatMsg[] = [];
   user: UserData;
   messagesSubscription: Subscription;
 
-  constructor(private chatService: ChatService,
+  constructor(public chatService: ChatService,
     private authService: AuthService,
     public profileService: ProfileService,
     private notificationService: NotificationsService) { }
@@ -27,18 +28,17 @@ export class ChatPage implements OnInit {
   ngOnInit() {
     // Inizializzazione chat e caricamento messaggi
     this.user = this.authService.getUserData();
-    this.messagesSubscription = this.chatService.init().subscribe((receivedMessages) => {
-      this.handleNewMessages(receivedMessages);
-    });
+    this.chatService.init(false).then(
+      (obs) => {
+        this.messagesSubscription = obs.subscribe((receivedMessages) => {
+          this.handleNewMessages(receivedMessages);
+        });
+      }
+    );
 
     // Registrazione observable per reagire al ricaricamento chat (es. vengo aggiunto a una cena)
     this.notificationService.getUpdateParamsObservable().subscribe(() => {
-      console.log("Chat - Ricarico parametri e messaggi");
-      this.dinnerMessages = [];
-      this.messagesSubscription.unsubscribe();
-      this.messagesSubscription = this.chatService.init().subscribe((receivedMessages) => {
-        this.handleNewMessages(receivedMessages);
-      });
+      this.onReinitChat();
     });
   }
 
@@ -53,7 +53,7 @@ export class ChatPage implements OnInit {
   // Invia il messaggio, portando la videata a scrollare in fondo
   sendMsg() {
     if (this.newMsgText) {
-      this.chatService.addNewMessage(this.newMsgText).then(() => {
+      this.chatService.addNewMessage(this.authService.getUserData().userid, this.newMsgText).then(() => {
         this.scrollToBottom();
         this.newMsgText = '';
       });
@@ -66,5 +66,19 @@ export class ChatPage implements OnInit {
     setTimeout(() => {
       this.chatContent.scrollToBottom();
     });
+  }
+
+  // Ricaricamento chat, utile se ad esempio voglio ricaricare le immagini dei partecipanti alla cena
+  onReinitChat() {
+    console.log("Chat - Ricarico parametri e messaggi");
+    this.dinnerMessages = [];
+    this.messagesSubscription.unsubscribe();
+    this.chatService.init(true).then(
+      (obs) => {
+        this.messagesSubscription = obs.subscribe((receivedMessages) => {
+          this.handleNewMessages(receivedMessages);
+        });
+      }
+    );
   }
 }
