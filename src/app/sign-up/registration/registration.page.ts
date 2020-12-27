@@ -13,9 +13,9 @@ import { IonSlides } from '@ionic/angular';
   templateUrl: './registration.page.html',
   styleUrls: ['./registration.page.scss'],
 })
-export class RegistrationPage implements OnInit,AfterViewInit {
+export class RegistrationPage implements OnInit, AfterViewInit {
 
-  @ViewChild('slider', {static: false}) Slider: IonSlides;
+  @ViewChild('slider', { static: false }) Slider: IonSlides;
   @ViewChild('map', { static: false }) mapElementRef: ElementRef;
 
   GoogleAutocomplete: google.maps.places.AutocompleteService;
@@ -26,21 +26,22 @@ export class RegistrationPage implements OnInit,AfterViewInit {
   map: any;
   service: google.maps.places.PlacesService;
   mapPreview: any = null;
-  progressvalue =0.25;
+  progressvalue = 0.25;
 
 
   username: string;
   birthdate: Date;
   photoData: string; // Rappresenta i dati da mostrare a video
-  index= 0;
+  index = 0;
 
-  constructor(public photoService: PhotoService, private signupService: SignupService, private router: Router,private render: Renderer2,
+  constructor(public photoService: PhotoService, private signupService: SignupService, private router: Router, private render: Renderer2,
     private zone: NgZone, private authService: AuthService, private spinner: RDSpinnerService) {
     defineCustomElements(window); // CAPIRE PERCHè SERVE
     this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
     this.autocomplete = { input: '' };
     this.autocompleteItems = [];
   }
+
   ngAfterViewInit() {
     //Get Map from Google Maps
     this.getGoogleMaps().then(googleMaps => {
@@ -58,24 +59,24 @@ export class RegistrationPage implements OnInit,AfterViewInit {
       console.log(err);
     });
   }
-  // All'avvio carico l'immagine eventualmente salvata in localStorage
 
+  // All'avvio carico l'immagine eventualmente salvata in localStorage
   ngOnInit() {
     this.username = null;
     this.loadPicture();
   }
 
-  activeIndex(){
+  activeIndex() {
     this.Slider.getActiveIndex()
-    .then(activeIndex => {
-      console.log('active index = ', activeIndex );
-      this.index=activeIndex;
-      this.progressvalue= 0.25 + (activeIndex*0.25);
-   });
+      .then(activeIndex => {
+        console.log('active index = ', activeIndex);
+        this.index = activeIndex;
+        this.progressvalue = 0.25 + (activeIndex * 0.25);
+      });
   }
-  
-   // Ottengo foto da camera o galleria
-   async getPicture() {
+
+  // Ottengo foto da camera o galleria
+  async getPicture() {
     const data = await this.photoService.getPicture();
     if (data) {
       this.loadPicture();
@@ -94,8 +95,8 @@ export class RegistrationPage implements OnInit,AfterViewInit {
     this.router.navigateByUrl('/sign-up/address-map');
   }
 
-   // Effettua la registrazione utente, e in caso positivo entra nella home
-   onSignup() {
+  // Effettua la registrazione utente, e in caso positivo entra nella home
+  onSignup() {
 
     // Inserisco tutte le informazioni delle slide nel signupservice
     this.signupService.setName(this.username);
@@ -132,7 +133,7 @@ export class RegistrationPage implements OnInit,AfterViewInit {
     });
   }
 
-   private getGoogleMaps(): Promise<any> {
+  private getGoogleMaps(): Promise<any> {
     const win = window as any;
     const googleModule = win.google;
     if (googleModule && googleModule.maps) {

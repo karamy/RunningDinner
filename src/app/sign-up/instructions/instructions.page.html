@@ -1,20 +1,11 @@
 <ion-content class="prova">
   <ion-img class="città" src="assets/citta.svg"></ion-img>
-  <ion-img
-    *ngIf="this.index===1 || this.index===2"
-    class="animate__animated animate__fadeIn logo1"
-    src="assets/pinRD.png"
-  ></ion-img>
-  <ion-img
-    *ngIf="this.index===1 || this.index===2"
-    class="animate__animated animate__fadeIn logo2"
-    src="assets/pinRD.png"
-  ></ion-img>
-  <ion-img
-    *ngIf="this.index===2"
-    class="animate__animated animate__lightSpeedInLeft macchina"
-    src="assets/macchina.png"
-  ></ion-img>
+  <ion-img *ngIf="this.index===1 || this.index===2" class="animate__animated animate__fadeIn logo1"
+    src="assets/pinRD.png"></ion-img>
+  <ion-img *ngIf="this.index===1 || this.index===2" class="animate__animated animate__fadeIn logo2"
+    src="assets/pinRD.png"></ion-img>
+  <ion-img *ngIf="this.index===2" class="animate__animated animate__lightSpeedInLeft macchina"
+    src="assets/macchina.png"></ion-img>
   <div class="footerslide"></div>
   <ion-slides #slider (ionSlideDidChange)="activeIndex()">
     <ion-slide>
@@ -36,17 +27,10 @@
     </ion-slide>
     <ion-slide>
       <h1 class="titletop">Al resto ci pensiamo noi!</h1>
-      <ion-button
-        class="buttonbottom"
-        fill="outline"
-        (click)="goToGeolocation()"
-      >
+      <ion-button class="buttonbottom" fill="outline" (click)="goToGeolocation()">
         Continua
       </ion-button>
     </ion-slide>
   </ion-slides>
-  <ion-progress-bar
-    color="secondary"
-    value="{{this.progressvalue}}"
-  ></ion-progress-bar>
+  <ion-progress-bar color="secondary" value="{{this.progressvalue}}"></ion-progress-bar>
 </ion-content>

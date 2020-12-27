@@ -1,13 +1,18 @@
 <ion-content>
   <ion-grid>
-    <ion-row class="ion-align-self-center ion-align-items-center">
-      <ion-col class="ion-align-self-center" size-md="6" size-sm="12" size-xs="12">
-        <ion-item lines="none">
-          <h1>My phone number is</h1>
-        </ion-item>
-      </ion-col>
+    <ion-row class="firstrow">
+      <div class="headerslide">
+        <h1 class="titleheader">
+          Il tuo numero di telefono non potrà essere visualizzato dagli altri
+          utenti.
+        </h1>
+      </div>
     </ion-row>
-    <ion-row>
+    <ion-row class="secondrow">
+      <h1 class="titletop">
+        il mio <br />
+        numero di cellulare
+      </h1>
       <ion-col size="4">
         <ion-item class="ion-text-center">
           <ion-input required readonly placeholder="Code" [value]="prefix" (click)="presentModalCountryCodes()">
@@ -21,29 +26,29 @@
         </ion-item>
       </ion-col>
     </ion-row>
-    <ion-row>
+    <ion-row class="secondrowsecond">
       <ion-col size="12" class="ion-text-center">
         <ion-item *ngIf="otpSent">
-          <ion-input required placeholder="Verification Code" [(ngModel)]="otp"></ion-input>
+          <ion-input required placeholder="XXXXX" class="ion-text-center" [(ngModel)]="otp"></ion-input>
         </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col class="ion-text-center">
-        <ion-label color='medium' *ngIf="!otpSent">
-          Ti invieremo un messaggio contenente un codice di verifica. Possono applicarsi tariffe per l'invio di messaggi
-          e il trasferimento di dati
+        <ion-label color="medium" *ngIf="!otpSent">
+          Ti invieremo un messaggio contenente un codice di verifica. Possono
+          applicarsi tariffe per l'invio di messaggi e il trasferimento di dati
         </ion-label>
-        <ion-label color='medium' *ngIf="otpSent">
+        <ion-label color="medium" *ngIf="otpSent">
           Inserisci il codice di conferma
         </ion-label>
       </ion-col>
     </ion-row>
-    <ion-row>
+    <ion-row class="thirdrow">
       <ion-col class="ion-text-center">
-        <ion-button [disabled]="!inputNumber || !prefix" *ngIf="!otpSent" block strong=true color='secondary'
-          fill='outline' (click)="sendOtp()">Verifica</ion-button>
-        <ion-button *ngIf="otpSent" [disabled]="!otp" expand="block" strong=true color='secondary' fill='outline'
+        <ion-button *ngIf="inputNumber && prefix && !otpSent" strong="true" fill="outline" (click)="sendOtp()"
+          class="buttonbottom">Verifica</ion-button>
+        <ion-button *ngIf="otpSent && otp" expand="block" strong="true" class="buttonbottom" fill="outline"
           (click)="verifyNumber()">Conferma</ion-button>
       </ion-col>
     </ion-row>

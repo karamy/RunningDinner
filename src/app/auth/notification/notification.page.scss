@@ -1,8 +1,66 @@
-ion-img {
+.headerslide {
   width: 100%;
+  border-bottom-right-radius: 2em;
+  border-bottom-left-radius: 2em;
+  background: linear-gradient(to bottom, #50976a, #80c898);
 }
-
-ion-item {
-  --inner-padding-end: 0px;
-  --padding-start: 0px;
+.titleheader {
+  font-size: 1.5em;
+  color: white;
+  width: 80%;
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center;
+}
+.buttonbottom {
+  background: linear-gradient(to bottom, white, #e2f4de);
+  border-radius: 0.5em;
+  height: 10%;
+  box-shadow: 0px 0px 7px 7px #e2f4de;
+  font-size: 1.7em;
+  border-width: 0px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+.firstrow {
+  height: 20%;
+}
+.secondrow {
+  height: 70%;
+  align-items: center;
+  background: radial-gradient(#80c898 , #ffffff 80%);
+}
+.secondrowsecond {
+  height: 70%;
+  align-items: center;
+  background: radial-gradient(#ff817b , #ffffff 80%);
+}
+.thirdrow {
+  height: 40%;
+  display:flex;
+}
+ion-grid{
+  height:100% !important;
+  width:100% !important;
+}
+.notification{
+  margin:10px;
+}
+.pulse{
+  margin-left: auto;
+  margin-right: auto;
+  animation-name: color;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  border-radius: 6em;
+  width: 50%;
+}
+@keyframes color {
+  0% {box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7), 0 0 0 0 rgba(255, 255, 255, .7)}
+  40% {box-shadow: 0 0 0 50px rgba(255, 255, 255, 0), 0 0 0 0 rgba(255, 255, 255, .7)}
+  80% {box-shadow: 0 0 0 50px rgba(255, 255, 255, 0), 0 0 0 30px rgba(255, 255, 255, 0)}
+  100% {box-shadow: 0 0 0 0 rgba(255, 255, 255, 0), 0 0 0 30px rgba(255, 255, 255, 0)}
 }

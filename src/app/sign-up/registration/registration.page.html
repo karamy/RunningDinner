@@ -1,9 +1,6 @@
 <ion-content>
   <div class="headerslide">
-    <ion-progress-bar
-      color="secondary"
-      value="{{this.progressvalue}}"
-    ></ion-progress-bar>
+    <ion-progress-bar color="secondary" value="{{this.progressvalue}}"></ion-progress-bar>
   </div>
   <ion-slides #slider color="secondary" (ionSlideDidChange)="activeIndex()">
     <ion-slide class="Slide1">
@@ -18,11 +15,7 @@
             Mi <br />
             chiamo
           </h1>
-          <ion-input
-            class="inputusername"
-            placeholder="Inserisci qui il tuo nome"
-            [(ngModel)]="username"
-          ></ion-input>
+          <ion-input class="inputusername" placeholder="Inserisci qui il tuo nome" [(ngModel)]="username"></ion-input>
         </ion-row>
         <ion-row class="ThirdRow"> </ion-row>
       </ion-grid>
@@ -39,11 +32,8 @@
             Sono <br />
             nato
           </h1>
-          <ion-datetime
-            class="inputusername"
-            placeholder="Inserisci la tua data di nascita"
-            [(ngModel)]="birthdate"
-          ></ion-datetime>
+          <ion-datetime class="inputusername" placeholder="Inserisci la tua data di nascita" [(ngModel)]="birthdate">
+          </ion-datetime>
         </ion-row>
         <ion-row class="ThirdRow"> </ion-row>
       </ion-grid>
@@ -60,21 +50,13 @@
             Foto <br />
             Profilo
           </h1>
-          <ion-avatar
-            *ngIf="photoData"
-            style="margin: auto"
-            class="profilephoto"
-          >
+          <ion-avatar *ngIf="photoData" style="margin: auto" class="profilephoto">
             <ion-img class="profilephoto" src="{{ photoData }}"> </ion-img>
           </ion-avatar>
         </ion-row>
         <ion-row class="ThirdRow">
-          <ion-button
-            class="photobutton"
-            color="secondary"
-            (click)="getPicture()"
-          >
-            <ion-icon name="camera"></ion-icon>
+          <ion-button class="photobutton" (click)="getPicture()">
+            <ion-icon style="font-size: 3em" name="camera"></ion-icon>
           </ion-button>
         </ion-row>
       </ion-grid>
@@ -91,17 +73,10 @@
             Mi <br />
             trovo
           </h1>
-          <ion-input
-            class="inputusername"
-            placeholder="Inserisci qui l'indirizzo"
-            [(ngModel)]="autocomplete.input"
-            (keyup)="updateSearchResults()"
-          ></ion-input>
+          <ion-input class="inputusername" placeholder="Inserisci qui l'indirizzo" [(ngModel)]="autocomplete.input"
+            (keyup)="updateSearchResults()"></ion-input>
           <ion-list class="autocomplete">
-            <ion-list
-              [hidden]="autocompleteItems.length == 0"
-              *ngFor="let item of autocompleteItems; let i = index"
-            >
+            <ion-list [hidden]="autocompleteItems.length == 0" *ngFor="let item of autocompleteItems; let i = index">
               <ion-item *ngIf="i<3" tappable (click)="selectSearchResult(item)">
                 {{ item.description }}
               </ion-item>
@@ -110,21 +85,10 @@
         </ion-row>
         <ion-row class="ThirdRow">
           <!-- <div class="map" #map></div> -->
-          <img
-            class="map-preview animate__animated animate__fadeIn"
-            [hidden]="!mapPreview"
-            src="{{ mapPreview }}"
-          />
+          <img class="map-preview animate__animated animate__fadeIn" [hidden]="!mapPreview" src="{{ mapPreview }}" />
           <br />
-          <ion-button
-            *ngIf="autocomplete.input && username && birthdate && photoService.profilePhotoData"
-            expand="block"
-            strong="true"
-            fill="outline"
-            (click)="onSignup()"
-            class="buttonbottom"
-            >Conferma</ion-button
-          >
+          <ion-button *ngIf="autocomplete.input && username && birthdate && photoService.profilePhotoData"
+            expand="block" strong="true" fill="outline" (click)="onSignup()" class="buttonbottom">Conferma</ion-button>
         </ion-row>
       </ion-grid>
     </ion-slide>

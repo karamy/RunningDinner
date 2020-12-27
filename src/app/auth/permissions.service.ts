@@ -20,7 +20,7 @@ export class PermissionsService {
           console.warn("Auth status" + status);
           status = status.toLowerCase();
           if (status === "granted" || status === "authorized_when_in_use") {
-            resolve();
+            reject(status);
           } else {
             reject(status);
           }

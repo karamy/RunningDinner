@@ -13,10 +13,6 @@ ion-slides {
   --bullet-background: white;
   --bullet-background-active: #e2f4de;
 }
-ion-content {
-  --background: linear-gradient(to top, #80c898, #ffffff) no-repeat center
-    center / cover;
-}
 
 .titletop {
   font-size: 2.5em;
@@ -68,6 +64,7 @@ ion-grid {
   height: 12rem;
   width: 12rem;
   border: 3px solid var(--ion-color-secondary);
+  margin-bottom: 10%;
 }
 ion-row {
   height: 100%;
@@ -128,4 +125,9 @@ ion-progress-bar {
   border-width: 0px;
   margin-left: auto;
   margin-right: auto;
+}
+.photobutton {
+  height: 30%;
+  width: 8em;
+  margin-top: 30%;
 }

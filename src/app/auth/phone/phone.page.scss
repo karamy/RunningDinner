@@ -1,0 +1,50 @@
+.headerslide {
+  width: 100%;
+  border-bottom-right-radius: 2em;
+  border-bottom-left-radius: 2em;
+  box-shadow: 0px 5px 20px 20px #f5f5f5;
+  background: linear-gradient(to bottom, #50976a, #80c898);
+}
+.titleheader {
+  font-size: 1.5em;
+  color: white;
+  width: 80%;
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center;
+}
+.titletop {
+  font-size: 1.5em;
+  color: #50976a;
+  width: 80%;
+  text-align: left;
+  margin-left: 10%;
+  margin-top: 10%;
+}
+.buttonbottom {
+  background: linear-gradient(to bottom, white, #e2f4de);
+  border-radius: 0.5em;
+  width: 40%;
+  height: 20%;
+  box-shadow: 0px 0px 7px 7px #e2f4de;
+  font-size: 1.7em;
+  border-width: 0px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+.firstrow {
+  height: 20%;
+}
+.secondrow .secondrowsecond {
+  height: 40%;
+}
+.thirdrow {
+  height: 40%;
+}
+ion-grid {
+  height: 100% !important;
+}
