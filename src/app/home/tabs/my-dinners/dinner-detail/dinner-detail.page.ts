@@ -55,7 +55,6 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
 
   // Rimuovo la sottoscrizione all'observable quando esco dalla videata
   ngOnDestroy() {
-    console.log('OnDestroy');
     this.subscription.unsubscribe();
   }
 

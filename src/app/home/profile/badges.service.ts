@@ -2,22 +2,28 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RDConstantsService } from 'src/app/rdcostants.service';
 import { RDParamsService } from 'src/app/rdparams.service';
+import { RDStorageService } from 'src/app/rdstorage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BadgesService {
 
-  _userBadges: UserBadge[];
-  _groupBadges: UserBadge[];
+  private _userBadges: UserBadge[];
+  private _groupBadges: UserBadge[];
+  private _contactBadgesDict: any;
 
   constructor(
     private http: HttpClient,
     private rdConstants: RDConstantsService,
-    public paramsService: RDParamsService
+    public paramsService: RDParamsService,
+    private rdStorage: RDStorageService
   ) {
     this.readUserBadges();
     this.readGroupBadges();
+
+    this._contactBadgesDict = {};
+    this.readContactBadges();
   }
 
   // Carica le i badges da DB
@@ -38,6 +44,12 @@ export class BadgesService {
     });
   }
 
+  // Ritorna la lista di tutti i badges
+  getUserBadgesData() {
+    return this._userBadges;
+  }
+
+  // Converte le immagini in stringhe utilizzabili dal tag <src>
   public convertImagesToJpeg(badges: UserBadge[]) {
     for (let i = 0; i < badges.length; i++) {
       badges[i].badge_photo = 'data:image/jpeg;base64,' + badges[i].badge_photo;
@@ -67,21 +79,36 @@ export class BadgesService {
     this.readUserBadges();
   }
 
+  // Legge gli userBadges presenti in localStorage e li carica nel Service
   private readUserBadges() {
     this._userBadges = JSON.parse(
       localStorage.getItem('badges')
     ) as UserBadge[] || [];
   }
 
-  // Ritorna la lista di tutti i badges
-  getUserBadgesData() {
-    return this._userBadges;
-  }
-
   // Cancella dal localStorage la lista di tutti i badges
   clearUserBadges() {
     localStorage.setItem('badges', null);
     this.readUserBadges();
+  }
+
+  // Scrivo in localstorage la lista di tutti i contact badges
+  private async writeContactBadges(contactBadges: any) {
+    await this.rdStorage.setItem('contactBadges', JSON.stringify(contactBadges));
+    await this.readContactBadges();
+  }
+
+  // Legge i contactBadges presenti in localStorage e li carica nel Service
+  private async readContactBadges() {
+    this._contactBadgesDict = JSON.parse(
+      await this.rdStorage.getItem('contactBadges')
+    ) || {};
+  }
+
+  // Cancella dal localStorage la lista di tutti i contact badges
+  async clearContactBadges() {
+    await this.rdStorage.setItem('contactBadges', null);
+    await this.readContactBadges();
   }
 
   // Ottengo da DB i badges del Partner
@@ -149,22 +176,33 @@ export class BadgesService {
     this.readGroupBadges();
   }
 
-  // Carica le i badges del contatto selezionato da DB
-  async getContactBadges(userId: number): Promise<UserBadge[]> {
-    return new Promise((resolve, reject) => {
-      this.http
-        .post(this.rdConstants.getApiRoute('getContactBadges'), { userId })
-        .toPromise()
-        .then(
-          res => {
-            this.convertImagesToJpeg(res as UserBadge[]);
-            resolve(res as UserBadge[]);
-          },
-          err => {
-            reject(err);
-          }
-        );
-    });
+  getContactBadgesFromCache(contactId: number): UserBadge[] {
+    return this._contactBadgesDict[contactId] || [];
+  }
+
+  // Carica i badges del contatto selezionato da DB
+  async getContactBadges(contactId: number): Promise<UserBadge[]> {
+    return new Promise(
+      (resolve, reject) => {
+
+        this.http
+          .post(this.rdConstants.getApiRoute('getContactBadges'), { userId: contactId })
+          .toPromise()
+          .then(
+            async res => {
+              this.convertImagesToJpeg(res as UserBadge[]);
+
+              this._contactBadgesDict[contactId.toString()] = res;
+              await this.writeContactBadges(this._contactBadgesDict);
+              resolve(this._contactBadgesDict[contactId.toString()]);
+            },
+            err => {
+              reject(err);
+            }
+          );
+
+
+      })
   }
 }
 

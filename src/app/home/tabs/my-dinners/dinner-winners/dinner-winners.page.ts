@@ -43,13 +43,12 @@ export class DinnerWinnersPage implements OnInit, OnDestroy {
 
   // Rimuovo la sottoscrizione all'observable quando esco dalla videata
   ngOnDestroy() {
-    console.log('OnDestroy');
     this.subscription.unsubscribe();
   }
 
   getDinnerWinners(force: Boolean) {
     // Ottengo i vincitori della cena
-    this.dinnerService.getDinnerWinners(this.dinner,force).then(res => {
+    this.dinnerService.getDinnerWinners(this.dinner, force).then(res => {
 
       // Converto le immagini profilo e badge in JPEG
       this.dinnerWinnersList = this.dinnerService.convertWinnersImagesToJpeg(res);

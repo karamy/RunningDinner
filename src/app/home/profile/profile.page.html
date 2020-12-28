@@ -322,7 +322,6 @@
   <ion-grid>
     <ion-row>
       <ion-col class="ion-text-center">
-        <ion-button *ngIf="editMode" color="danger" style="width: 50%;" (click)="onLogout()">Logout</ion-button>
         <ion-button color="danger" style="width: 50%;" (click)="onLogout()">Logout Debug</ion-button>
         <ion-button *ngIf="paramsService.getParams().groupId && !paramsService.getParams().dinnerId" style="width: 50%;"
           (click)="onLeaveGroup()">Lascia il gruppo</ion-button>

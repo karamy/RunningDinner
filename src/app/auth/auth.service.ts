@@ -189,6 +189,7 @@ export class AuthService {
           await this.dinnersService.clearDinnerWinners();
           await this.dinnersService.clearMyDinnerDetails();
           await this.chatService.clearChatImages();
+          await this.badgesService.clearContactBadges();
 
           // Uscita dall'app
           this.navController.navigateRoot('/auth');
