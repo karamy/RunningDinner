@@ -3,7 +3,6 @@ import { Plugins, CameraResultType, CameraSource } from '@capacitor/core';
 
 const { Camera } = Plugins;
 
-
 @Injectable({
   providedIn: 'root'
 })

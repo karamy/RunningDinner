@@ -13,7 +13,7 @@ import {
 } from "src/app/rdmodals/food-allergies/food-allergies.page";
 import { UserService } from "src/app/auth/user.service";
 import { ProfileService } from "./profile.service";
-import { PhotoService } from "src/app/sign-up/profile-photo/photo.service";
+import { PhotoService } from "src/app/photo.service";
 import { RDSpinnerService } from "src/app/rdspinner.service";
 import { BadgesService } from "./badges.service";
 import { FoodAllergiesService } from "src/app/rdmodals/food-allergies/food-allergies.service";
