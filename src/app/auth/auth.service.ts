@@ -253,11 +253,11 @@ export class AuthService {
       firebaseToken: this.firebaseToken
     };
 
-    await this.spinner.create();
+    //await this.spinner.create();
     return this.http.post(this.rdConstants.getApiRoute('updateFirebaseToken'), updateFirebaseTokenBody)
       .toPromise()
       .finally(
-        () => { this.spinner.dismiss(); }
+        () => { /* this.spinner.dismiss(); */ }
       );
   }
 
