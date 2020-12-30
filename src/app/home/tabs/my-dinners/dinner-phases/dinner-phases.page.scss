@@ -1,3 +1,8 @@
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;
+}
+
 ion-toolbar {
     --background: transparent;
 }

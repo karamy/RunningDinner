@@ -4,6 +4,7 @@ import { ContactsDetailPage } from "../../../rdmodals/contacts-detail/contacts-d
 import { ContactsService, RDContact } from "./contacts.service";
 import { RDSpinnerService } from 'src/app/rdspinner.service';
 import { AuthService } from 'src/app/auth/auth.service';
+import { RDToastService } from "src/app/rdtoast.service";
 
 @Component({
   selector: "app-contacts",
@@ -18,7 +19,8 @@ export class ContactsPage implements OnInit {
     public modalController: ModalController,
     private contactsService: ContactsService,
     private spinner: RDSpinnerService,
-    private authService: AuthService
+    private authService: AuthService,
+    private rdToast: RDToastService
   ) { }
 
   ngOnInit() {
@@ -47,8 +49,14 @@ export class ContactsPage implements OnInit {
           this.contactsService.getMatchingContacts(localContacts).then(
             // Invio i contatti al server
             remoteMathContacts => {
+              // Popolo una lista temporanea
+              const tempList = this.contactList;
               // Riempio la lista locale
               this.contactList = this.contactsService.compareContacts(remoteMathContacts, localContacts);
+              // Se aggiunti/rimossi contatti mostro un toast
+              if (tempList.length !== this.contactList.length) {
+                this.showToast(tempList);
+              }
               resolve();
             },
             () => {
@@ -79,5 +87,25 @@ export class ContactsPage implements OnInit {
       this.modalOpen = false;
     });
     return await modal.present();
+  }
+
+  // Mostro un toast se cambiamento nei contatti
+  showToast(tempList) {
+    const diff = (this.contactList.length - tempList.length);
+    let message: string;
+    if (diff > 0) {
+      if (diff > 1) {
+        message = 'Aggiunti ' + diff + ' contatti'
+      } else {
+        message = 'Aggiunto ' + diff + ' contatto'
+      }
+    } else {
+      if (diff < -1) {
+        message = 'Rimossi ' + Math.abs(diff) + ' contatti'
+      } else {
+        message = 'Rimosso ' + Math.abs(diff) + ' contatto'
+      }
+    }
+    this.rdToast.show(message);
   }
 }

@@ -1,9 +1,12 @@
 <ion-card>
   <ion-grid>
-    <ion-row style="align-items: center;" class="no-padding" *ngIf="objectsArray.length > 0">
+    <ion-row style="align-items: center;" class="no-padding"
+      *ngIf="objectsArray.length > 0 || type === 'skeleton-badge' || type === 'skeleton-foodAllergy'">
       <ion-col>
         <p *ngIf="type === 'badge'" style="margin: 0%;">Badges</p>
+        <p *ngIf="type === 'skeleton-badge'" style="margin: 0%;">Badges</p>
         <p *ngIf="type === 'foodAllergy'" style="margin: 0%;">Intolleranze Alimentari</p>
+        <p *ngIf="type === 'skeleton-foodAllergy'" style="margin: 0%;">Intolleranze Alimentari</p>
       </ion-col>
       <ion-col *ngIf="expandable" style="padding-top: 0%;" class="ion-text-end">
         <ion-button fill=" clear" size="small" style="margin: 0%;font-size: 14px;" *ngIf="!expand"
@@ -23,6 +26,13 @@
             <ion-avatar>
               <img *ngIf="type === 'badge'" [src]=badge.badge_photo />
               <img *ngIf="type === 'foodAllergy'" [src]=badge.allergy_photo />
+            </ion-avatar>
+          </ion-slide>
+        </ion-slides>
+        <ion-slides [options]="slideOpts" *ngIf="type === 'skeleton-badge' || type === 'skeleton-foodAllergy'">
+          <ion-slide *ngFor="let n of [0,1,2]">
+            <ion-avatar>
+              <ion-skeleton-text animated></ion-skeleton-text>
             </ion-avatar>
           </ion-slide>
         </ion-slides>

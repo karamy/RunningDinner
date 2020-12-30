@@ -20,114 +20,211 @@
 <ion-content scrollY="false" fullscreen="true" slot="fixed">
   <div id="mapEvent" class="background-map"></div>
   <div id="cupertinoEvent" class="bottomPanel">
-    <ion-grid>
-      <ion-row>
-        <ion-col style="height: 100%;">
-          <h3 class="dinner-title">{{dinner.title}}</h3>
-        </ion-col>
-      </ion-row>
-      <ion-row style="height: 100%; margin-top: 5%">
-        <ion-col style="height: 100%;">
-          <h3 class="dinner-name">Cena di {{dinnerType}}</h3>
-        </ion-col>
-        <ion-col *ngIf="myDinnerDetails.foodAllergies.length > 0">
-          <div class="foodAllergies">
-            <ion-button style="margin: 0%; color: black;" size="small" fill="clear"
-              (click)="presentModalFoodAllergies(myDinnerDetails.foodAllergies, myDinnerDetails.foodAllergiesCategories)">
-              Sono presenti intolleranze
-              <ion-icon slot="start" size="default" name="heart-circle-outline"></ion-icon>
-            </ion-button>
-          </div>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col class="ion-text-center" style="padding-left: 2%;">
-          <h6 *ngIf="myDish" style="margin-bottom: 0px; margin-top: 10px;">Tu e
-            {{partnerName}}
-            dovrete cucinare {{myDish}}</h6>
-        </ion-col>
-      </ion-row>
-      <ion-row class="ion-text-center" style="padding-top: 2%;">
-        <ion-col size="1" class="ion-align-items-center">
-          <ion-icon name="time-outline"></ion-icon>
-        </ion-col>
-        <ion-col class="ion-text-start" style="padding-left: 2%;">
-          <h6 class="dinner-info">{{dinner.dateString}} alle {{dinner.time}}</h6>
-        </ion-col>
-      </ion-row>
-      <ion-row style="margin-top: 3%;">
-        <ion-col style="display: contents;" class="ion-text-center">
-          <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-left">
-            <img [src]="myDinnerDetails.houses.firstHouse.firstImage">
-          </ion-avatar>
-          <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-right">
-            <img [src]="myDinnerDetails.houses.firstHouse.secondImage">
-          </ion-avatar>
-        </ion-col>
-        <ion-col *ngIf="myDinnerDetails.houses" class="ion-text-center">
-          <p style="margin: 0px;">{{firstDish}} a casa di
-            {{myDinnerDetails.houses.firstHouse.firstName}}
-            &
-            {{myDinnerDetails.houses.firstHouse.secondName}}</p>
-          <span>
-            <p style="margin: 0px;">Alle 21.20</p>
-          </span>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col style="height: 40px; margin-left: 4%;" size="1">
-          <div class="dotted-line"></div>
-        </ion-col>
-        <ion-col class="ion-text-start">
-          <p style="margin: 0px; margin-left: 2%;">{{myDinnerDetails.houseDistances[0]}}</p>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col style="display: contents;" class="ion-text-center">
-          <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-left">
-            <img [src]="myDinnerDetails.houses.secondHouse.firstImage">
-          </ion-avatar>
-          <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-right">
-            <img [src]="myDinnerDetails.houses.secondHouse.secondImage">
-          </ion-avatar>
-        </ion-col>
-        <ion-col *ngIf="myDinnerDetails.houses" class="ion-text-center">
-          <p style="margin: 0px;">{{secondDish}} a casa di
-            {{myDinnerDetails.houses.secondHouse.firstName}}
-            &
-            {{myDinnerDetails.houses.secondHouse.secondName}}</p>
-          <span>
-            <p style="margin: 0px;">Alle 22.30</p>
-          </span>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col style="height: 40px; margin-left: 4%;" size="1">
-          <div class="dotted-line"></div>
-        </ion-col>
-        <ion-col class="ion-text-start">
-          <p style="margin: 0px; margin-left: 2%;">{{myDinnerDetails.houseDistances[1]}}</p>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col style="display: contents;" class="ion-text-center">
-          <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-left">
-            <img [src]="myDinnerDetails.houses.thirdHouse.firstImage">
-          </ion-avatar>
-          <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-right">
-            <img [src]="myDinnerDetails.houses.thirdHouse.secondImage">
-          </ion-avatar>
-        </ion-col>
-        <ion-col *ngIf="myDinnerDetails.houses" class="ion-text-center">
-          <p style="margin: 0px;">{{thirdDish}} a casa di
-            {{myDinnerDetails.houses.thirdHouse.firstName}}
-            &
-            {{myDinnerDetails.houses.thirdHouse.secondName}}</p>
-          <span>
-            <p style="margin: 0px;">Alle 23.00</p>
-          </span>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+    <div *ngIf="myDinnerDetails.houseDistances.length === 0 && bottomPanel">
+      <ion-grid>
+        <ion-row>
+          <ion-col style="height: 100%; text-align: -webkit-center;">
+            <ion-skeleton-text animated style="width: 90%; margin-top: 0.5em;">
+            </ion-skeleton-text>
+          </ion-col>
+        </ion-row>
+        <ion-row style="height: 100%; margin-top: 5%">
+          <ion-col style="height: 100%; text-align: -webkit-center;">
+            <ion-skeleton-text animated style="width: 30%; margin-bottom: 0.5em;">
+            </ion-skeleton-text>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="padding-left: 2%; text-align: -webkit-center;">
+            <ion-skeleton-text animated style="width: 70%; margin-bottom: 0.5em; margin-top: 0.5em;">
+            </ion-skeleton-text>
+          </ion-col>
+        </ion-row>
+        <ion-row class="ion-text-center" style="padding-top: 2%;">
+          <ion-col size="1" class="ion-align-items-center">
+            <ion-icon name="time-outline"></ion-icon>
+          </ion-col>
+          <ion-col class="ion-text-start" style="padding-left: 2%;">
+            <ion-skeleton-text animated style="width: 50%; margin-bottom: 0.5em; margin-top: 0.5em;">
+            </ion-skeleton-text>
+          </ion-col>
+        </ion-row>
+        <ion-row style="margin-top: 3%;">
+          <ion-col style="display: contents;" class="ion-text-center">
+            <ion-avatar class="avatar-left">
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-avatar>
+            <ion-avatar class="avatar-right">
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-avatar>
+          </ion-col>
+          <ion-col class="ion-text-center">
+            <ion-skeleton-text animated></ion-skeleton-text>
+            <span style="text-align: -webkit-center;">
+              <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+            </span>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="height: 40px; margin-left: 4%;" size="1">
+            <div class="dotted-line"></div>
+          </ion-col>
+          <ion-col class="ion-text-start">
+            <ion-skeleton-text animated style="width: 20%; margin-left: 0.4em;"></ion-skeleton-text>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="display: contents;" class="ion-text-center">
+            <ion-avatar class="avatar-left">
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-avatar>
+            <ion-avatar class="avatar-right">
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-avatar>
+          </ion-col>
+          <ion-col class="ion-text-center">
+            <ion-skeleton-text animated></ion-skeleton-text>
+            <span style="text-align: -webkit-center;">
+              <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+            </span>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="height: 40px; margin-left: 4%;" size="1">
+            <div class="dotted-line"></div>
+          </ion-col>
+          <ion-col class="ion-text-start">
+            <ion-skeleton-text animated style="width: 20%; margin-left: 0.4em;"></ion-skeleton-text>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="display: contents;" class="ion-text-center">
+            <ion-avatar class="avatar-left">
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-avatar>
+            <ion-avatar class="avatar-right">
+              <ion-skeleton-text animated></ion-skeleton-text>
+            </ion-avatar>
+          </ion-col>
+          <ion-col class="ion-text-center">
+            <ion-skeleton-text animated></ion-skeleton-text>
+            <span style="text-align: -webkit-center;">
+              <ion-skeleton-text animated style="width: 50%;"></ion-skeleton-text>
+            </span>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+    <div *ngIf="myDinnerDetails.houseDistances.length > 0 && bottomPanel">
+      <ion-grid>
+        <ion-row>
+          <ion-col style="height: 100%;">
+            <h3 class="dinner-title">{{dinner.title}}</h3>
+          </ion-col>
+        </ion-row>
+        <ion-row style="height: 100%; margin-top: 5%">
+          <ion-col style="height: 100%;">
+            <h3 class="dinner-name">Cena di {{dinnerType}}</h3>
+          </ion-col>
+          <ion-col *ngIf="myDinnerDetails.foodAllergies.length > 0">
+            <div class="foodAllergies">
+              <ion-button style="margin: 0%; color: black;" size="small" fill="clear"
+                (click)="presentModalFoodAllergies(myDinnerDetails.foodAllergies, myDinnerDetails.foodAllergiesCategories)">
+                Sono presenti intolleranze
+                <ion-icon slot="start" size="default" name="heart-circle-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col class="ion-text-center" style="padding-left: 2%;">
+            <h6 *ngIf="myDish" style="margin-bottom: 0px; margin-top: 10px;">Tu e
+              {{partnerName}}
+              dovrete cucinare {{myDish}}</h6>
+          </ion-col>
+        </ion-row>
+        <ion-row class="ion-text-center" style="padding-top: 2%;">
+          <ion-col size="1" class="ion-align-items-center">
+            <ion-icon name="time-outline"></ion-icon>
+          </ion-col>
+          <ion-col class="ion-text-start" style="padding-left: 2%;">
+            <h6 class="dinner-info">{{dinner.dateString}} alle {{dinner.time}}</h6>
+          </ion-col>
+        </ion-row>
+        <ion-row style="margin-top: 3%;">
+          <ion-col style="display: contents;" class="ion-text-center">
+            <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-left">
+              <img [src]="myDinnerDetails.houses.firstHouse.firstImage">
+            </ion-avatar>
+            <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-right">
+              <img [src]="myDinnerDetails.houses.firstHouse.secondImage">
+            </ion-avatar>
+          </ion-col>
+          <ion-col *ngIf="myDinnerDetails.houses" class="ion-text-center">
+            <p style="margin: 0px;">{{firstDish}} a casa di
+              {{myDinnerDetails.houses.firstHouse.firstName}}
+              &
+              {{myDinnerDetails.houses.firstHouse.secondName}}</p>
+            <span>
+              <p style="margin: 0px;">Alle 21.20</p>
+            </span>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="height: 40px; margin-left: 4%;" size="1">
+            <div class="dotted-line"></div>
+          </ion-col>
+          <ion-col class="ion-text-start">
+            <p style="margin: 0px; margin-left: 2%;">{{myDinnerDetails.houseDistances[0]}}</p>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="display: contents;" class="ion-text-center">
+            <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-left">
+              <img [src]="myDinnerDetails.houses.secondHouse.firstImage">
+            </ion-avatar>
+            <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-right">
+              <img [src]="myDinnerDetails.houses.secondHouse.secondImage">
+            </ion-avatar>
+          </ion-col>
+          <ion-col *ngIf="myDinnerDetails.houses" class="ion-text-center">
+            <p style="margin: 0px;">{{secondDish}} a casa di
+              {{myDinnerDetails.houses.secondHouse.firstName}}
+              &
+              {{myDinnerDetails.houses.secondHouse.secondName}}</p>
+            <span>
+              <p style="margin: 0px;">Alle 22.30</p>
+            </span>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="height: 40px; margin-left: 4%;" size="1">
+            <div class="dotted-line"></div>
+          </ion-col>
+          <ion-col class="ion-text-start">
+            <p style="margin: 0px; margin-left: 2%;">{{myDinnerDetails.houseDistances[1]}}</p>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col style="display: contents;" class="ion-text-center">
+            <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-left">
+              <img [src]="myDinnerDetails.houses.thirdHouse.firstImage">
+            </ion-avatar>
+            <ion-avatar *ngIf="myDinnerDetails.houses" class="avatar-right">
+              <img [src]="myDinnerDetails.houses.thirdHouse.secondImage">
+            </ion-avatar>
+          </ion-col>
+          <ion-col *ngIf="myDinnerDetails.houses" class="ion-text-center">
+            <p style="margin: 0px;">{{thirdDish}} a casa di
+              {{myDinnerDetails.houses.thirdHouse.firstName}}
+              &
+              {{myDinnerDetails.houses.thirdHouse.secondName}}</p>
+            <span>
+              <p style="margin: 0px;">Alle 23.00</p>
+            </span>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
   </div>
 </ion-content>

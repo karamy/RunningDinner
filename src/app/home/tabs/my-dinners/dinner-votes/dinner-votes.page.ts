@@ -199,7 +199,7 @@ export class DinnerVotesPage implements OnInit {
     const panelSettings: CupertinoSettings = {
       initialBreak: 'top',
       breaks: {
-        top: { enabled: true, height: window.screen.height * 0.5, bounce: true },
+        top: { enabled: true, height: window.screen.height * 0.55, bounce: true },
         middle: { enabled: false, height: window.screen.height * 0.25, bounce: true },
         bottom: { enabled: true, height: window.screen.height * 0.15 },
       },

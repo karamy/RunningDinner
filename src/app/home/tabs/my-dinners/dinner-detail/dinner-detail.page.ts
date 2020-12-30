@@ -6,6 +6,7 @@ import { RDParamsService } from 'src/app/rdparams.service';
 import { NotificationsService } from 'src/app/home/notifications.service';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
+import { RDToastService } from 'src/app/rdtoast.service';
 
 @Component({
   selector: 'app-dinner-detail',
@@ -37,7 +38,8 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
     public paramsService: RDParamsService,
     private notificationsService: NotificationsService,
     private navController: NavController,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private rdToast: RDToastService) { }
 
   ngOnInit() {
     // Ottengo i dati di testate della cena dai parametri della rotta
@@ -284,6 +286,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
         });
 
         this.navController.navigateRoot('/home/tabs/dinners');
+        this.rdToast.show('Hai abbandonato la cena');
       },
       (err) => {
         console.warn(err);

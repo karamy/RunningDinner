@@ -11,6 +11,7 @@ export class StarRatingComponent implements OnInit {
   @Input() categoryId: number;
   @Input() categoryName: string;
   @Input() groupId: number;
+  @Input() isSkeleton: boolean;
   @Output() ratingChange: EventEmitter<Vote> = new EventEmitter();
   rating: number;
 

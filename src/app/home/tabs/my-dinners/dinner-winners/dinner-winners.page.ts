@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ɵbypassSanitizationTrustStyle } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { NotificationsService } from 'src/app/home/notifications.service';
@@ -49,7 +49,7 @@ export class DinnerWinnersPage implements OnInit, OnDestroy {
 
   getDinnerWinners(force: Boolean) {
     // Ottengo i vincitori della cena
-    this.dinnerService.getDinnerWinners(this.dinner,force).then(res => {
+    this.dinnerService.getDinnerWinners(this.dinner, force).then(res => {
 
       // Converto le immagini profilo e badge in JPEG
       this.dinnerWinnersList = this.dinnerService.convertWinnersImagesToJpeg(res);

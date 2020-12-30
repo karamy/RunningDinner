@@ -24,71 +24,123 @@
 </ion-header>
 
 <ion-content [scrollEvents]="true" fullscreen="true" slot="fixed">
-  <div>
-    <div style="height: 130px;position: relative;">
-      <div id="mapDetails" class="avatar"></div>
+  <div style="height: 130px;position: relative;">
+    <div id="mapDetails" class="avatar"></div>
+  </div>
+  <div *ngIf="!dinnerDetails.dinnerData">
+    <div class="card-body" style="height: fit-content; margin-bottom: 2%;">
+      <div class="dinner-meta ion-text-center">
+        <div style="text-align: -webkit-center;">
+          <ion-skeleton-text animated style="width: 50%; margin-bottom: 0.5em; margin-top: 0.5em;"></ion-skeleton-text>
+          <ion-skeleton-text animated style="width: 50%; margin-bottom: 0.5em;"></ion-skeleton-text>
+        </div>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="1" class="ion-align-items-center">
+              <ion-icon name="rocket-outline"></ion-icon>
+            </ion-col>
+            <ion-col class="ion-text-start" style="padding-left: 2%;">
+              <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
+            </ion-col>
+          </ion-row>
+          <ion-row style="padding-top: 2%;">
+            <ion-col size="1" class="ion-align-items-center">
+              <ion-icon name="time-outline"></ion-icon>
+            </ion-col>
+            <ion-col class="ion-text-start" style="padding-left: 2%;">
+              <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
+            </ion-col>
+          </ion-row>
+          <ion-row style="padding-top: 2%;">
+            <ion-col size="1" class="ion-align-items-center">
+              <ion-icon name="people-circle-outline"></ion-icon>
+            </ion-col>
+            <ion-col class="ion-text-start" style="padding-left: 2%;">
+              <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
+            </ion-col>
+          </ion-row>
+          <ion-row style="padding-top: 2%;">
+            <ion-col size="1" class="ion-align-items-center">
+              <ion-icon name="map-outline"></ion-icon>
+            </ion-col>
+            <ion-col class="ion-text-start" style="padding-left: 2%;">
+              <ion-skeleton-text animated style="width: 100%;"></ion-skeleton-text>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <div style="text-align: -webkit-center;">
+          <ion-skeleton-text animated style="width: 70%; margin-bottom: 1.5em; margin-top: 1em;"></ion-skeleton-text>
+        </div>
+        <rd-slider [objectsArray]="" [type]="'skeleton-badge'" [expandable]="false"
+          [descriptionVoid]="'Nessun badge presente'">
+        </rd-slider>
+        <rd-slider [objectsArray]="" [type]="'skeleton-foodAllergy'" [categories]="" [expandable]="false"
+          [descriptionVoid]="'Nessuna intolleranza presente'"></rd-slider>
+      </div>
     </div>
   </div>
-  <div class="card-body" style="height: fit-content; margin-bottom: 2%;">
-    <div class="dinner-meta ion-text-center">
-      <h3 *ngIf="!isEdit" class="dinner-name">{{dinner.title}}</h3>
-      <ion-input *ngIf="isEdit" class="dinner-edit" [(ngModel)]="_newTitle"></ion-input>
-      <h3 class="dinner-name">{{dinnerType}}</h3>
-      <ion-grid>
-        <ion-row>
-          <ion-col size="1" class="ion-align-items-center">
-            <ion-icon name="rocket-outline"></ion-icon>
-          </ion-col>
-          <ion-col class="ion-text-start" style="padding-left: 2%;">
-            <h6 class="dinner-info">Partecipanti alla cena {{dinner.groupIds.length}} su 9</h6>
-          </ion-col>
-        </ion-row>
-        <ion-row style="padding-top: 2%;">
-          <ion-col size="1" class="ion-align-items-center">
-            <ion-icon name="time-outline"></ion-icon>
-          </ion-col>
-          <ion-col class="ion-text-start" style="padding-left: 2%;">
-            <h6 class="dinner-info">{{dinner.dateString}} alle {{dinner.time}}</h6>
-          </ion-col>
-        </ion-row>
-        <ion-row style="padding-top: 2%;">
-          <ion-col size="1" class="ion-align-items-center">
-            <ion-icon name="people-circle-outline"></ion-icon>
-          </ion-col>
-          <ion-col class="ion-text-start" style="padding-left: 2%;">
-            <div *ngIf="dinnerDetails && dinnerDetails.minMaxAges.length > 0">
-              <h6 *ngIf="dinnerDetails.minMaxAges[0] !== dinnerDetails.minMaxAges[1]" class="dinner-info">Età
-                partecipanti
-                dai
-                {{dinnerDetails.minMaxAges[0]}} ai
-                {{dinnerDetails.minMaxAges[1]}} anni</h6>
-              <h6 *ngIf="dinnerDetails.minMaxAges[0] === dinnerDetails.minMaxAges[1]" class="dinner-info">Età
-                partecipanti
-                {{dinnerDetails.minMaxAges[0]}} anni</h6>
-            </div>
-          </ion-col>
-        </ion-row>
-        <ion-row style="padding-top: 2%;">
-          <ion-col size="1" class="ion-align-items-center">
-            <ion-icon name="map-outline"></ion-icon>
-          </ion-col>
-          <ion-col class="ion-text-start" style="padding-left: 2%;">
-            <div *ngIf="dinnerDetails && dinnerDetails.avgDistance >= 0">
-              <h6 class="dinner-info">Distanza media {{dinnerDetails.avgDistance}} km da te</h6>
-            </div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-      <div *ngIf="!isEdit" class="dinner-description">
-        {{dinner.description}}
+  <div *ngIf="dinnerDetails.dinnerData">
+    <div class="card-body" style="height: fit-content; margin-bottom: 2%;">
+      <div class="dinner-meta ion-text-center">
+        <h3 *ngIf="!isEdit" class="dinner-name">{{dinner.title}}</h3>
+        <ion-input *ngIf="isEdit" class="dinner-edit" [(ngModel)]="_newTitle"></ion-input>
+        <h3 class="dinner-name">{{dinnerType}}</h3>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="1" class="ion-align-items-center">
+              <ion-icon name="rocket-outline"></ion-icon>
+            </ion-col>
+            <ion-col class="ion-text-start" style="padding-left: 2%;">
+              <h6 class="dinner-info">Partecipanti alla cena {{dinner.groupIds.length}} su 9</h6>
+            </ion-col>
+          </ion-row>
+          <ion-row style="padding-top: 2%;">
+            <ion-col size="1" class="ion-align-items-center">
+              <ion-icon name="time-outline"></ion-icon>
+            </ion-col>
+            <ion-col class="ion-text-start" style="padding-left: 2%;">
+              <h6 class="dinner-info">{{dinner.dateString}} alle {{dinner.time}}</h6>
+            </ion-col>
+          </ion-row>
+          <ion-row style="padding-top: 2%;">
+            <ion-col size="1" class="ion-align-items-center">
+              <ion-icon name="people-circle-outline"></ion-icon>
+            </ion-col>
+            <ion-col class="ion-text-start" style="padding-left: 2%;">
+              <div *ngIf="dinnerDetails && dinnerDetails.minMaxAges.length > 0">
+                <h6 *ngIf="dinnerDetails.minMaxAges[0] !== dinnerDetails.minMaxAges[1]" class="dinner-info">Età
+                  partecipanti
+                  dai
+                  {{dinnerDetails.minMaxAges[0]}} ai
+                  {{dinnerDetails.minMaxAges[1]}} anni</h6>
+                <h6 *ngIf="dinnerDetails.minMaxAges[0] === dinnerDetails.minMaxAges[1]" class="dinner-info">Età
+                  partecipanti
+                  {{dinnerDetails.minMaxAges[0]}} anni</h6>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row style="padding-top: 2%;">
+            <ion-col size="1" class="ion-align-items-center">
+              <ion-icon name="map-outline"></ion-icon>
+            </ion-col>
+            <ion-col class="ion-text-start" style="padding-left: 2%;">
+              <div *ngIf="dinnerDetails && dinnerDetails.avgDistance >= 0">
+                <h6 class="dinner-info">Distanza media {{dinnerDetails.avgDistance}} km da te</h6>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <div *ngIf="!isEdit" class="dinner-description">
+          {{dinner.description}}
+        </div>
+        <ion-input *ngIf="isEdit" class="dinner-edit" [(ngModel)]="_newDescription"></ion-input>
+        <rd-slider [objectsArray]="dinnerDetails.badges" [type]="'badge'" [expandable]="true"
+          [descriptionVoid]="'Nessun badge presente'">
+        </rd-slider>
+        <rd-slider [objectsArray]="dinnerDetails.foodAllergies" [type]="'foodAllergy'"
+          [categories]="dinnerDetails.foodAllergiesCategories" [expandable]="true"
+          [descriptionVoid]="'Nessuna intolleranza presente'"></rd-slider>
       </div>
-      <ion-input *ngIf="isEdit" class="dinner-edit" [(ngModel)]="_newDescription"></ion-input>
-      <rd-slider [objectsArray]="dinnerDetails.badges" [type]="'badge'" [expandable]="true"
-        [descriptionVoid]="'Nessun badge presente'">
-      </rd-slider>
-      <rd-slider [objectsArray]="dinnerDetails.foodAllergies" [type]="'foodAllergy'"
-        [categories]="dinnerDetails.foodAllergiesCategories" [expandable]="true"
-        [descriptionVoid]="'Nessuna intolleranza presente'"></rd-slider>
     </div>
   </div>
 

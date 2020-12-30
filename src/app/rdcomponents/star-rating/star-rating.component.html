@@ -1,5 +1,14 @@
-<div style="margin-top: 5%;">
-  <h3 style="margin: 0%; font-size: 20px;">{{categoryName}}</h3>
-  <ion-icon name="star" *ngFor="let num of [1,2,3,4,5]" (click)="rate(num)" [ngStyle]="{'color':getColor(num)}">
-  </ion-icon>
+<div *ngIf="isSkeleton">
+  <div style="margin-top: 5%; text-align: -webkit-center;">
+    <ion-skeleton-text animated style="width: 30%; margin-top: 0.5em;"></ion-skeleton-text>
+    <ion-icon name="star" *ngFor="let num of [1,2,3,4,5]">
+    </ion-icon>
+  </div>
+</div>
+<div *ngIf="!isSkeleton">
+  <div style="margin-top: 5%;">
+    <h3 style="margin: 0%; font-size: 20px;">{{categoryName}}</h3>
+    <ion-icon name="star" *ngFor="let num of [1,2,3,4,5]" (click)="rate(num)" [ngStyle]="{'color':getColor(num)}">
+    </ion-icon>
+  </div>
 </div>

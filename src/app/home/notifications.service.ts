@@ -119,29 +119,15 @@ export class NotificationsService {
         this.presentAlertAddToGroup(notificationContent.userIdThatInvites as number, notificationContent.userNameThatInvites as string, notificationContent.userIdThatInvitesHouse as boolean);
         break;
       case "updateParams": // Richiesta di ricaricamento parametri
-        this.paramsService.loadParams(true)
-          .then(() => {
-            if (this.paramsService.getParams().groupId) {
-              this.profileService.getPartnerData(this.authService.getUserData()).then(() => {
-                this.foodAllergiesService.getPartnerFoodAllergies(this.authService.getUserData().userid);
-                this.badgesService.getPartnerBadges(this.authService.getUserData().userid);
-              },
-                () => {
-                  console.log("Errore getPartnerData");
-                })
-            } else {
-              this.profileService.clearPartner();
-              this.foodAllergiesService.clearGroupFoodAllergies();
-              this.badgesService.clearGroupBadges();
-              this.rdToast.show('Il gruppo è stato sciolto', 2000);
-            }
-            this.fireUpdateParamsEvent();
-          })
-          .catch(
-            () => { // Errore ricaricamento parametri
-              console.warn("Errore caricamento parametri");
-            }
-          );
+        this.updateParams();
+        break;
+      case 'joinDinner': // Aggiunta ad una cena e richiesta ricaricamento parametri
+        this.updateParams();
+        this.rdToast.show('Il tuo partner ti ha aggiunto ad una cena');
+        break;
+      case "leaveDinner": // Abbandono di una cena e richiesta ricaricamento parametri
+        this.updateParams();
+        this.rdToast.show('Il tuo partner ha abbandonato la cena');
         break;
       case "newMessage":
         console.log("Ricevuto nuovo messaggio in chat");
@@ -149,6 +135,33 @@ export class NotificationsService {
       default:
         console.warn("Ricevuta notifica di tipologia non gestita");
     }
+  }
+
+  // Ricaricamento dei parametri
+  private updateParams() {
+    this.paramsService.loadParams(true)
+      .then(() => {
+        if (this.paramsService.getParams().groupId) {
+          this.profileService.getPartnerData(this.authService.getUserData()).then(() => {
+            this.foodAllergiesService.getPartnerFoodAllergies(this.authService.getUserData().userid);
+            this.badgesService.getPartnerBadges(this.authService.getUserData().userid);
+          },
+            () => {
+              console.log("Errore getPartnerData");
+            })
+        } else {
+          this.profileService.clearPartner();
+          this.foodAllergiesService.clearGroupFoodAllergies();
+          this.badgesService.clearGroupBadges();
+          this.rdToast.show('Il gruppo è stato sciolto', 2000);
+        }
+        this.fireUpdateParamsEvent();
+      })
+      .catch(
+        () => { // Errore ricaricamento parametri
+          console.warn("Errore caricamento parametri");
+        }
+      );
   }
 
   // Scateno evento di ricaricamento parametri (undefined se non ci sono sottoscrizioni)
