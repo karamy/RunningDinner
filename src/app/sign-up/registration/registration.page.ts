@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, ElementRef, NgZone, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { SignupService } from '../signup-service.service';
+import { IonSlides } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { PhotoService } from '../profile-photo/photo.service';
 import { defineCustomElements } from '@ionic/pwa-elements/loader';
+import { SignupService } from '../signup-service.service';
 import { RDSpinnerService } from 'src/app/rdspinner.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { environment } from 'src/environments/environment';
-import { IonSlides } from '@ionic/angular';
+import { PhotoService } from 'src/app/photo.service';
 
 @Component({
   selector: 'app-registration',
@@ -28,15 +28,14 @@ export class RegistrationPage implements OnInit, AfterViewInit {
   mapPreview: any = null;
   progressvalue = 0.25;
 
-
   username: string;
   birthdate: Date;
-  photoData: string; // Rappresenta i dati da mostrare a video
+  photoData: string;
   index = 0;
 
   constructor(public photoService: PhotoService, private signupService: SignupService, private router: Router, private render: Renderer2,
     private zone: NgZone, private authService: AuthService, private spinner: RDSpinnerService) {
-    defineCustomElements(window); // CAPIRE PERCHè SERVE
+    defineCustomElements(window);
     this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
     this.autocomplete = { input: '' };
     this.autocompleteItems = [];
@@ -97,12 +96,10 @@ export class RegistrationPage implements OnInit, AfterViewInit {
 
   // Effettua la registrazione utente, e in caso positivo entra nella home
   onSignup() {
-
     // Inserisco tutte le informazioni delle slide nel signupservice
     this.signupService.setName(this.username);
     this.signupService.setBirthDate(this.birthdate);
     this.signupService.setProfilePhoto(this.photoService.profilePhotoData);
-
 
     // Dichiaro la funzione qui perchè altrimenti VS Code non la riconosceva all'interno dello scope
     // Esegue la registrazione e il successivo login
@@ -156,7 +153,7 @@ export class RegistrationPage implements OnInit, AfterViewInit {
     });
   }
 
-  /* Autocomplete Address */
+  // Autocomplete Address
   updateSearchResults() {
     if (this.autocomplete.input === '') {
       this.autocompleteItems = [];
@@ -176,13 +173,12 @@ export class RegistrationPage implements OnInit, AfterViewInit {
   }
 
   selectSearchResult(item) {
-    console.log(item);
     this.autocompleteItems = [];
     this.autocomplete.input = item.description;
     this.getMapImage(item.description);
   }
 
-  /* Get a static Map image */
+  // Get a static Map image
   public getMapImage(place) {
     if (place) {
       this.mapPreview = `https://maps.googleapis.com/maps/api/staticmap?size=300x300&maptype=roadmap
@@ -190,5 +186,4 @@ export class RegistrationPage implements OnInit, AfterViewInit {
     &key=${environment.googleMapsAPIKey}`;
     }
   }
-
 }

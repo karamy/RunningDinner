@@ -227,7 +227,7 @@ export class DinnersService {
   }
 
   // Aggiorna i dinnerDetails nel localStorage
-  private async writeDinnerDetails(dinnerDetails: DinnerDetails) {
+  private async writeDinnerDetails(dinnerDetails: any) {
     await this.rdStorage.setItem('dinnerDetails', JSON.stringify(dinnerDetails));
     await this.readDinnerDetails();
   }
@@ -333,7 +333,7 @@ export class DinnersService {
   }
 
   // Aggiorna i myDinnerDetails nel localStorage
-  private async writeMyDinnerDetails(myDinnerDetails: MyDinnerDetails) {
+  private async writeMyDinnerDetails(myDinnerDetails: any) {
     await this.rdStorage.setItem('myDinnerDetails', JSON.stringify(myDinnerDetails));
     await this.readMyDinnerDetails();
   }

@@ -1,3 +1,6 @@
+/// <reference types="@types/googlemaps" />
+// In questo modo viene importata la libreria di google maps che servirà a tutto il progetto (deve essere la prima riga del file)
+
 import { Component } from '@angular/core';
 import { Platform, NavController } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';

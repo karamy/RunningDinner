@@ -189,6 +189,7 @@ export class AuthService {
           await this.dinnersService.clearDinnerWinners();
           await this.dinnersService.clearMyDinnerDetails();
           await this.chatService.clearChatImages();
+          await this.badgesService.clearContactBadges();
 
           // Uscita dall'app
           this.navController.navigateRoot('/auth');
@@ -252,11 +253,11 @@ export class AuthService {
       firebaseToken: this.firebaseToken
     };
 
-    await this.spinner.create();
+    //await this.spinner.create();
     return this.http.post(this.rdConstants.getApiRoute('updateFirebaseToken'), updateFirebaseTokenBody)
       .toPromise()
       .finally(
-        () => { this.spinner.dismiss(); }
+        () => { /* this.spinner.dismiss(); */ }
       );
   }
 

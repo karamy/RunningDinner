@@ -31,11 +31,13 @@ export class ContactsDetailPage implements OnInit {
   ) { }
 
   ngOnInit() {
+    // Lancio caricamento simultaneo sia da cache che da remoto, così se il valore era già in cache non viene ricaricato
+    this.contactBadges = this.badgesService.getContactBadgesFromCache(this.contactId);
     this.badgesService.getContactBadges(this.contactId).then(res => {
-      this.contactBadges = this.contactBadges.concat(res);
+      this.contactBadges = res;
     },
       () => {
-        console.log('Errore getContactBadges');
+        console.log('Errore getContactBadges', this.contactId);
       });
   }
 
