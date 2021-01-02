@@ -14,6 +14,7 @@ import { RDToastService } from "src/app/rdtoast.service";
 export class ContactsPage implements OnInit {
   contactList: RDContact[] = [];
   modalOpen = false;
+  syncInProgress: boolean;
 
   constructor(
     public modalController: ModalController,
@@ -24,12 +25,13 @@ export class ContactsPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.spinner.create("Caricando Contatti...");
-    this.loadContacts().finally(() => {
+    // this.spinner.create("Caricando Contatti...");
+    this.loadContacts()
+    /* .finally(() => {
       setTimeout(() => { // Necessario perchè altrimenti in caso di valore cache-ato non viene chiamato il finally
         this.spinner.dismiss();
       }, 2000);
-    });
+    }); */
   }
 
   async doRefresh(event) {
@@ -42,6 +44,9 @@ export class ContactsPage implements OnInit {
   }
 
   loadContacts(): Promise<void> {
+    // Mostro ion-skeleton
+    this.syncInProgress = true;
+
     return new Promise((resolve, reject) => {
       this.contactsService.getLocalContacts(true, this.authService.getUserData().phone_number).then(
         // Ottengo i contatti del device
@@ -57,15 +62,24 @@ export class ContactsPage implements OnInit {
               if (tempList.length !== this.contactList.length) {
                 this.showToast(tempList);
               }
+
+              // Fine della sincronizzazione, tolgo ion-skeleton
+              this.syncInProgress = false;
               resolve();
             },
             () => {
+              // Fine della sincronizzazione, tolgo ion-skeleton
+              this.syncInProgress = false;
+
               console.error("Impossibile inviare contatti al server");
               reject();
             }
           );
         },
         () => {
+          // Fine della sincronizzazione, tolgo ion-skeleton
+          this.syncInProgress = false;
+
           console.error("Impossibile leggere contatti dal dispositivo");
           reject();
         }

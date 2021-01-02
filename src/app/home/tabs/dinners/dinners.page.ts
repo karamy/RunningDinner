@@ -17,6 +17,7 @@ export class DinnersPage implements OnInit {
   myDinner: Dinner;
   filterType = 0;
   index = 0;
+  syncInProgress: boolean;
 
   constructor(public paramsService: RDParamsService,
     private route: ActivatedRoute,
@@ -43,6 +44,9 @@ export class DinnersPage implements OnInit {
 
   // Ricarico i parametri e l'elenco delle cene
   loadDinners(event, force: Boolean, loadFrom: string, notSave: Boolean) {
+    // Mostro ion-skeleton
+    this.syncInProgress = true;
+
     this.paramsService.loadParams(force).then(
       () => {
 
@@ -69,6 +73,9 @@ export class DinnersPage implements OnInit {
               this.dinnerList[i].time = Number(dinnerDateTime[1]);
             }
 
+            // Fine della sincronizzazione, tolgo ion-skeleton
+            this.syncInProgress = false;
+
             if (event) { // Se lanciato dal refresher o dall'infinite scroll emetto evento di completamento
               event.target.complete();
             }
@@ -90,6 +97,9 @@ export class DinnersPage implements OnInit {
             }
           },
           (err) => {
+            // Fine della sincronizzazione, tolgo ion-skeleton
+            this.syncInProgress = false;
+
             console.warn(err);
           });
       });

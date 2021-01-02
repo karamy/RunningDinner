@@ -20,7 +20,7 @@
 <ion-content scrollY="false" fullscreen="true" slot="fixed">
   <div id="map" class="background-map"></div>
   <div id="cupertinoPhases" class="bottomPanel">
-    <div *ngIf="myDinnerDetails.houseDistances.length === 0 && bottomPanel">
+    <div *ngIf="syncInProgress && bottomPanel">
       <ion-grid>
         <ion-row>
           <ion-col style="text-align: -webkit-center;">
@@ -87,7 +87,7 @@
         </ion-row>
       </ion-grid>
     </div>
-    <div *ngIf="myDinnerDetails.houseDistances.length > 0 && bottomPanel">
+    <div *ngIf="!syncInProgress && bottomPanel">
       <ion-grid>
         <ion-row>
           <ion-col>

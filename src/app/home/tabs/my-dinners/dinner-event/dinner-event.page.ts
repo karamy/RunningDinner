@@ -36,6 +36,7 @@ export class DinnerEventPage implements OnInit, OnDestroy {
     addressesLatLng: []
   };
   partnerName: string;
+  syncInProgress: boolean;
   bounds = new google.maps.LatLngBounds();
   bottomPanel: CupertinoPane;
 
@@ -90,6 +91,9 @@ export class DinnerEventPage implements OnInit, OnDestroy {
   }
 
   getDinnerEventData() {
+    // Mostro ion-skeleton
+    this.syncInProgress = true;
+
     this.dinnersService.getDinnerState(this.dinner.id).then(resp => {
       this.state = resp.dinner_state;
 
@@ -120,6 +124,9 @@ export class DinnerEventPage implements OnInit, OnDestroy {
 
           // Istanzio la mappa
           this.initMap(this.myDinnerDetails.addressesLatLng, this.myDinnerDetails.userLatLng);
+
+          // Fine della sincronizzazione, tolgo ion-skeleton
+          this.syncInProgress = false;
         });
       } else {
         this.dinnersService.detDinnerStateRoute(this.dinner, this.state);

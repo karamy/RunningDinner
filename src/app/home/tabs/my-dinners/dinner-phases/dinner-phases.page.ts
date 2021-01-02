@@ -42,6 +42,7 @@ export class DinnerPhasesPage implements OnInit {
   partnerName: string;
   dinnerPhase: number;
   phaseVariables: any[];
+  syncInProgress: boolean;
   bounds = new google.maps.LatLngBounds();
   bottomPanel: CupertinoPane;
 
@@ -86,6 +87,10 @@ export class DinnerPhasesPage implements OnInit {
   }
 
   getDinnerPhasesData() {
+    // Mostro ion-skeleton
+    this.syncInProgress = true;
+    console.log('sync');
+
     this.dinnersService.getDinnerState(this.dinner.id).then(resp => {
       this.state = resp.dinner_state;
 
@@ -155,6 +160,9 @@ export class DinnerPhasesPage implements OnInit {
               }
             });
           }
+
+          // Fine della sincronizzazione, tolgo ion-skeleton
+          this.syncInProgress = false;
         });
       } else {
         this.dinnersService.detDinnerStateRoute(this.dinner, this.state);

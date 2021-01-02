@@ -27,7 +27,7 @@
   <div style="height: 130px;position: relative;">
     <div id="mapDetails" class="avatar"></div>
   </div>
-  <div *ngIf="!dinnerDetails.dinnerData">
+  <div *ngIf="syncInProgress">
     <div class="card-body" style="height: fit-content; margin-bottom: 2%;">
       <div class="dinner-meta ion-text-center">
         <div style="text-align: -webkit-center;">
@@ -79,7 +79,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="dinnerDetails.dinnerData">
+  <div *ngIf="!syncInProgress">
     <div class="card-body" style="height: fit-content; margin-bottom: 2%;">
       <div class="dinner-meta ion-text-center">
         <h3 *ngIf="!isEdit" class="dinner-name">{{dinner.title}}</h3>

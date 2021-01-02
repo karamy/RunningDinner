@@ -53,6 +53,7 @@ export class DinnerVotesPage implements OnInit {
   seconds: number;
   minutesString: string;
   secondsString: string;
+  syncInProgress: boolean;
   bottomPanel: CupertinoPane;
 
   private subscription: Subscription;
@@ -92,6 +93,9 @@ export class DinnerVotesPage implements OnInit {
   }
 
   detDinnerVotes() {
+    // Mostro ion-skeleton
+    this.syncInProgress = true;
+
     this.dinnersService.getDinnerState(this.dinner.id).then(resp => {
       this.state = resp.dinner_state;
 
@@ -120,6 +124,9 @@ export class DinnerVotesPage implements OnInit {
               // Valorizzo i groupId dei due oggetti che rappresentano i voti del primo e del secondo gruppo
               this.firstGroupVotes.groupId = this.groupsToVote[0].groupid;
               this.secondGroupVotes.groupId = this.groupsToVote[1].groupid;
+
+              // Fine della sincronizzazione, tolgo ion-skeleton
+              this.syncInProgress = false;
             });
           }
         });

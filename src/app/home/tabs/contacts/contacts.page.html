@@ -11,13 +11,21 @@
     <ion-refresher-content pullingIcon="lines" refreshingSpinner="lines">
     </ion-refresher-content>
   </ion-refresher>
-  <ion-list>
+  <ion-list *ngIf="!syncInProgress">
     <ion-item *ngFor="let contact of contactList"
       (click)="onShowContact(contact.name, contact.imageUrl, contact.userId, contact.isInGroup)">
       <ion-avatar>
         <img [src]=" contact.imageUrl" />
       </ion-avatar>
       <p>{{contact.name}}</p>
+    </ion-item>
+  </ion-list>
+  <ion-list *ngIf="syncInProgress">
+    <ion-item *ngFor="let n of [0,1,2,3,4,5,6,7]">
+      <ion-avatar style="margin-top: 0.5em; margin-bottom: 0.5em;">
+        <ion-skeleton-text animated></ion-skeleton-text>
+      </ion-avatar>
+      <ion-skeleton-text animated style="width: 20%; margin-left: 0.2em;"></ion-skeleton-text>
     </ion-item>
   </ion-list>
 </ion-content>

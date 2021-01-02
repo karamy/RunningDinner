@@ -35,7 +35,7 @@
       </ion-row>
     </ion-grid>
     <div id="cupertinoVotes" class="bottomPanel">
-      <div style="height: 100%;" *ngIf="myDinnerDetails.houseDistances.length === 0">
+      <div style="height: 100%;" *ngIf="syncInProgress">
         <ion-slides pager="true" [options]="slideOpts">
           <ion-slide>
             <ion-grid>
@@ -117,7 +117,7 @@
           </ion-slide>
         </ion-slides>
       </div>
-      <div style="height: 100%;" *ngIf="myDinnerDetails.houseDistances.length > 0">
+      <div style="height: 100%;" *ngIf="!syncInProgress">
         <ion-slides pager="true" [options]="slideOpts">
           <ion-slide>
             <ion-grid>

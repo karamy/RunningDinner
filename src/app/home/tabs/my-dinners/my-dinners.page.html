@@ -17,14 +17,23 @@
     <ion-refresher-content pullingIcon="lines" refreshingSpinner="lines">
     </ion-refresher-content>
   </ion-refresher>
-  <div *ngIf="myDinner">
-    <rd-my-dinner (click)="goToDinner(myDinner)" [dinner]="myDinner"></rd-my-dinner>
-  </div>
-  <h1>Cronologia Cene</h1>
-  <div *ngIf="dinnerHistoryList">
-    <div *ngFor="let dinner of dinnerHistoryList">
-      <rd-dinner (click)="goToDinnerWinner(dinner)" [dinner]="dinner"></rd-dinner>
+  <div *ngIf="syncInProgress">
+    <rd-dinner [dinner]="" [isSkeleton]="true"></rd-dinner>
+    <ion-skeleton-text animated style="width: 50%; margin-left: 1em;"></ion-skeleton-text>
+    <div *ngFor="let n of [0,1,2]">
+      <rd-dinner [dinner]="" [isSkeleton]="true"></rd-dinner>
     </div>
-    <h2 *ngIf="dinnerHistoryList.length === 0">Non sono presenti cene passate</h2>
+  </div>
+  <div *ngIf="!syncInProgress">
+    <div *ngIf="myDinner">
+      <rd-my-dinner (click)="goToDinner(myDinner)" [dinner]="myDinner"></rd-my-dinner>
+    </div>
+    <h1>Cronologia Cene</h1>
+    <div *ngIf="dinnerHistoryList">
+      <div *ngFor="let dinner of dinnerHistoryList">
+        <rd-dinner (click)="goToDinnerWinner(dinner)" [dinner]="dinner"></rd-dinner>
+      </div>
+      <h2 *ngIf="dinnerHistoryList.length === 0">Non sono presenti cene passate</h2>
+    </div>
   </div>
 </ion-content>

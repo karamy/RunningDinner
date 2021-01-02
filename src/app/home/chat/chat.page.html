@@ -19,7 +19,9 @@
 
       <ion-item *ngFor="let item of dinnerMessages" text-wrap>
         <div *ngIf="item.userid != user.userid" class="message">
-          <ion-avatar> <img [src]="this.chatService.getUserChatImage(item.userid)"></ion-avatar>
+          <ion-avatar>
+            <img [src]="this.chatService.getUserChatImage(item.userid)">
+          </ion-avatar>
           <div class="bubble">
             <span style="color: lightcoral">{{this.chatService.getUserChatName(item.userid)}}</span> <br>
             {{item.message}}
@@ -29,7 +31,9 @@
         </div>
 
         <div *ngIf="item.userid === user.userid" class="message right">
-          <ion-avatar> <img [src]="user.profile_photo"></ion-avatar>
+          <ion-avatar>
+            <img [src]="user.profile_photo">
+          </ion-avatar>
           <div class="bubble">
             <span style="color: green">{{this.chatService.getUserChatName(item.userid)}}</span> <br> {{item.message}}
             <div class="corner"></div>

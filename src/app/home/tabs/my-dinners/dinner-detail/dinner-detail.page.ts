@@ -25,6 +25,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
   };
   dinnerType: string;
   dinnerDaysLeft: number; // Indica quanti giorni (multipli di 24h) mancano al giorno della cena
+  syncInProgress: boolean;
 
   // Valori temporanei della cena in edit
   _newTitle: string;
@@ -62,6 +63,9 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
 
   // Carica i dettagli della cena
   getDinnerDetails(force: Boolean) {
+    // Mostro ion-skeleton
+    this.syncInProgress = true;
+
     // Controllo lo state della cena
     this.dinnersService.getDinnerState(this.dinner.id).then(res => {
       if (!res) { // Può accadere se vengo rimosso da una cena che viene eliminata, ritorno alla home
@@ -93,6 +97,9 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
 
             // Carico la mappa
             this.initMap(this.dinnerDetails.addressesLatLng, this.dinnerDetails.userLatLng);
+
+            // Fine della sincronizzazione, tolgo ion-skeleton
+            this.syncInProgress = false;
           },
           () => {
             console.log('Errore getDinnerDetails, ritorno alla home');

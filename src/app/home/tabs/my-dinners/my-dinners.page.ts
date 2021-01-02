@@ -13,6 +13,7 @@ import { Dinner, DinnersService } from '../dinners/dinners.service';
 export class MyDinnersPage implements OnInit {
   dinnerHistoryList: Dinner[];
   myDinner: Dinner;
+  syncInProgress: boolean;
 
   constructor(
     private dinnersService: DinnersService,
@@ -28,7 +29,7 @@ export class MyDinnersPage implements OnInit {
     this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Dinner History - Ricarico cene');
       this.loadDinners(null, true);
-    }); 
+    });
 
     this.loadDinners(null, false); // Caricamento della myDinner e cene passate
 
@@ -36,6 +37,9 @@ export class MyDinnersPage implements OnInit {
 
   // Ricarico i parametri, ottengo l'eventuale myDinner e cene passate
   loadDinners(event, force: Boolean) {
+    // Mostro ion-skeleton
+    this.syncInProgress = true;
+
     this.paramsService.loadParams(force).then(
       () => {
         // Ottengo l'eventuale mia cena
@@ -54,9 +58,15 @@ export class MyDinnersPage implements OnInit {
               if (event) { // Se lanciato dal refresher emetto evento di completamento
                 event.target.complete();
               }
+
+              // Fine della sincronizzazione, tolgo ion-skeleton
+              this.syncInProgress = false;
             });
           },
           (err) => {
+            // Fine della sincronizzazione, tolgo ion-skeleton
+            this.syncInProgress = false;
+
             console.warn(err);
           }
         );

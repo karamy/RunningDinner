@@ -108,7 +108,7 @@ export class DinnersService {
     return new Promise(async (resolve, reject) => {
       if (force || !this._myDinner) {
 
-        await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
+        // await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
         this.http.get(this.rdConstants.getApiRoute('getMyDinner'))
           .toPromise()
           .then(async res => {
@@ -116,10 +116,11 @@ export class DinnersService {
             resolve(this._myDinner);
           }, () => {
             reject();
-          }).finally(
-            () => {
-              this.spinner.dismiss();
-            });
+          })
+        /* .finally(
+          () => {
+            this.spinner.dismiss();
+          }); */
       } else {
         resolve(this._myDinner);
       }
@@ -130,7 +131,7 @@ export class DinnersService {
   async getOtherDinners(dinnerId: number, force: Boolean, index: number, filter: number, notSave: Boolean): Promise<Dinner[]> {
     return new Promise(async (resolve, reject) => {
       if (force || !this._otherDinners || !this._otherDinners.length) {
-        await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
+        // await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
         this.http.post(this.rdConstants.getApiRoute('getOtherDinners'), { dinnerId, index, filter })
           .toPromise().then(
             async res => {
@@ -144,7 +145,8 @@ export class DinnersService {
             () => {
               reject();
             }
-          ).finally(() => { this.spinner.dismiss(); });
+          )
+        /* .finally(() => { this.spinner.dismiss(); }); */
       } else {
         resolve(this._otherDinners);
       }
@@ -268,7 +270,7 @@ export class DinnersService {
           userGroupId: userGroupId
         };
 
-        await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
+        // await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
         this.http.post(this.rdConstants.getApiRoute('getDinnerDetails'), dataToSend)
           .toPromise()
           .then(
@@ -323,9 +325,9 @@ export class DinnersService {
               reject();
             }
           )
-          .finally(
-            () => { this.spinner.dismiss(); }
-          )
+        /*           .finally(
+                    () => { this.spinner.dismiss(); }
+                  ) */
       } else {
         resolve(this._dinnerDetailsDict[dinnerId.toString()]);
       }
@@ -367,7 +369,7 @@ export class DinnersService {
           groupId: groupId
         };
 
-        await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
+        // await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
         this.http.post(this.rdConstants.getApiRoute('getDinnerHouses'), dataToSend)
           .toPromise()
           .then(
@@ -398,9 +400,9 @@ export class DinnersService {
             }, () => {
               reject();
             })
-          .finally(
-            () => { this.spinner.dismiss(); }
-          );
+        /* .finally(
+          () => { this.spinner.dismiss(); }
+        ); */
       } else {
         resolve(this._myDinnerDetailsDict[dinnerId.toString()]);
       }
@@ -609,7 +611,7 @@ export class DinnersService {
 
   // Controllo se l'utente ha già votato o meno
   async checkIfVoted(dinnerId: number): Promise<any> {
-    await this.spinner.create();
+    // await this.spinner.create();
     return new Promise((resolve, reject) =>
       this.http.post(this.rdConstants.getApiRoute('checkIfVoted'), { dinnerId })
         .toPromise()
@@ -621,9 +623,9 @@ export class DinnersService {
             reject();
           }
         )
-        .finally(
-          () => { this.spinner.dismiss(); }
-        )
+      /* .finally(
+        () => { this.spinner.dismiss(); }
+      ) */
     );
   }
 
@@ -712,7 +714,7 @@ export class DinnersService {
         !Object.keys(this._dinnerWinnersDict).includes(dinnerId.toString()))
       ) {
 
-        await this.spinner.create();
+        // await this.spinner.create();
         this.http.post(this.rdConstants.getApiRoute('getDinnerWinners'), { dinnerId })
           .toPromise()
           .then(
@@ -725,7 +727,7 @@ export class DinnersService {
               reject();
             }
           )
-          .finally(() => { this.spinner.dismiss(); });
+        // .finally(() => { this.spinner.dismiss(); });
       } else {
         resolve(this._dinnerWinnersDict[dinnerId.toString()]);
       }
@@ -767,7 +769,7 @@ export class DinnersService {
     return new Promise(async (resolve, reject) => {
       if ((force || !this._dinnerHistory || !this._dinnerHistory.length)) {
 
-        await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
+        // await this.spinner.create(); // Lascio l'await perchè a volta è così veloce che non fa in tempo a creare lo spinner
         this.http.get(this.rdConstants.getApiRoute('getDinnerHistory'))
           .toPromise()
           .then(
@@ -777,9 +779,9 @@ export class DinnersService {
             }, () => {
               reject();
             })
-          .finally(
-            () => { this.spinner.dismiss(); }
-          )
+        /* .finally(
+          () => { this.spinner.dismiss(); }
+        ) */
       } else {
         resolve(this._dinnerHistory);
       }
