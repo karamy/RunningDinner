@@ -9,14 +9,14 @@ export class BadgeFilterPipe implements PipeTransform {
     const filtered = [];
     if (arg === 'owned') {
       for (let i = 0; i < badges.length; i++) {
-        if (badges[i].phase !== null) {
+        if (badges[i].progress > 0) {
           filtered.push(badges[i]);
         }
       }
       return filtered;
     } else {
       for (let i = 0; i < badges.length; i++) {
-        if (badges[i].phase === null) {
+        if (!badges[i].progress) { // == 0, == null, == undefined
           filtered.push(badges[i]);
         }
       }
