@@ -958,7 +958,7 @@ export interface DinnerType {
   code: number; // 1: italiano, 2: sushi, 3: vegan, 4: flash dinner
   description: string;
   dishes: string[];
-  background?: string; // TODO aggiungere gestione backgound della card in base alla tipologia di cena
+  background?: string;
 }
 
 // Rappresenta una cena
