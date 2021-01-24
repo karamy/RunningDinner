@@ -277,7 +277,7 @@ export class DinnersService {
             res => {
               const avgDistance = res['avgDistance'];
               const dinnerData = res['dinnerData'];
-              const dinnerBadges = this.getDinnerBadges(res as DinnerDetails);
+              const dinnerBadges = this.getDinnerBadgesUnique(res as DinnerDetails);
               const allDinnerFoodAllergies = this.foodAllergiesService.convertImagesToJpeg(res['foodAllergies']);
               const dinnerFoodAllergies = this.getDinnerFoodAllergies(res as DinnerDetails);
               const dinnerMinMaxAges = this.getDinnerUsersData(res as DinnerDetails);
@@ -411,15 +411,31 @@ export class DinnersService {
 
   // Funzioni di Dinner Details
 
-  // Ottengo i Badges della cena selezionata
-  getDinnerBadges(dinnerDetails: DinnerDetails) {
+  // Ottengo i badges della cena selezionata, rimuovendo i duplicati
+  getDinnerBadgesUnique(dinnerDetails: DinnerDetails) {
     const dinnerBadges = [];
-    dinnerDetails.badges.forEach(badge => {
-      const sameGroupid = dinnerBadges.filter(x => x.group_id === badge.group_id);
+    dinnerDetails.badges.forEach(
+      newBadge => {
+        const _badge = dinnerBadges.find(x => x.badge_id === newBadge.badge_id);
+        if (!_badge) {
+          dinnerBadges.push(newBadge);
+        }
+        if (_badge && _badge.progress < newBadge.progress) { // Se trovo badge con progress maggiore lo sostituisco
+          _badge.progress = newBadge.progress;
+          _badge.description = newBadge.description;
+          _badge.badge_photo = newBadge.badge_photo;
+        }
+      }
+    );
+
+    // TODO: rimuovere questo metodo e sfruttarlo costruire un'altra struttura dati da fornire allo slider
+    // per mostrare i badge dello stesso tipo ma di gruppi diversi a livelli diversi
+    /* dinnerDetails.badges.forEach(badge => { // Per ogni badge
+      const sameGroupid = dinnerBadges.filter(x => x.group_id === badge.group_id); // Ottengo tutti i badges del gruppo relativo al badge
       if (sameGroupid) {
-        const sameBadgeid = sameGroupid.find(x => x.badge_id === badge.badge_id);
+        const sameBadgeid = sameGroupid.find(x => x.badge_id === badge.badge_id); // Ottengo il badge di quel gruppo già eventualmente inserito 
         if (sameBadgeid) {
-          if (sameBadgeid.progress < badge.progress) {
+          if (sameBadgeid.progress < badge.progress) { // Se progress maggiore per lo stesso badge nello stesso gruppo lo sostituisco
             sameBadgeid.progress = badge.progress;
             sameBadgeid.description = badge.description;
             sameBadgeid.badge_photo = badge.badge_photo;
@@ -430,7 +446,8 @@ export class DinnersService {
       } else {
         dinnerBadges.push(badge);
       }
-    });
+    }); */
+
     this.badgesService.convertImagesToJpeg(dinnerBadges);
     this.badgesService.setDescriptionProgress(dinnerBadges);
     return dinnerBadges;
@@ -1031,4 +1048,5 @@ export interface DinnerWinner {
   category: string;
   vote: number;
   has_voted: boolean;
+  description: string;
 }

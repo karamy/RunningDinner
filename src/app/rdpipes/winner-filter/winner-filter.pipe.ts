@@ -30,7 +30,8 @@ export class WinnerFilterPipe implements PipeTransform {
           secondImage: null,
           secondHasVoted: null,
           badgePhoto: filtered[k].badge_photo,
-          vote: filtered[k].vote
+          vote: filtered[k].vote,
+          description: filtered[k].description
         };
 
         grouped.push(groupWinner);

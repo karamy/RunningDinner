@@ -138,7 +138,7 @@ export class BadgesService {
   private writeGroupBadges(partnerBadges: UserBadge[]) {
     const userBadges = JSON.parse(
       localStorage.getItem('badges')
-    ) as UserBadge[];
+    ) as UserBadge[] || [];
 
     // Converto le immagini dei badge del partner in Jpeg
     partnerBadges = this.convertImagesToJpeg(partnerBadges);

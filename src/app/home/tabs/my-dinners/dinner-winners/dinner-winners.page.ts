@@ -29,14 +29,14 @@ export class DinnerWinnersPage implements OnInit, OnDestroy {
     // Ottengo i dati della cena dai parametri della rotta
     this.route.queryParams.subscribe((dinner: Dinner) => {
       this.dinner = { ...dinner };
-      this.detDinnerDate(); // Controllo se nascondere la chat o meno
+      this.checkHideChat(); // Controllo se nascondere la chat
       this.getDinnerWinners(false);
     });
 
     // Registrazione observable per reagire al ricaricamento cena (es. vengo rimosso da una cena)
     this.subscription = this.notificationsService.getUpdateParamsObservable().subscribe(() => {
       console.log('Dinner Winners - Ricarico cena');
-      this.detDinnerDate(); // Controllo se nascondere la chat o meno
+      this.checkHideChat(); // Controllo se nascondere la chat
       this.getDinnerWinners(true);
     });
   }
@@ -47,6 +47,8 @@ export class DinnerWinnersPage implements OnInit, OnDestroy {
   }
 
   getDinnerWinners(force: Boolean) {
+    this.winnerLoaded = false;
+
     // Ottengo i vincitori della cena
     this.dinnerService.getDinnerWinners(this.dinner, force).then(res => {
 
@@ -75,12 +77,17 @@ export class DinnerWinnersPage implements OnInit, OnDestroy {
   }
 
   // Se sono passati 30 minuti dalla fine della cena, nascondo la chat
-  detDinnerDate() {
+  checkHideChat() {
     const date = new Date();
     const dinnerDate = new Date(this.dinner.date);
     const chatEndDate = dinnerDate.getTime() + 9000000;
     if (date.getTime() > chatEndDate) {
       this.hideChat = true;
     }
+  }
+
+  // Effettua il refredh dei dati della pagina
+  onRefreshDinnerWinners() {
+    this.getDinnerWinners(true);
   }
 }
