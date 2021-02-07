@@ -10,7 +10,8 @@
       <ion-button shape="round" size="large" slot="icon-only" (click)="getDinnerEventData()">
         <ion-icon size="large" name="refresh-circle-outline"></ion-icon>
       </ion-button>
-      <ion-button shape="round" size="large" slot="icon-only" (click)="presentPopover($event, dinner.time)">
+      <ion-button shape="round" size="large" slot="icon-only"
+        (click)="dinnersService.presentDinnerInfoPopover($event, dinner.time)">
         <ion-icon size="large" name="help-circle-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -20,6 +21,8 @@
 <ion-content scrollY="false" fullscreen="true" slot="fixed">
   <div id="mapEvent" class="background-map"></div>
   <div id="cupertinoEvent" class="bottomPanel">
+
+    <!-- sync in progress -->
     <div *ngIf="syncInProgress && bottomPanel">
       <ion-grid>
         <ion-row>
@@ -115,6 +118,8 @@
         </ion-row>
       </ion-grid>
     </div>
+
+    <!-- dati caricati -->
     <div *ngIf="!syncInProgress && bottomPanel">
       <ion-grid>
         <ion-row>
@@ -129,7 +134,7 @@
           <ion-col *ngIf="myDinnerDetails.foodAllergies.length > 0">
             <div class="foodAllergies">
               <ion-button style="margin: 0%; color: black;" size="small" fill="clear"
-                (click)="presentModalFoodAllergies(myDinnerDetails.foodAllergies, myDinnerDetails.foodAllergiesCategories)">
+                (click)="foodAlergiesService.presentModalFoodAllergies(myDinnerDetails.foodAllergies, myDinnerDetails.foodAllergiesCategories)">
                 Sono presenti intolleranze
                 <ion-icon slot="start" size="default" name="heart-circle-outline"></ion-icon>
               </ion-button>

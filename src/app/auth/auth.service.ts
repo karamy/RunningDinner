@@ -221,6 +221,8 @@ export class AuthService {
 
   // Effettua chiamata per ottenere un accessToken passando il refreshToken
   public refreshToken() {
+    console.log("Utilizzo refreshToken dopo 401");
+
     const dataToSend = {
       refreshToken: this.getRefreshToken()
     };

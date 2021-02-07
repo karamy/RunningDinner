@@ -191,6 +191,7 @@ export class BadgesService {
           .then(
             async res => {
               this.convertImagesToJpeg(res as UserBadge[]);
+              this.setDescriptionProgress(res as UserBadge[]);
 
               this._contactBadgesDict[contactId.toString()] = res;
               await this.writeContactBadges(this._contactBadgesDict);
@@ -200,17 +201,21 @@ export class BadgesService {
               reject(err);
             }
           );
-
-
-      })
+      });
   }
 }
 
 export interface UserBadge {
   badge_id: number;
   description: string;
+  title?: string; // Utilizzato in dinner_details
+  help?: string; // Utilizzato nel profilo
   badge_photo: string;
   phase?: number;
   progress: number;
   group_id?: number;
+
+  // Nonostante lo sia, non posso dichiararlo come un array di UserBadge altrimenti 
+  // creo struttura circolare e RDStorage non riesce a serializzarlo
+  groupDetails?: any[];
 }

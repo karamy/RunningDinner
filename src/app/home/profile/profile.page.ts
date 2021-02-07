@@ -21,6 +21,7 @@ import { RDToastService } from "src/app/rdtoast.service";
 import { NotificationsService } from "../notifications.service";
 import { HttpClient } from "@angular/common/http";
 import { RDConstantsService } from "src/app/rdcostants.service";
+import { CreditsPage } from "src/app/rdmodals/credits/credits.page";
 
 @Component({
   selector: "app-profile",
@@ -32,10 +33,10 @@ export class ProfilePage implements OnInit {
   userAge: number;
   editMode = false;
   onRefresh = false;
-  badgeExpand = false;
-  foodExpand = false;
   GoogleAutocomplete: google.maps.places.AutocompleteService;
   autocompleteItems: any[];
+
+  profileClicks = 0; // Credits
 
   // Impostazioni ion-slides
   slideOpts = {
@@ -72,6 +73,30 @@ export class ProfilePage implements OnInit {
 
   ngOnInit() {
     this.getUser();
+  }
+
+  public onProfilelick() {
+    this.profileClicks++;
+
+    if (this.profileClicks == 5) { // Al quinto click mostro i credits
+      this.profileClicks = 0;
+      this.showCredits();
+    } else if (this.profileClicks == 1) {
+      // Al primo click faccio partire il timeout di 5 secondi.
+      // Scelto apposta di non resettarlo ogni click per rendere più difficile aprire l'easter-egg)
+      setTimeout(
+        () => {
+          this.profileClicks = 0;
+        }, 4000);
+    }
+  }
+  private async showCredits() {
+    const modal = await this.modalController.create({
+      component: CreditsPage,
+      backdropDismiss: true,
+      animated: true
+    });
+    modal.present();
   }
 
   getUser() {

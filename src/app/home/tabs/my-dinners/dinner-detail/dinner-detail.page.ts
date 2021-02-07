@@ -7,6 +7,7 @@ import { NotificationsService } from 'src/app/home/notifications.service';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { RDToastService } from 'src/app/rdtoast.service';
+import { FoodAllergiesService } from 'src/app/rdmodals/food-allergies/food-allergies.service';
 
 @Component({
   selector: 'app-dinner-detail',
@@ -40,7 +41,8 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
     private notificationsService: NotificationsService,
     private navController: NavController,
     private authService: AuthService,
-    private rdToast: RDToastService) { }
+    private rdToast: RDToastService,
+    public foodAlergiesService: FoodAllergiesService) { }
 
   ngOnInit() {
     // Ottengo i dati di testate della cena dai parametri della rotta

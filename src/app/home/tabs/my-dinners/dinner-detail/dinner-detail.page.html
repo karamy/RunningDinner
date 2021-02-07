@@ -71,11 +71,9 @@
         <div style="text-align: -webkit-center;">
           <ion-skeleton-text animated style="width: 70%; margin-bottom: 1.5em; margin-top: 1em;"></ion-skeleton-text>
         </div>
-        <rd-slider [objectsArray]="" [type]="'skeleton-badge'" [expandable]="false"
-          [descriptionVoid]="'Nessun badge presente'">
+        <rd-slider [objectsArray]="" [type]="'skeleton-badge'" [descriptionVoid]="'Nessun badge presente'"
+          [route]="'dinner-details'">
         </rd-slider>
-        <rd-slider [objectsArray]="" [type]="'skeleton-foodAllergy'" [categories]="" [expandable]="false"
-          [descriptionVoid]="'Nessuna intolleranza presente'"></rd-slider>
       </div>
     </div>
   </div>
@@ -86,7 +84,18 @@
         <ion-input *ngIf="isEdit" class="dinner-edit" [(ngModel)]="_newTitle"></ion-input>
         <h3 class="dinner-name">{{dinnerType}}</h3>
         <ion-grid>
-          <ion-row>
+          <ion-row style="height: 100%;">
+            <ion-col *ngIf="dinnerDetails.foodAllergies.length > 0" offset="6">
+              <div class="foodAllergies">
+                <ion-button style="margin: 0%; color: black;" size="small" fill="clear"
+                  (click)="foodAlergiesService.presentModalFoodAllergies(dinnerDetails.foodAllergies, dinnerDetails.foodAllergiesCategories)">
+                  Sono presenti intolleranze
+                  <ion-icon slot="start" size="default" name="heart-circle-outline"></ion-icon>
+                </ion-button>
+              </div>
+            </ion-col>
+          </ion-row>
+          <ion-row style="margin-top: 15px;">
             <ion-col size="1" class="ion-align-items-center">
               <ion-icon name="rocket-outline"></ion-icon>
             </ion-col>
@@ -134,12 +143,9 @@
           {{dinner.description}}
         </div>
         <ion-input *ngIf="isEdit" class="dinner-edit" [(ngModel)]="_newDescription"></ion-input>
-        <rd-slider [objectsArray]="dinnerDetails.badges" [type]="'badge'" [expandable]="true"
-          [descriptionVoid]="'Nessun badge presente'">
+        <rd-slider [objectsArray]="dinnerDetails.badges" [type]="'badge'" [descriptionVoid]="'Nessun badge presente'"
+          [route]="'dinner-details'">
         </rd-slider>
-        <rd-slider [objectsArray]="dinnerDetails.foodAllergies" [type]="'foodAllergy'"
-          [categories]="dinnerDetails.foodAllergiesCategories" [expandable]="true"
-          [descriptionVoid]="'Nessuna intolleranza presente'"></rd-slider>
       </div>
     </div>
   </div>
