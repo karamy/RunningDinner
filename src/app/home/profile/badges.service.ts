@@ -72,23 +72,23 @@ export class BadgesService {
   }
 
   // Scrivo in localstorage la lista di tutti i badges
-  private writeUserBadges(userBadges: UserBadge[]) {
+  private async writeUserBadges(userBadges: UserBadge[]) {
     userBadges = this.convertImagesToJpeg(userBadges);
     userBadges = this.setDescriptionProgress(userBadges);
-    localStorage.setItem('badges', JSON.stringify(userBadges));
+    await this.rdStorage.setItem('badges', JSON.stringify(userBadges));
     this.readUserBadges();
   }
 
   // Legge gli userBadges presenti in localStorage e li carica nel Service
-  private readUserBadges() {
+  private async readUserBadges() {
     this._userBadges = JSON.parse(
-      localStorage.getItem('badges')
+      await this.rdStorage.getItem('badges')
     ) as UserBadge[] || [];
   }
 
   // Cancella dal localStorage la lista di tutti i badges
-  clearUserBadges() {
-    localStorage.setItem('badges', null);
+  public async clearUserBadges() {
+    await this.rdStorage.setItem('badges', null);
     this.readUserBadges();
   }
 
@@ -135,9 +135,9 @@ export class BadgesService {
   }
 
   // Creo l'array groupBadges e lo scrivo in localstorage
-  private writeGroupBadges(partnerBadges: UserBadge[]) {
+  private async writeGroupBadges(partnerBadges: UserBadge[]) {
     const userBadges = JSON.parse(
-      localStorage.getItem('badges')
+      await this.rdStorage.getItem('badges')
     ) as UserBadge[] || [];
 
     // Converto le immagini dei badge del partner in Jpeg
@@ -154,14 +154,14 @@ export class BadgesService {
       }
     }
 
-    localStorage.setItem('groupBadges', JSON.stringify(groupBadges));
+    await this.rdStorage.setItem('groupBadges', JSON.stringify(groupBadges));
     this.readGroupBadges();
   }
 
   // Legge il parametro groupBadges e lo carica nel Service
-  private readGroupBadges() {
+  private async readGroupBadges() {
     this._groupBadges = JSON.parse(
-      localStorage.getItem('groupBadges')
+      await this.rdStorage.getItem('groupBadges')
     ) as UserBadge[] || [];
   }
 
@@ -171,8 +171,8 @@ export class BadgesService {
   }
 
   // Cancella dal localStorage i badges del gruppo
-  clearGroupBadges() {
-    localStorage.setItem('groupBadges', null);
+  async clearGroupBadges() {
+    await this.rdStorage.setItem('groupBadges', null);
     this.readGroupBadges();
   }
 
