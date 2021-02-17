@@ -57,16 +57,6 @@ export class DinnerPhasesPage implements OnInit {
     private launchNavigator: LaunchNavigator,
     private authService: AuthService) { }
 
-  async presentPopover(ev: any, dinnerTime) {
-    const popover = await this.popoverController.create({
-      component: DinnerInfoPage,
-      componentProps: { dinnerTime },
-      event: ev,
-      translucent: true
-    });
-    return await popover.present();
-  }
-
   ngOnInit() {
     // Ottengo i dati della cena dai parametri della rotta
     this.route.queryParams.subscribe((dinner: Dinner) => {
@@ -89,7 +79,6 @@ export class DinnerPhasesPage implements OnInit {
   getDinnerPhasesData() {
     // Mostro ion-skeleton
     this.syncInProgress = true;
-    console.log('sync');
 
     this.dinnersService.getDinnerState(this.dinner.id).then(resp => {
       this.state = resp.dinner_state;

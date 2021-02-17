@@ -1,6 +1,7 @@
 <ion-content (click)="dismiss()"></ion-content>
+
 <!-- Workaround perchè backdropDismiss non funziona siccome la modale sta davanti al ion-backdrop -->
-<div style="height: 130px;position: relative;">
+<div style="height: 130px; position: relative;">
   <ion-avatar class="avatar">
     <img [src]="contactImage">
   </ion-avatar>
@@ -10,7 +11,48 @@
     <h3 class="user-name">{{contactName}}</h3>
   </div>
 </div>
-<rd-slider [objectsArray]="contactBadges" [type]="'badge'" [descriptionVoid]="'Nessun badge posseduto'"></rd-slider>
+
+<!-- Nessun badge -->
+<ion-card *ngIf="contactBadges.length === 0" style="margin-bottom: 2.5%;">
+  <ion-grid>
+    <ion-row>
+      <ion-col class="ion-text-center">
+        <h3>Nessun badge posseduto</h3>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-card>
+
+<!-- Badges -->
+<ion-card *ngIf="contactBadges.length > 0">
+  <ion-grid>
+    <ion-row style="text-align: center;" class="no-padding">
+      <ion-col style="padding-top: 0%;">
+        <p>Badges del contatto</p>
+      </ion-col>
+    </ion-row>
+    <ion-row style="padding-bottom: 2%;">
+      <ion-col class="no-padding">
+        <ion-card *ngFor="let badge of contactBadges" style="margin: 2.5%;">
+          <ion-grid>
+            <ion-row style="align-items: center;" class="no-padding">
+              <ion-col size="3">
+                <ion-avatar>
+                  <img [src]=badge.badge_photo />
+                </ion-avatar>
+              </ion-col>
+              <ion-col>
+                <p>{{badge.description}}</p>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-card>
+
+<!-- Aggiunta a gruppo -->
 <ion-card *ngIf="!paramsService.getParams().groupId" style="margin-bottom: 2.5%;">
   <ion-grid>
     <ion-row class="ion-align-items-center">

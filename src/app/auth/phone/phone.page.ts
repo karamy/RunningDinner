@@ -72,7 +72,7 @@ export class PhonePage implements OnInit {
     const reqBody = {
       phone_number: this.phoneNumber
     };
-    this.spinner.create("Effettuo login...");
+    this.spinner.create("Verifico utente...");
     this.userService.existsUser(reqBody).then(data => {
       this.spinner.dismiss();
       if (!data) {

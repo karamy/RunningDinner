@@ -106,7 +106,7 @@ export class RegistrationPage implements OnInit, AfterViewInit {
     const signUpAndLogin = (lat: number, lon: number) => {
       this.signupService.setAddressAndCoordinates(this.autocomplete.input, lat, lon);
 
-      this.spinner.create("Effettuo login..."); // Creo lo spinner ma non lo rimuovo tanto ci pensa l'authService dopo il login a farlo
+      this.spinner.create("Effettuo registrazione..."); // Creo lo spinner ma non lo rimuovo tanto ci pensa l'authService dopo il login a farlo
       this.signupService.signupUser().then(
         () => {
           this.authService.doLogin(this.signupService.getSignupData().phoneNumber);

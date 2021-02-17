@@ -21,7 +21,7 @@
 
 <ion-content [scrollEvents]="true" appHideHeader [header]="header" fullscreen="true" slot="fixed">
   <div>
-    <div style="height: 130px;position: relative;">
+    <div style="height: 130px;position: relative;" (click)="onProfilelick()">
       <ion-avatar [class.avatar]="!profileService.getPartner()" [class.avatar-user-group]="profileService.getPartner()">
         <img [src]="user.profile_photo">
       </ion-avatar>
@@ -85,122 +85,20 @@
       <h6 *ngIf="profileService.getPartner()">{{profileService.getPartner().group_address}}</h6>
     </div>
   </div>
-  <ion-card>
+
+  <!-- Badges -->
+  <rd-slider
+    [objectsArray]="paramsService.getParams().groupId > 0 ? badgesService.getGroupBadges() : badgesService.getUserBadgesData()"
+    [type]="'badge'" [descriptionVoid]="'Nessun badge presente'" [route]="'profile'">
+  </rd-slider>
+
+  <!-- Intolleranze -->
+
+  <!-- Nessuna intolleranza -->
+  <ion-card *ngIf=" !foodAllergiesService.getUserFoodAllergies() || (foodAllergiesService.getUserFoodAllergies().length===0 &&
+    foodAllergiesService.getGroupFoodAllergies().length===0)" style="margin-bottom: 2.5%;">
     <ion-grid>
-      <ion-row style="align-items: center;" class="no-padding">
-        <ion-col style="padding-top: 0%;">
-          <p style="margin: 0%;">Badges</p>
-        </ion-col>
-        <ion-col style="padding-top: 0%;" class="ion-text-end">
-          <ion-button fill=" clear" size="small" style="margin: 0%;font-size: 14px;" *ngIf="!badgeExpand"
-            (click)="badgeExpand = !badgeExpand">
-            Espandi
-          </ion-button>
-          <ion-button fill=" clear" size="small" style="margin: 0%;font-size: 14px;" *ngIf="badgeExpand"
-            (click)="badgeExpand = !badgeExpand">
-            Riduci
-          </ion-button>
-        </ion-col>
-      </ion-row>
-      <ion-row style="padding-bottom: 2%;">
-        <ion-col class="no-padding">
-          <ion-slides *ngIf="!badgeExpand && paramsService.getParams().groupId === 0" [options]="slideOpts">
-            <ion-slide *ngFor="let badge of badgesService.getUserBadgesData() | badgeFilterPipe:'owned'">
-              <ion-avatar>
-                <img [src]=badge.badge_photo />
-              </ion-avatar>
-            </ion-slide>
-            <ion-slide *ngFor="let badge of badgesService.getUserBadgesData() | badgeFilterPipe:'notOwned'">
-              <ion-avatar>
-                <img style="filter: grayscale(1);" [src]=badge.badge_photo />
-              </ion-avatar>
-            </ion-slide>
-          </ion-slides>
-          <ion-slides *ngIf="!badgeExpand && paramsService.getParams().groupId > 0" [options]="slideOpts">
-            <ion-slide *ngFor="let badge of badgesService.getGroupBadges() | badgeFilterPipe:'owned'">
-              <ion-avatar>
-                <img [src]=badge.badge_photo />
-              </ion-avatar>
-            </ion-slide>
-            <ion-slide *ngFor="let badge of badgesService.getGroupBadges() | badgeFilterPipe:'notOwned'">
-              <ion-avatar>
-                <img style="filter: grayscale(1);" [src]=badge.badge_photo />
-              </ion-avatar>
-            </ion-slide>
-          </ion-slides>
-          <div *ngIf="badgeExpand && paramsService.getParams().groupId === 0">
-            <ion-card *ngFor="let badge of badgesService.getUserBadgesData() | badgeFilterPipe:'owned'"
-              style="margin: 2.5%;">
-              <ion-grid>
-                <ion-row style="align-items: center;" class="no-padding">
-                  <ion-col size="3">
-                    <ion-avatar>
-                      <img [src]=badge.badge_photo />
-                    </ion-avatar>
-                  </ion-col>
-                  <ion-col>
-                    <p>{{badge.description}}</p>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </ion-card>
-            <ion-card *ngFor="let badge of badgesService.getUserBadgesData() | badgeFilterPipe:'notOwned'"
-              style="margin: 2.5%;">
-              <ion-grid>
-                <ion-row style="align-items: center;" class="no-padding">
-                  <ion-col size="3">
-                    <ion-avatar>
-                      <img style="filter: grayscale(1);" [src]=badge.badge_photo />
-                    </ion-avatar>
-                  </ion-col>
-                  <ion-col>
-                    <p>{{badge.description}}</p>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </ion-card>
-          </div>
-          <div *ngIf="badgeExpand && paramsService.getParams().groupId > 0">
-            <ion-card *ngFor="let badge of badgesService.getGroupBadges() | badgeFilterPipe:'owned'"
-              style="margin: 2.5%;">
-              <ion-grid>
-                <ion-row style="align-items: center;" class="no-padding">
-                  <ion-col size="3">
-                    <ion-avatar>
-                      <img [src]=badge.badge_photo />
-                    </ion-avatar>
-                  </ion-col>
-                  <ion-col>
-                    <p>{{badge.description}}</p>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </ion-card>
-            <ion-card *ngFor="let badge of badgesService.getGroupBadges() | badgeFilterPipe:'notOwned'"
-              style="margin: 2.5%;">
-              <ion-grid>
-                <ion-row style="align-items: center;" class="no-padding">
-                  <ion-col size="3">
-                    <ion-avatar>
-                      <img style="filter: grayscale(1);" [src]=badge.badge_photo />
-                    </ion-avatar>
-                  </ion-col>
-                  <ion-col>
-                    <p>{{badge.description}}</p>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </ion-card>
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-card>
-  <ion-card
-    *ngIf="!foodAllergiesService.getUserFoodAllergies() || (foodAllergiesService.getUserFoodAllergies().length === 0 && foodAllergiesService.getGroupFoodAllergies().length === 0)"
-    style="margin-bottom: 2.5%;">
-    <ion-grid>
-      <ion-row style="align-items: center;">
+      <ion-row>
         <ion-col class="ion-text-center">
           <h3>Nessuna intolleranza alimentare</h3>
         </ion-col>
@@ -213,112 +111,74 @@
       </ion-row>
     </ion-grid>
   </ion-card>
+
+  <!-- Intolleranze presenti -->
   <ion-card
     *ngIf="foodAllergiesService.getUserFoodAllergies() && (foodAllergiesService.getUserFoodAllergies().length > 0 || foodAllergiesService.getGroupFoodAllergies().length > 0)">
     <ion-grid>
-      <ion-row style="align-items: center;" class="no-padding">
-        <ion-col style="padding-top: 0%;">
-          <p style="margin: 0%;">Intolleranze Alimentari</p>
-        </ion-col>
-        <ion-col style="padding-top: 0%;" class="ion-text-end">
-          <ion-button fill=" clear" size="small" style="margin: 0%;font-size: 14px;" *ngIf="!foodExpand"
-            (click)="foodExpand = !foodExpand">
-            Espandi
-          </ion-button>
-          <ion-button fill=" clear" size="small" style="margin: 0%;font-size: 14px;" *ngIf="foodExpand"
-            (click)="foodExpand = !foodExpand">
-            Riduci
-          </ion-button>
+      <ion-row style="text-align: center;" class="no-padding">
+        <ion-col>
+          <p>Intolleranze Alimentari</p>
         </ion-col>
       </ion-row>
-      <div *ngIf="!foodExpand">
-        <ion-row style="padding-bottom: 2%;">
+      <div *ngIf="paramsService.getParams().groupId === 0">
+        <ion-row *ngFor="let category of foodAllergiesService.getUserAllergiesCategories()" style="padding: 2%;">
           <ion-col class="no-padding">
-            <div *ngIf="paramsService.getParams().groupId === 0">
-              <ion-slides [options]="slideOpts">
-                <ion-slide *ngFor="let food of foodAllergiesService.getUserFoodAllergies()">
-                  <ion-avatar>
-                    <img [src]="food.allergy_photo" />
-                  </ion-avatar>
-                </ion-slide>
-                <ion-slide>
-                  <ion-button size="small" shape="round" class="button-add-categories" fill="outline"
-                    (click)="presentModalFoodAllergies()">
-                    <ion-icon name="add"></ion-icon>
-                  </ion-button>
-                </ion-slide>
-              </ion-slides>
-            </div>
-            <div *ngIf="paramsService.getParams().groupId > 0">
-              <ion-slides [options]="slideOpts">
-                <ion-slide *ngFor="let food of foodAllergiesService.getGroupFoodAllergies()">
-                  <ion-avatar>
-                    <img [src]="food.allergy_photo" />
-                  </ion-avatar>
-                </ion-slide>
-              </ion-slides>
-            </div>
-          </ion-col>
-        </ion-row>
-      </div>
-      <div *ngIf="foodExpand">
-        <div *ngIf="paramsService.getParams().groupId === 0">
-          <ion-row *ngFor="let category of foodAllergiesService.getUserAllergiesCategories()" style="padding: 2%;">
-            <ion-col class="no-padding">
-              <h3 style="margin-top: 2%;text-align: center;">{{category}}</h3>
-              <ion-card *ngFor="let food of foodAllergiesService.getUserFoodAllergies() | categoryFilter: category">
-                <ion-grid>
-                  <ion-row class="no-padding">
-                    <ion-col class="no-padding">
-                      <ion-list>
-                        <ion-item-sliding>
-                          <ion-item-options side="end">
-                            <ion-item-option color="danger" (click)="deleteFoodAllergy(food)">Elimina</ion-item-option>
-                          </ion-item-options>
-                          <ion-item lines="none">
-                            <ion-avatar>
-                              <img [src]="food.allergy_photo">
-                            </ion-avatar>
-                            <ion-label style="margin-left: 3%;">{{food.allergy_name}}</ion-label>
-                          </ion-item>
-                        </ion-item-sliding>
-                      </ion-list>
-                    </ion-col>
-                  </ion-row>
-                </ion-grid>
-              </ion-card>
-            </ion-col>
-          </ion-row>
-          <ion-row style="padding-top:2%;padding-bottom: 2%;justify-content: center;">
-            <ion-button fill="outline" color="primary" (click)="presentModalFoodAllergies()">Aggiungi</ion-button>
-          </ion-row>
-        </div>
-        <div *ngIf="paramsService.getParams().groupId > 0">
-          <ion-row *ngFor="let category of foodAllergiesService.getGroupAllergiesCategories()" style="padding: 2%;">
-            <ion-col class="no-padding">
-              <h3 style="margin-top: 2%;text-align: center;">{{category}}</h3>
-              <ion-card *ngFor="let food of foodAllergiesService.getGroupFoodAllergies() | categoryFilter: category">
-                <ion-grid>
-                  <ion-row class="no-padding">
-                    <ion-col class="no-padding">
-                      <ion-list>
+            <h3 style="margin-top: 2%;text-align: center;">{{category}}</h3>
+            <ion-card *ngFor="let food of foodAllergiesService.getUserFoodAllergies() | categoryFilter: category">
+              <ion-grid>
+                <ion-row class="no-padding">
+                  <ion-col class="no-padding">
+                    <ion-list>
+                      <ion-item-sliding>
+                        <ion-item-options side="end">
+                          <ion-item-option color="danger" (click)="deleteFoodAllergy(food)">Elimina
+                          </ion-item-option>
+                        </ion-item-options>
                         <ion-item lines="none">
                           <ion-avatar>
                             <img [src]="food.allergy_photo">
                           </ion-avatar>
                           <ion-label style="margin-left: 3%;">{{food.allergy_name}}</ion-label>
                         </ion-item>
-                      </ion-list>
-                    </ion-col>
-                  </ion-row>
-                </ion-grid>
-              </ion-card>
-            </ion-col>
-          </ion-row>
-        </div>
+                      </ion-item-sliding>
+                    </ion-list>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+        <ion-row style="padding-top:2%;padding-bottom: 2%;justify-content: center;">
+          <ion-button fill="outline" color="primary" (click)="presentModalFoodAllergies()">Aggiungi</ion-button>
+        </ion-row>
+      </div>
+      <div *ngIf="paramsService.getParams().groupId > 0">
+        <ion-row *ngFor="let category of foodAllergiesService.getGroupAllergiesCategories()" style="padding: 2%;">
+          <ion-col class="no-padding">
+            <h3 style="margin-top: 2%;text-align: center;">{{category}}</h3>
+            <ion-card *ngFor="let food of foodAllergiesService.getGroupFoodAllergies() | categoryFilter: category">
+              <ion-grid>
+                <ion-row class="no-padding">
+                  <ion-col class="no-padding">
+                    <ion-list>
+                      <ion-item lines="none">
+                        <ion-avatar>
+                          <img [src]="food.allergy_photo">
+                        </ion-avatar>
+                        <ion-label style="margin-left: 3%;">{{food.allergy_name}}</ion-label>
+                      </ion-item>
+                    </ion-list>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-card>
+          </ion-col>
+        </ion-row>
       </div>
     </ion-grid>
   </ion-card>
+
   <ion-grid>
     <ion-row>
       <ion-col class="ion-text-center">

@@ -7,6 +7,9 @@
       <ion-button shape="round" size="large" routerLink="/home/chat" *ngIf="hideChat === false">
         <ion-icon size="large" name="chatbubble-ellipses-outline"></ion-icon>
       </ion-button>
+      <ion-button shape="round" size="large" slot="icon-only" (click)="onRefreshDinnerWinners()">
+        <ion-icon size="large" name="refresh-circle-outline"></ion-icon>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -93,6 +96,9 @@
                   <ion-col class="ion-text-center">
                     <p>Voto: {{winner.vote}}</p>
                   </ion-col>
+                  <ion-col class="ion-text-center">
+                    <p>Descrizione: {{winner.description}}</p>
+                  </ion-col>
                 </ion-row>
                 <ion-row>
                   <ion-col style="display: flex; justify-content: center">
@@ -137,6 +143,9 @@
                 <ion-row>
                   <ion-col class="ion-text-center">
                     <p>Voto: {{winner.vote}}</p>
+                  </ion-col>
+                  <ion-col class="ion-text-center">
+                    <p>Descrizione: {{winner.description}}</p>
                   </ion-col>
                 </ion-row>
                 <ion-row>

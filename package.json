@@ -2,7 +2,7 @@
   "name": "runningdinner",
   "version": "1.0.0",
   "author": "CarlPaolAndrea",
-  "homepage": "https://github.com/karamy/RunningDinner//",
+  "homepage": "https://github.com/karamy/RunningDinner/",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

@@ -3,7 +3,7 @@
 App RunningDinner
 
 Repo GDrive: https://drive.google.com/drive/u/0/folders/1UH0TRlFf0-ZpmZUsC7uzacQWe_u0UGxX
-URL  GitHub: https://karamy.github.io/RunningDinner/auth
+URL  GitHub: https://karamy.github.io/RunningDinner
 ----------------------------------------------------------------------------------------------------
 
 Deploy verso GitHub Pages
@@ -32,7 +32,7 @@ Per buildare con Capacitor:
 - fare 'npx cap open android' o 'npx cap open ios' per aprire l'ide che punta già al progetto
 - fare la build o run con l'ide (Android Studio o XCode)
 
-Metodo rapido:
+Comandi rapidi:
 npm run build-android -> effettua build e copia file per Android
 npm run run-android -> effettua build, copia file e apertura ide per Android
 npm run build-ios -> effettua build e copia file per iOS

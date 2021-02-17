@@ -8,8 +8,9 @@ import { UserData } from 'src/app/auth/auth.service';
 import { FoodAllergiesService } from 'src/app/rdmodals/food-allergies/food-allergies.service';
 import { RDParamsService } from 'src/app/rdparams.service';
 import { ProfileService } from '../../profile/profile.service';
-import { NavController } from '@ionic/angular';
+import { NavController, PopoverController } from '@ionic/angular';
 import { RDStorageService } from 'src/app/rdstorage.service';
+import { DinnerInfoPage } from 'src/app/rdmodals/dinner-info/dinner-info.page';
 
 @Injectable({
   providedIn: 'root'
@@ -104,7 +105,8 @@ export class DinnersService {
     public paramsService: RDParamsService,
     private foodAllergiesService: FoodAllergiesService,
     private badgesService: BadgesService,
-    private rdStorage: RDStorageService) {
+    private rdStorage: RDStorageService,
+    private popoverController: PopoverController) {
 
     // Lettura dati in cache
     this.readMyDinner();
@@ -334,7 +336,7 @@ export class DinnersService {
             res => {
               const avgDistance = res['avgDistance'];
               const dinnerData = res['dinnerData'];
-              const dinnerBadges = this.getDinnerBadges(res as DinnerDetails);
+              const dinnerBadges = this.getDinnerBadgesUnique(res as DinnerDetails);
               const allDinnerFoodAllergies = this.foodAllergiesService.convertImagesToJpeg(res['foodAllergies']);
               const dinnerFoodAllergies = this.getDinnerFoodAllergies(res as DinnerDetails);
               this.usersData = res['usersData'];
@@ -380,9 +382,9 @@ export class DinnersService {
               reject();
             }
           )
-        /*           .finally(
-                    () => { this.spinner.dismiss(); }
-                  ) */
+        /*.finally(
+            () => { this.spinner.dismiss(); }
+          ) */
       } else {
         resolve(this._dinnerDetailsDict[dinnerId.toString()]);
       }
@@ -466,26 +468,72 @@ export class DinnersService {
 
   // Funzioni di Dinner Details
 
-  // Ottengo i Badges della cena selezionata
-  getDinnerBadges(dinnerDetails: DinnerDetails) {
-    const dinnerBadges = [];
-    dinnerDetails.badges.forEach(badge => {
-      const sameGroupid = dinnerBadges.filter(x => x.group_id === badge.group_id);
+  // Ottengo i badges della cena selezionata, rimuovendo i duplicati
+  getDinnerBadgesUnique(dinnerDetails: DinnerDetails) {
+    const dinnerBadges: UserBadge[] = [];
+
+    // Ottengo badge univoci da mostrare nello slider
+    dinnerDetails.badges.forEach(
+      newBadge => {
+        const _badge = dinnerBadges.find(x => x.badge_id === newBadge.badge_id); // Prendo badge se già inserito
+        if (!_badge) {
+          dinnerBadges.push({ ...newBadge }); // Pusho la copia del badge per evitare problemi di riferimenti nelle elaborazioni successive
+        }
+        if (_badge && _badge.progress < newBadge.progress) { // Se trovo badge con progress maggiore lo sostituisco
+          _badge.progress = newBadge.progress;
+          _badge.description = newBadge.description;
+          _badge.badge_photo = newBadge.badge_photo;
+          _badge.group_id = newBadge.group_id;
+        }
+      }
+    );
+
+    // Ottengo array di badges prendendo il maggiore del gruppo
+    const _filteredGroupBadges: UserBadge[] = [];
+
+    dinnerDetails.badges.forEach(badge => { // Per ogni badge
+      const sameGroupid = _filteredGroupBadges.filter(x => x.group_id === badge.group_id); // Ottengo tutti i badges del gruppo relativo al badge
       if (sameGroupid) {
-        const sameBadgeid = sameGroupid.find(x => x.badge_id === badge.badge_id);
+        const sameBadgeid = sameGroupid.find(x => x.badge_id === badge.badge_id); // Ottengo il badge di quel gruppo già eventualmente inserito 
         if (sameBadgeid) {
-          if (sameBadgeid.progress < badge.progress) {
+          if (sameBadgeid.progress < badge.progress) { // Se progress maggiore per lo stesso badge nello stesso gruppo lo sostituisco
             sameBadgeid.progress = badge.progress;
             sameBadgeid.description = badge.description;
             sameBadgeid.badge_photo = badge.badge_photo;
+            sameBadgeid.group_id = badge.group_id;
           }
         } else {
-          dinnerBadges.push(badge);
+          _filteredGroupBadges.push(badge);
         }
       } else {
-        dinnerBadges.push(badge);
+        _filteredGroupBadges.push(badge);
       }
     });
+
+    // Calcolo per ogni badge il campo badgeDetail
+    dinnerBadges.forEach(
+      (dinnerBadge) => {
+        // Ottengo tutti i badges con quell'id nell'array filtrato e ordinato e li aggiungo al dinnerBadge
+        const _badgeArray = _filteredGroupBadges.filter(x => x.badge_id === dinnerBadge.badge_id).sort((badge_a, badge_b) => badge_b.progress - badge_a.progress);
+        const _groupDetails = [];
+        _badgeArray.forEach(
+          (_badgeArrayElem) => {
+            // Genero elemento di tipo UserBadge da aggiungere al dinnerBadge
+            _groupDetails.push({
+              description: _badgeArrayElem.description,
+              badge_photo: _badgeArrayElem.badge_photo,
+              phase: _badgeArrayElem.phase,
+              progress: _badgeArrayElem.progress,
+              group_id: _badgeArrayElem.group_id
+            });
+          }
+        );
+        this.badgesService.convertImagesToJpeg(_groupDetails);
+        this.badgesService.setDescriptionProgress(_groupDetails);
+        dinnerBadge.groupDetails = _groupDetails;
+      }
+    );
+
     this.badgesService.convertImagesToJpeg(dinnerBadges);
     this.badgesService.setDescriptionProgress(dinnerBadges);
     return dinnerBadges;
@@ -1004,6 +1052,16 @@ export class DinnersService {
       return address;
     }
   }
+
+  public async presentDinnerInfoPopover(ev: any, dinnerTime) {
+    const popover = await this.popoverController.create({
+      component: DinnerInfoPage,
+      componentProps: { dinnerTime },
+      event: ev,
+      translucent: true
+    });
+    await popover.present();
+  }
 }
 
 // Rappresenta una tipologia di cena
@@ -1011,7 +1069,7 @@ export interface DinnerType {
   code: number; // 1: italiano, 2: sushi, 3: vegan, 4: flash dinner
   description: string;
   dishes: string[];
-  background?: string; // TODO aggiungere gestione backgound della card in base alla tipologia di cena
+  background?: string;
 }
 
 export interface DinnerImage {
@@ -1093,4 +1151,5 @@ export interface DinnerWinner {
   category: string;
   vote: number;
   has_voted: boolean;
+  description: string;
 }

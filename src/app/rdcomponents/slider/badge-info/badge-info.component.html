@@ -1,0 +1,48 @@
+<!-- Ho dovuto impostare altezza fissa > 100px altrimenti me lo faceva apparire sotto, da sistemare  -->
+<div class="wrapper" style="height: 200px; overflow-y: scroll;">
+
+  <!-- gestione badge in profile -->
+  <ion-grid *ngIf=" route === 'profile'">
+    <ion-row>
+      <ion-col class=" ion-text-center">
+        <ion-avatar style="margin: auto;">
+          <img *ngIf="!badge.progress" [src]=badge.badge_photo style="filter: grayscale(1)" />
+          <img *ngIf="badge.progress" [src]=badge.badge_photo />
+        </ion-avatar>
+        <p>{{badge.help}}</p>
+        <p>{{badge.description}}</p>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- gestione badge in dinner-details -->
+  <div *ngIf="route === 'dinner-details'">
+    <ion-row style=" text-align: center;" class="no-padding">
+      <ion-col style="padding-top: 0%;">
+        <p>{{badge.title}}</p>
+      </ion-col>
+    </ion-row>
+    <ion-row style="padding-bottom: 2%;">
+      <ion-col class="no-padding">
+        <ion-card *ngFor="let badge of badge.groupDetails" style="margin: 2.5%;">
+          <ion-grid>
+            <ion-row style="align-items: center;" class="no-padding">
+              <ion-col size="3">
+                <ion-avatar>
+                  <img [src]=badge.badge_photo />
+                </ion-avatar>
+              </ion-col>
+              <ion-col>
+                <p>{{badge.description}}</p>
+              </ion-col>
+              <ion-col>
+                <label>Gruppo: </label>
+                <p>{{badge.group_id}}</p>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </div>
+</div>

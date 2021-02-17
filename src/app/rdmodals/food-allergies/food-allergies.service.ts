@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { RDConstantsService } from 'src/app/rdcostants.service';
 import { FoodAllergy, UserAllergy } from './food-allergies.page';
 import { RDParamsService } from 'src/app/rdparams.service';
+import { FoodAllergiesInfoPage } from '../food-allergies-info/food-allergies-info.page';
+import { ModalController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +20,8 @@ export class FoodAllergiesService {
   constructor(
     private http: HttpClient,
     private rdConstants: RDConstantsService,
-    public paramsService: RDParamsService
+    public paramsService: RDParamsService,
+    private modalController: ModalController
   ) {
     this.readAllFoodAllergies();
     this.readUserFoodAllergies();
@@ -272,5 +275,15 @@ export class FoodAllergiesService {
     localStorage.setItem('groupFoodAllergies', null);
     localStorage.setItem('groupFoodAllergiesCategories', null);
     this.readGroupFoodAllergies();
+  }
+
+  async presentModalFoodAllergies(foodAllergies, categories) {
+    const modal = await this.modalController.create({
+      component: FoodAllergiesInfoPage,
+      backdropDismiss: true,
+      componentProps: { foodAllergies, categories },
+      cssClass: 'modal-style'
+    });
+    await modal.present();
   }
 }

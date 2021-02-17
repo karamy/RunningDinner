@@ -3,13 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { Dinner, DinnersService, MyDinnerDetails } from 'src/app/home/tabs/dinners/dinners.service';
 import { ProfileService } from 'src/app/home/profile/profile.service';
 import { RDParamsService } from 'src/app/rdparams.service';
-import { PopoverController, ModalController } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { DinnerInfoPage } from 'src/app/rdmodals/dinner-info/dinner-info.page';
-import { FoodAllergiesInfoPage } from 'src/app/rdmodals/food-allergies-info/food-allergies-info.page';
 import { CupertinoPane, CupertinoSettings } from 'cupertino-pane';
 import { NotificationsService } from 'src/app/home/notifications.service';
 import { Subscription } from 'rxjs';
-import { AuthService } from 'src/app/auth/auth.service';
+import { FoodAllergiesService } from 'src/app/rdmodals/food-allergies/food-allergies.service';
 
 @Component({
   selector: 'app-dinner-event',
@@ -44,32 +43,11 @@ export class DinnerEventPage implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute,
     private popoverController: PopoverController,
-    private modalController: ModalController,
-    private dinnersService: DinnersService,
+    public dinnersService: DinnersService,
     private profileService: ProfileService,
     public paramsService: RDParamsService,
     private notificationsService: NotificationsService,
-    private authService: AuthService) { }
-
-  async presentPopover(ev: any, dinnerTime) {
-    const popover = await this.popoverController.create({
-      component: DinnerInfoPage,
-      componentProps: { dinnerTime },
-      event: ev,
-      translucent: true
-    });
-    return await popover.present();
-  }
-
-  async presentModalFoodAllergies(foodAllergies, categories) {
-    const modal = await this.modalController.create({
-      component: FoodAllergiesInfoPage,
-      backdropDismiss: true,
-      componentProps: { foodAllergies, categories },
-      cssClass: 'modal-style'
-    });
-    await modal.present();
-  }
+    public foodAlergiesService: FoodAllergiesService) { }
 
   ngOnInit() {
     // Ottengo i dati della cena dai parametri della rotta
