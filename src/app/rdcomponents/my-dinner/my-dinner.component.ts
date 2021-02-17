@@ -8,6 +8,7 @@ import { Dinner } from 'src/app/home/tabs/dinners/dinners.service';
 })
 export class MyDinnerComponent implements OnInit {
   @Input() dinner: Dinner;
+  @Input() isSkeleton: boolean;
 
   constructor() { }
 

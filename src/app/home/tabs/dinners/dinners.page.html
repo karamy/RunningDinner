@@ -19,6 +19,18 @@
     </ion-refresher-content>
   </ion-refresher>
   <app-slider-filters (filter)="setFilter($event)"></app-slider-filters>
+  <div>
+    <ion-list *ngIf="dinnerList && dinnerList.length > 0">
+      <div *ngFor="let dinner of dinnerList" (click)="goToDinner(dinner)">
+        <rd-dinner [dinner]="dinner" [isSkeleton]="false"></rd-dinner>
+      </div>
+    </ion-list>
+    <div *ngIf="(!dinnerList || !dinnerList.length) && !syncInProgress">
+      <ion-card>
+        Non sono presenti cene attive in questo momento :(
+      </ion-card>
+    </div>
+  </div>
   <div *ngIf="syncInProgress">
     <ion-list>
       <div *ngFor="let n of [0,1,2]">
@@ -26,19 +38,7 @@
       </div>
     </ion-list>
   </div>
-  <div *ngIf="!syncInProgress">
-    <ion-list *ngIf="dinnerList && dinnerList.length > 0">
-      <div *ngFor="let dinner of dinnerList" (click)="goToDinner(dinner)">
-        <rd-dinner [dinner]="dinner" [isSkeleton]="false"></rd-dinner>
-      </div>
-    </ion-list>
-    <div *ngIf="!dinnerList || !dinnerList.length">
-      <ion-card>
-        Non sono presenti cene attive in questo momento :(
-      </ion-card>
-    </div>
-  </div>
-  <ion-infinite-scroll threshold="5%" (ionInfinite)="loadDinners($event, true, 'infinite', true)">
+  <ion-infinite-scroll threshold="1%" (ionInfinite)="loadDinners($event, true, 'infinite', true)">
     <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Carico altre cene...">
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>

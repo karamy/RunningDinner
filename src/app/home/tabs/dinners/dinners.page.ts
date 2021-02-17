@@ -62,8 +62,9 @@ export class DinnersPage implements OnInit {
         this.dinnersService.getOtherDinners(this.paramsService.getParams().dinnerId || 0, force, this.index, this.filterType, notSave).then(
           (response) => {
 
-            // Popolo la lista delle cene presenti
+            // Assegno immagine alla cena e popolo la lista delle cene presenti
             for (let i = 0; i < response.length; i++) {
+              response[i].image = this.dinnersService.assignDinnerImage(response[i]);
               this.dinnerList.push(response[i]);
             }
 

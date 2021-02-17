@@ -52,6 +52,49 @@ export class DinnersService {
     }
   ];
 
+  dinnerImages: DinnerImage[] = [
+    {
+      dinnerType: 1,
+      imageId: 0,
+      value: '../assets/pizza1.png'
+    },
+    {
+      dinnerType: 1,
+      imageId: 1,
+      value: '../assets/pizza2.png'
+    },
+    {
+      dinnerType: 2,
+      imageId: 0,
+      value: '../assets/pesce1.png'
+    },
+    {
+      dinnerType: 2,
+      imageId: 1,
+      value: '../assets/pesce2.png'
+    },
+    {
+      dinnerType: 3,
+      imageId: 0,
+      value: '../assets/vegan1.png'
+    },
+    {
+      dinnerType: 3,
+      imageId: 1,
+      value: '../assets/vegan2.png'
+    },
+    {
+      dinnerType: 4,
+      imageId: 0,
+      value: '../assets/sushi1.png'
+    },
+    {
+      dinnerType: 4,
+      imageId: 1,
+      value: '../assets/sushi2.png'
+    }
+  ]
+
   constructor(
     private http: HttpClient,
     private rdConstants: RDConstantsService,
@@ -86,6 +129,13 @@ export class DinnersService {
 
   // Aggiorna la myDinner in localStorage
   private async writeMyDinner(myDinner: Dinner) {
+    this.readMyDinner();
+    // Se già cachata mantengo la stessa immagine, altrimenti ne genero una casuale
+    if (!this._myDinner) {
+      myDinner.image = this.assignDinnerImage(myDinner);
+    } else {
+      myDinner.image = this._myDinner.image;
+    }
     await this.rdStorage.setItem('myDinner', JSON.stringify(myDinner));
     await this.readMyDinner();
   }
@@ -151,6 +201,13 @@ export class DinnersService {
         resolve(this._otherDinners);
       }
     });
+  }
+
+  // Assegna immagine casuale alla cena in base al tipo
+  assignDinnerImage(dinner: Dinner) {
+    const rndNumber = Math.floor(Math.random() * (1 - 0 + 1)) + 0; // Genera numero casuale intero compreso tra 0 e 1 (inclusi), perchè adesso solo 2 immagini per tipo
+    const selectedImage = this.dinnerImages.find(x => x.dinnerType === dinner.type && x.imageId === rndNumber);
+    return selectedImage.value;
   }
 
   // Aggiorna le otherDinners in localStorage
@@ -280,7 +337,6 @@ export class DinnersService {
               const dinnerBadges = this.getDinnerBadges(res as DinnerDetails);
               const allDinnerFoodAllergies = this.foodAllergiesService.convertImagesToJpeg(res['foodAllergies']);
               const dinnerFoodAllergies = this.getDinnerFoodAllergies(res as DinnerDetails);
-              const dinnerMinMaxAges = this.getDinnerUsersData(res as DinnerDetails);
               this.usersData = res['usersData'];
               const addressesToDecode = {
                 groupid: [],
@@ -309,7 +365,6 @@ export class DinnersService {
                   allFoodAllergies: allDinnerFoodAllergies,
                   foodAllergies: dinnerFoodAllergies[0],
                   foodAllergiesCategories: dinnerFoodAllergies[1],
-                  minMaxAges: dinnerMinMaxAges,
                   addressesLatLng: addressesLatLng,
                   userLatLng: userLatLng,
                   groupAddresses: addressesToDecode,
@@ -461,18 +516,6 @@ export class DinnersService {
     const dinnerAllergiesCategory = this.foodAllergiesService.createCategoryArray(uniqueFoodAllergiesList);
 
     return [uniqueFoodAllergiesList, dinnerAllergiesCategory];
-  }
-
-  // Calcolo gli anni e l'età minima/massima degli utenti partecipanti alla cena selezionata
-  getDinnerUsersData(dinnerDetails: DinnerDetails) {
-    const userAges: number[] = [];
-    dinnerDetails.usersData.forEach(user => {
-      user.birth_date = new Date(user.birth_date);
-      user.birth_date = user.birth_date.toLocaleDateString() as unknown as Date;
-      userAges.push(this.calcAge(user.birth_date));
-    });
-    const userMinMaxAges = [Math.min.apply(null, userAges), Math.max.apply(null, userAges)];
-    return userMinMaxAges;
   }
 
   // Funzioni di myDinner
@@ -747,6 +790,16 @@ export class DinnersService {
 
   // Aggiorna la dinnerHistory in localStorage
   private async writeDinnerHistory(dinnerHistory: Dinner[]) {
+    this.readDinnerHistory();
+    // Se già cachata mantengo la stessa immagine, altrimenti ne genero una casuale
+    for (let i = 0; i < dinnerHistory.length; i++) {
+      const dinnerCached = this._dinnerHistory.find(x => x.id === dinnerHistory[i].id);
+      if (dinnerCached) {
+        dinnerHistory[i].image = dinnerCached.image;
+      } else {
+        dinnerHistory[i].image = this.assignDinnerImage(dinnerHistory[i]);
+      }
+    }
     await this.rdStorage.setItem('dinnerHistory', JSON.stringify(dinnerHistory));
     await this.readDinnerHistory();
   }
@@ -961,11 +1014,19 @@ export interface DinnerType {
   background?: string; // TODO aggiungere gestione backgound della card in base alla tipologia di cena
 }
 
+export interface DinnerImage {
+  dinnerType: number;
+  imageId: number;
+  value: string;
+}
+
 // Rappresenta una cena
 export interface Dinner {
   id: number;
   title: string;
   description: string;
+  avgDistance: number;
+  userMinMaxAges: number[];
   type: number; // rappresenta la tipologia di cena
   groupIds: number[]; // Rappresenta gli id dei gruppi partecipanti alla cena
   date: Date;
@@ -973,6 +1034,8 @@ export interface Dinner {
   time?: number;
   administrator: number; // rappresenta l'id del gruppo amministratore della cena
   state: number; // Rappresenta lo state della cena
+  image?: string; // Immagine della cena nella schermata dinners
+  isWinner?: boolean;
 }
 
 // Rappresenta i dettagli di una cena
@@ -982,7 +1045,6 @@ export interface DinnerDetails {
   foodAllergies: UserAllergy[];
   foodAllergiesCategories?: string[];
   usersData?: UserData[];
-  minMaxAges?: number[];
   avgDistance?: number;
   addressesLatLng?: google.maps.LatLng[];
   groupAddresses?: any;

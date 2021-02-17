@@ -18,10 +18,10 @@
     </ion-refresher-content>
   </ion-refresher>
   <div *ngIf="syncInProgress">
-    <rd-dinner [dinner]="" [isSkeleton]="true"></rd-dinner>
+    <rd-my-dinner [dinner]="" [isSkeleton]="true"></rd-my-dinner>
     <ion-skeleton-text animated style="width: 50%; margin-left: 1em;"></ion-skeleton-text>
     <div *ngFor="let n of [0,1,2]">
-      <rd-dinner [dinner]="" [isSkeleton]="true"></rd-dinner>
+      <rd-my-dinner [dinner]="" [isSkeleton]="true"></rd-my-dinner>
     </div>
   </div>
   <div *ngIf="!syncInProgress">
@@ -31,7 +31,7 @@
     <h1>Cronologia Cene</h1>
     <div *ngIf="dinnerHistoryList">
       <div *ngFor="let dinner of dinnerHistoryList">
-        <rd-dinner (click)="goToDinnerWinner(dinner)" [dinner]="dinner"></rd-dinner>
+        <rd-my-dinner (click)="goToDinnerWinner(dinner)" [dinner]="dinner"></rd-my-dinner>
       </div>
       <h2 *ngIf="dinnerHistoryList.length === 0">Non sono presenti cene passate</h2>
     </div>

@@ -1,8 +1,45 @@
-<ion-card>
-  <ion-card-header>
-    <ion-card-title>{{dinner.title}}</ion-card-title>
-  </ion-card-header>
-  <ion-card-content>
-    {{dinner.description}}
-  </ion-card-content>
-</ion-card>
+<div *ngIf="!isSkeleton">
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-img [src]="dinner.image" class="dinner-type"></ion-img>
+        <div class="box-crown-column" *ngIf="dinner.isWinner">
+          <div class="box-crown">
+            <ion-img src="../assets/cappello-oro-animato.gif"></ion-img>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="dinner-title">
+        {{dinner.title}}
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="dinner-info">
+        {{dinner.dateString}} alle {{dinner.time}}
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>
+<div *ngIf="isSkeleton">
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-avatar>
+          <ion-skeleton-text animated></ion-skeleton-text>
+        </ion-avatar>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="dinner-title-col-skeleton">
+        <ion-skeleton-text animated class="dinner-title-skeleton"></ion-skeleton-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="dinner-info">
+        <ion-skeleton-text animated class="dinner-info-skeleton"></ion-skeleton-text>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>

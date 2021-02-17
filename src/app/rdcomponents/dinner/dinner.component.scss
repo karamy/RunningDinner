@@ -1,0 +1,173 @@
+ion-grid {
+    padding: 4%;
+    height: 100%;
+}
+
+ion-col {
+    padding: 0%;
+    text-align: center;
+}
+
+ion-img.dinner-type::part(image) {
+    border-radius: 8px;
+    height: 150px;
+    object-fit: cover;
+}
+
+.box-people-column {
+    position: absolute;
+    top: 5%;
+    left: 3%;
+}
+
+.box-people {
+    border-radius: 8px;
+    width: 50px;
+    height: 60px;
+    padding: 4px 0px 5px 0px;
+    font-size: 1.5em;
+    background-color: white;
+    box-shadow: 0px 1px 6px 0px #888888;
+}
+
+.kilometers {
+    color: #888888de;
+    margin: 0%;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    bottom: 10%;
+}
+
+.box-distance-column {
+    position: absolute;
+    bottom: -5%;
+    right: 0%;
+}
+
+.box-distance {
+    border-radius: 20px;
+    width: 90%;
+    padding: 2px 10px 2px 10px;
+    font-size: 1.3em;
+    background-color: white;
+    box-shadow: 0px 1px 6px 0px #888888;
+}
+
+.age {
+    color: #888888de;
+}
+
+.dinner-title {
+    font-size: 1.8em;
+    text-align: start;
+}
+
+.dinner-info {
+    font-size: 1.3em;
+    color: #888888de;
+    text-align: start;
+}
+
+// Stili dello Skeleton
+
+ion-avatar {
+    --border-radius: 8px;
+    width: 100%;
+    height: 150px;
+}
+
+.skeleton-text-distance {
+    width: 60%;
+    margin: 0%;
+    height: 50%;
+    left: 20%;
+    top: 5%;
+    border-radius: 0%;
+}
+
+.skeleton-km {
+    width: 60%;
+    height: 45%;
+    left: 20%;
+    top: 55%;
+}
+
+.box-distance-column-skeleton {
+    position: absolute;
+    bottom: -5%;
+    right: 4%;
+    z-index: 1;
+}
+
+.box-distance-skeleton {
+    border-radius: 20px;
+    width: 125px;
+    height: 55px;
+    padding: 2px 10px 2px 10px;
+    font-size: 1.3em;
+    background-color: white;
+    box-shadow: 0px 1px 6px 0px #888888;
+}
+
+.ages-text-skeleton {
+    margin: 0%;
+    width: 80%;
+    left: 10%;
+    top: 20%;
+    height: 25%;
+    border-radius: 0%;
+}
+
+.ages-skeleton {
+    width: 30%;
+    height: 20%;
+    margin: 0%;
+    top: 35%;
+    left: 35%;
+}
+
+.dinner-title-col-skeleton {
+    margin-bottom: 4%;
+    margin-top: 2%;
+}
+
+.dinner-title-skeleton {
+    height: 200%;
+    margin: 0%;
+    width: 55%;
+}
+
+.dinner-info-skeleton {
+    width: 90%;
+    height: 30%;
+}
+
+
+
+
+// Vecchie
+
+.card {
+    background-color: white;
+    border-radius: 8px;
+    bottom: 30%;
+    position: absolute;
+    width: 100%;
+}
+
+.third-row {
+    margin-top: 15%;
+}
+
+.rd-pin-col {
+    padding-left: 3%;
+}
+
+.rd-pin {
+    width: 15%;
+}
+
+.no-padding {
+    padding: 0%;
+}

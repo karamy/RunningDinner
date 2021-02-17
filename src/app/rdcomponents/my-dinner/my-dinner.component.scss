@@ -1,3 +1,60 @@
-ion-card {
-    background-color:  #9CC7AE;
+ion-grid {
+    padding: 4%;
+    height: 100%;
+}
+
+ion-col {
+    padding: 0%;
+    text-align: center;
+}
+
+ion-img.dinner-type::part(image) {
+    border-radius: 8px;
+    height: 150px;
+    object-fit: cover;
+}
+
+.box-crown-column {
+    position: absolute;
+    top: 5%;
+    left: 3%;
+}
+
+.box-crown {
+    width: 35px;
+}
+
+.dinner-title {
+    font-size: 1.8em;
+    text-align: start;
+}
+
+.dinner-info {
+    font-size: 1.3em;
+    color: #888888de;
+    text-align: start;
+}
+
+// Stili dello Skeleton
+
+ion-avatar {
+    --border-radius: 8px;
+    width: 100%;
+    height: 150px;
+}
+
+.dinner-title-col-skeleton {
+    margin-bottom: 4%;
+    margin-top: 2%;
+}
+
+.dinner-title-skeleton {
+    height: 200%;
+    margin: 0%;
+    width: 70%;
+}
+
+.dinner-info-skeleton {
+    width: 90%;
+    height: 50%;
 }

@@ -54,6 +54,14 @@ export class MyDinnersPage implements OnInit {
             // Ottengo le cene passate
             this.dinnersService.getDinnerHistory(force).then(res => {
               this.dinnerHistoryList = res;
+              console.log(this.dinnerHistoryList);
+              if (this.dinnerHistoryList.length > 0) {
+                for (let i = 0; i < this.dinnerHistoryList.length; i++) {
+                  const dinnerHistoryDateTime = this.dinnersService.formatDate(this.dinnerHistoryList[i].date);
+                  this.dinnerHistoryList[i].dateString = dinnerHistoryDateTime[0];
+                  this.dinnerHistoryList[i].time = Number(dinnerHistoryDateTime[1]);
+                }
+              }
 
               if (event) { // Se lanciato dal refresher emetto evento di completamento
                 event.target.complete();

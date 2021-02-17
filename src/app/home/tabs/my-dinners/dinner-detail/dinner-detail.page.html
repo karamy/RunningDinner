@@ -107,15 +107,15 @@
               <ion-icon name="people-circle-outline"></ion-icon>
             </ion-col>
             <ion-col class="ion-text-start" style="padding-left: 2%;">
-              <div *ngIf="dinnerDetails && dinnerDetails.minMaxAges.length > 0">
-                <h6 *ngIf="dinnerDetails.minMaxAges[0] !== dinnerDetails.minMaxAges[1]" class="dinner-info">Età
+              <div *ngIf="dinner">
+                <h6 *ngIf="dinner.userMinMaxAges[0] !== dinner.userMinMaxAges[1]" class="dinner-info">Età
                   partecipanti
                   dai
-                  {{dinnerDetails.minMaxAges[0]}} ai
-                  {{dinnerDetails.minMaxAges[1]}} anni</h6>
-                <h6 *ngIf="dinnerDetails.minMaxAges[0] === dinnerDetails.minMaxAges[1]" class="dinner-info">Età
+                  {{dinner.userMinMaxAges[0]}} ai
+                  {{dinner.userMinMaxAges[1]}} anni</h6>
+                <h6 *ngIf="dinner.userMinMaxAges[0] === dinner.userMinMaxAges[1]" class="dinner-info">Età
                   partecipanti
-                  {{dinnerDetails.minMaxAges[0]}} anni</h6>
+                  {{dinner.userMinMaxAges[0]}} anni</h6>
               </div>
             </ion-col>
           </ion-row>

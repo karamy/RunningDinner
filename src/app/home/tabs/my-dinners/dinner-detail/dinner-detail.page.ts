@@ -20,7 +20,6 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
   dinnerDetails: DinnerDetails = {
     badges: [],
     foodAllergies: [],
-    minMaxAges: [],
     avgDistance: -1
   };
   dinnerType: string;
@@ -79,6 +78,7 @@ export class DinnerDetailPage implements OnInit, OnDestroy {
         this.dinnersService.getDinnerDetails(this.dinner, this.authService.getUserData(), force).then(
           (resp) => {
             this.dinnerDetails = resp;
+            console.log(this.dinnerDetails);
 
             // Sovrascrivo titolo, descrizione e amministratore cena in quanto possono essere modificati
             const dinnerData = resp.dinnerData;

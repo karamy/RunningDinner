@@ -1,19 +1,84 @@
-<ion-card *ngIf="!isSkeleton">
-  <ion-card-header>
-    <ion-card-title>{{dinner.title}}</ion-card-title>
-  </ion-card-header>
-  <ion-card-content>
-    {{dinner.description}}
-  </ion-card-content>
-</ion-card>
-<ion-card *ngIf="isSkeleton">
-  <ion-card-header>
-    <ion-card-title>
-      <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
-    </ion-card-title>
-  </ion-card-header>
-  <ion-card-content>
-    <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
-    <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
-  </ion-card-content>
-</ion-card>
+<div *ngIf="!isSkeleton">
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-img [src]="dinner.image" class="dinner-type"></ion-img>
+        <div class="box-people-column">
+          <div class="box-people">
+            {{dinner.avgDistance}}
+            <br>
+            <p class="kilometers">km</p>
+          </div>
+        </div>
+        <div class="box-distance-column">
+          <div class="box-distance" *ngIf="dinner.userMinMaxAges[0] !== dinner.userMinMaxAges[1]">
+            {{dinner.userMinMaxAges[0]}} - {{dinner.userMinMaxAges[1]}} anni
+            <span class="age">
+              Età
+            </span>
+          </div>
+          <div class="box-distance" *ngIf="dinner.userMinMaxAges[0] === dinner.userMinMaxAges[1]">
+            {{dinner.userMinMaxAges[0]}} anni
+            <span class="age">
+              Età
+            </span>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="dinner-title">
+        {{dinner.title}}
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="dinner-info">
+        {{dinner.dateString}} alle {{dinner.time}}
+        <span>
+          Partecipanti {{dinner.groupIds.length}} su 9
+        </span>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>
+<div *ngIf="isSkeleton">
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-avatar>
+          <ion-skeleton-text animated></ion-skeleton-text>
+        </ion-avatar>
+        <div class="box-people-column">
+          <div class="box-people">
+            <ion-skeleton-text animated class="skeleton-text-distance"></ion-skeleton-text>
+            <br>
+            <p class="kilometers">
+              <ion-skeleton-text animated class="skeleton-km"></ion-skeleton-text>
+            </p>
+          </div>
+        </div>
+        <div class="box-distance-column-skeleton">
+          <div class="box-distance-skeleton">
+            <ion-skeleton-text animated class="ages-text-skeleton"></ion-skeleton-text>
+            <span class="age">
+              <ion-skeleton-text animated class="ages-skeleton"></ion-skeleton-text>
+            </span>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="dinner-title-col-skeleton">
+        <ion-skeleton-text animated class="dinner-title-skeleton"></ion-skeleton-text>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col class="dinner-info">
+        <ion-skeleton-text animated class="dinner-info-skeleton"></ion-skeleton-text>
+        <span>
+          <ion-skeleton-text animated class="dinner-info-skeleton"></ion-skeleton-text>
+        </span>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>
