@@ -57,42 +57,42 @@ export class DinnersService {
     {
       dinnerType: 1,
       imageId: 0,
-      value: '../assets/pizza1.png'
+      value: 'assets/pizza1.png'
     },
     {
       dinnerType: 1,
       imageId: 1,
-      value: '../assets/pizza2.png'
+      value: 'assets/pizza2.png'
     },
     {
       dinnerType: 2,
       imageId: 0,
-      value: '../assets/pesce1.png'
+      value: 'assets/pesce1.png'
     },
     {
       dinnerType: 2,
       imageId: 1,
-      value: '../assets/pesce2.png'
+      value: 'assets/pesce2.png'
     },
     {
       dinnerType: 3,
       imageId: 0,
-      value: '../assets/vegan1.png'
+      value: 'assets/vegan1.png'
     },
     {
       dinnerType: 3,
       imageId: 1,
-      value: '../assets/vegan2.png'
+      value: 'assets/vegan2.png'
     },
     {
       dinnerType: 4,
       imageId: 0,
-      value: '../assets/sushi1.png'
+      value: 'assets/sushi1.png'
     },
     {
       dinnerType: 4,
       imageId: 1,
-      value: '../assets/sushi2.png'
+      value: 'assets/sushi2.png'
     }
   ]
 
