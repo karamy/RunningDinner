@@ -1,191 +1,195 @@
 <ion-header #header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home/tabs/dinners"></ion-back-button>
+      <ion-back-button text="Indietro" defaultHref="/home/tabs/dinners"></ion-back-button>
     </ion-buttons>
     <ion-buttons slot="primary">
       <ion-button *ngIf="!onRefresh" shape="round" size="large" slot="icon-only"
         (click)="onLoadOtherParamsInBackground()">
         <ion-icon size="large" name="refresh-circle-outline"></ion-icon>
       </ion-button>
-      <ion-button *ngIf="!onRefresh && !editMode && !profileService.getPartner()" fill="clear"
-        (click)="triggerEditMode()">
-        <ion-icon name="create-outline"></ion-icon>
-      </ion-button>
-      <ion-button *ngIf="!onRefresh && editMode" fill="clear" (click)="saveChanges()">
-        <ion-icon name="save-outline"></ion-icon>
-      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-
-<ion-content [scrollEvents]="true" appHideHeader [header]="header" fullscreen="true" slot="fixed">
-  <div>
-    <div style="height: 130px;position: relative;" (click)="onProfilelick()">
-      <ion-avatar [class.avatar]="!profileService.getPartner()" [class.avatar-user-group]="profileService.getPartner()">
-        <img [src]="user.profile_photo">
-      </ion-avatar>
-      <ion-avatar *ngIf="profileService.getPartner()" class="avatar-partner">
-        <img [src]="profileService.getPartner().profile_photo">
-      </ion-avatar>
-      <round-progress [class.user-level]="!profileService.getPartner()"
-        [class.user-level-group]="profileService.getPartner()" [current]="80" [max]="100" [color]="'#45ccce'"
-        [background]="'#eaeaea'" [radius]="80" [stroke]="10" [rounded]="true" [clockwise]="true" [responsive]="false"
-        [duration]="800" [animation]="'easeInOutQuart'" [animationDelay]="0">
-      </round-progress>
-      <round-progress *ngIf="profileService.getPartner()" class="partner-level" [current]="40" [max]="100"
-        [color]="'#8BB4C7'" [background]="'#eaeaea'" [radius]="80" [stroke]="10" [rounded]="true" [clockwise]="true"
-        [responsive]="false" [duration]="800" [animation]="'easeInOutQuart'" [animationDelay]="0">
-      </round-progress>
-      <ion-button *ngIf="editMode" color="light" fill="clear" class="button-edit" (click)="editImage()">
-        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-      </ion-button>
-    </div>
+<ion-content appHideHeader [header]="header" slot="fixed">
+  <div class="ocean">
+    <div class="wave"></div>
+    <div class="wave"></div>
   </div>
-  <div class="card-body">
-    <div class="user-meta ion-text-center">
-      <h3 class="user-name" *ngIf="!editMode && !profileService.getPartner()">{{user.name}},
-        <span class="ages">
-          {{userAge}} anni
-        </span>
-      </h3>
-      <h3 class="user-name" *ngIf="profileService.getPartner()">{{user.name}} &
-        {{profileService.getPartner().name}}</h3>
-      <h3 *ngIf="profileService.getPartner()" class="avg-age">Età media:
-        {{profileService.getPartner().avgAge}} ANNI</h3>
-      <ion-grid>
-        <ion-row *ngIf="editMode" class="no-padding" style="margin-bottom: 10px;margin-top: 16px;">
-          <ion-col style="margin-right: 5%;" class="no-padding">
-            <ion-input class="user-name ion-no-padding ion-text-end" *ngIf="editMode" [(ngModel)]="user.name">
+  <div>
+    <div>
+      <!-- Foto Profilo -->
+      <div style="height: 130px;position: relative;">
+        <ion-avatar [class.avatar]="!profileService.getPartner()"
+          [class.avatar-user-group]="profileService.getPartner()">
+          <img [src]="user.profile_photo">
+        </ion-avatar>
+        <ion-avatar *ngIf="profileService.getPartner()" class="avatar-partner">
+          <img [src]="profileService.getPartner().profile_photo">
+        </ion-avatar>
+        <ion-button *ngIf="editMode" color="light" fill="clear" class="button-edit" (click)="editImage()">
+          <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+    <ion-card>
+      <div class="card-body">
+        <ion-button class="edit" *ngIf="!onRefresh && !editMode && !profileService.getPartner()" fill="clear"
+          (click)="triggerEditMode()">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-button>
+        <ion-button class="edit" *ngIf="!onRefresh && editMode" fill="clear" (click)="saveChanges()">
+          <ion-icon name="save-outline"></ion-icon>
+        </ion-button>
+        <div class="user-meta">
+          <div>
+            <!-- Username -->
+            <ion-icon class="icon-name" name="body-outline"></ion-icon>
+            <h3 class="user-name" *ngIf="!editMode && !profileService.getPartner()">{{user.name}} </h3>
+            <h3 class="user-name" *ngIf="profileService.getPartner()">{{user.name}} &
+              {{profileService.getPartner().name}}</h3>
+            <ion-input class="user-name" *ngIf="editMode" [(ngModel)]="user.name">
             </ion-input>
-          </ion-col>
-          <ion-col class="no-padding">
+          </div>
+          <div>
+            <!-- Età -->
+            <ion-icon class="icon-name" name="time-outline"></ion-icon>
+            <span *ngIf="!editMode && !profileService.getPartner()" class="ages">
+              {{userAge}} anni
+            </span>
+            <span *ngIf="profileService.getPartner()" class="avg-age">Età media:
+              {{profileService.getPartner().avgAge}} anni
+            </span>
             <ion-datetime class="ages ion-no-padding ion-text-start" *ngIf="editMode" [(ngModel)]="user.birth_date"
               displayFormat="DD/MM/YYYY" cancelText="Annulla" doneText="Fatto" [value]="user.birth_date"
               [placeholder]="user.birth_date"></ion-datetime>
+          </div>
+          <div>
+            <!-- Indirizzo -->
+            <ion-icon class="icon-map" name="map-outline"></ion-icon>
+            <div *ngIf="!profileService.getPartner()">
+              <h6 *ngIf="!editMode">{{user.address}}</h6>
+              <ion-textarea rows="1" autoGrow="true" style="margin-top: 16px;margin-bottom: 8px;" class="ion-no-padding"
+                *ngIf="editMode" [(ngModel)]="user.address" (keyup)="updateSearchResults()">
+              </ion-textarea>
+              <ion-list *ngIf="autocompleteItems.length > 0">
+                <div *ngFor="let item of autocompleteItems; let i = index">
+                  <ion-item *ngIf="i<3" tappable lines="full" style="padding-bottom: 3%;--inner-padding-bottom: 3%;"
+                    (click)="selectSearchResult(item)">
+                    {{ item.description }}
+                  </ion-item>
+                </div>
+              </ion-list>
+            </div>
+            <h6 *ngIf="profileService.getPartner()">Ospitiamo a casa di
+              {{profileService.findHouseOwner(user, profileService.getPartner())}}</h6>
+            <h6 *ngIf="profileService.getPartner()">{{profileService.getPartner().group_address}}</h6>
+          </div>
+        </div>
+      </div>
+    </ion-card>
+
+    <!-- Badges -->
+    <rd-slider
+      [objectsArray]="paramsService.getParams().groupId > 0 ? badgesService.getGroupBadges() : badgesService.getUserBadgesData()"
+      [type]="'badge'" [descriptionVoid]="'Nessun badge presente'" [route]="'profile'">
+    </rd-slider>
+
+    <!-- Intolleranze -->
+
+    <!-- Nessuna intolleranza -->
+    <ion-card *ngIf=" !foodAllergiesService.getUserFoodAllergies() || (foodAllergiesService.getUserFoodAllergies().length===0 &&
+    foodAllergiesService.getGroupFoodAllergies().length===0)" style="margin-bottom: 2.5%;">
+      <ion-grid>
+        <ion-row>
+          <ion-col class="ion-text-center">
+            <h3>Nessuna intolleranza alimentare</h3>
+          </ion-col>
+          <ion-col size="3" *ngIf="paramsService.getParams().groupId === 0">
+            <ion-button size="small" shape="round" class="button-add" fill="outline"
+              (click)="presentModalFoodAllergies()">
+              <ion-icon name="add"></ion-icon>
+            </ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
-      <div *ngIf="!profileService.getPartner()">
-        <h6 *ngIf="!editMode">{{user.address}}</h6>
-        <ion-textarea rows="1" autoGrow="true" style="margin-top: 16px;margin-bottom: 8px;" class="ion-no-padding"
-          *ngIf="editMode" [(ngModel)]="user.address" (keyup)="updateSearchResults()">
-        </ion-textarea>
-        <ion-list *ngIf="autocompleteItems.length > 0">
-          <div *ngFor="let item of autocompleteItems; let i = index">
-            <ion-item *ngIf="i<3" tappable lines="full" style="padding-bottom: 3%;--inner-padding-bottom: 3%;"
-              (click)="selectSearchResult(item)">
-              {{ item.description }}
-            </ion-item>
-          </div>
-        </ion-list>
-      </div>
-      <h6 *ngIf="profileService.getPartner()">La casa del gruppo è quella di
-        {{profileService.findHouseOwner(user, profileService.getPartner())}}</h6>
-      <h6 *ngIf="profileService.getPartner()">{{profileService.getPartner().group_address}}</h6>
-    </div>
-  </div>
+    </ion-card>
 
-  <!-- Badges -->
-  <rd-slider
-    [objectsArray]="paramsService.getParams().groupId > 0 ? badgesService.getGroupBadges() : badgesService.getUserBadgesData()"
-    [type]="'badge'" [descriptionVoid]="'Nessun badge presente'" [route]="'profile'">
-  </rd-slider>
-
-  <!-- Intolleranze -->
-
-  <!-- Nessuna intolleranza -->
-  <ion-card *ngIf=" !foodAllergiesService.getUserFoodAllergies() || (foodAllergiesService.getUserFoodAllergies().length===0 &&
-    foodAllergiesService.getGroupFoodAllergies().length===0)" style="margin-bottom: 2.5%;">
-    <ion-grid>
-      <ion-row>
-        <ion-col class="ion-text-center">
-          <h3>Nessuna intolleranza alimentare</h3>
-        </ion-col>
-        <ion-col size="3" *ngIf="paramsService.getParams().groupId === 0">
-          <ion-button size="small" shape="round" class="button-add" fill="outline"
-            (click)="presentModalFoodAllergies()">
-            <ion-icon name="add"></ion-icon>
-          </ion-button>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </ion-card>
-
-  <!-- Intolleranze presenti -->
-  <ion-card
-    *ngIf="foodAllergiesService.getUserFoodAllergies() && (foodAllergiesService.getUserFoodAllergies().length > 0 || foodAllergiesService.getGroupFoodAllergies().length > 0)">
-    <ion-grid>
-      <ion-row style="text-align: center;" class="no-padding">
-        <ion-col>
-          <p>Intolleranze Alimentari</p>
-        </ion-col>
-      </ion-row>
-      <div *ngIf="paramsService.getParams().groupId === 0">
-        <ion-row *ngFor="let category of foodAllergiesService.getUserAllergiesCategories()" style="padding: 2%;">
-          <ion-col class="no-padding">
-            <h3 style="margin-top: 2%;text-align: center;">{{category}}</h3>
-            <ion-card *ngFor="let food of foodAllergiesService.getUserFoodAllergies() | categoryFilter: category">
-              <ion-grid>
-                <ion-row class="no-padding">
-                  <ion-col class="no-padding">
-                    <ion-list>
-                      <ion-item-sliding>
-                        <ion-item-options side="end">
-                          <ion-item-option color="danger" (click)="deleteFoodAllergy(food)">Elimina
-                          </ion-item-option>
-                        </ion-item-options>
+    <!-- Intolleranze presenti -->
+    <ion-card
+      *ngIf="foodAllergiesService.getUserFoodAllergies() && (foodAllergiesService.getUserFoodAllergies().length > 0 || foodAllergiesService.getGroupFoodAllergies().length > 0)">
+      <ion-grid>
+        <ion-row style="text-align: center;" class="no-padding">
+          <ion-col>
+            <h2>Intolleranze Alimentari</h2>
+          </ion-col>
+        </ion-row>
+        <div *ngIf="paramsService.getParams().groupId === 0">
+          <ion-row *ngFor="let category of foodAllergiesService.getUserAllergiesCategories()" style="padding: 2%;">
+            <ion-col class="no-padding">
+              <h3 style="margin-top: 2%;text-align: center;">{{category}}</h3>
+              <ion-card *ngFor="let food of foodAllergiesService.getUserFoodAllergies() | categoryFilter: category">
+                <ion-grid>
+                  <ion-row class="no-padding">
+                    <ion-col class="no-padding">
+                      <ion-list>
+                        <ion-item-sliding>
+                          <ion-item-options side="end">
+                            <ion-item-option color="danger" (click)="deleteFoodAllergy(food)">Elimina
+                            </ion-item-option>
+                          </ion-item-options>
+                          <ion-item lines="none">
+                            <ion-avatar>
+                              <img [src]="food.allergy_photo">
+                            </ion-avatar>
+                            <ion-label style="margin-left: 3%;">{{food.allergy_name}}</ion-label>
+                          </ion-item>
+                        </ion-item-sliding>
+                      </ion-list>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+          <ion-row style="padding-top:2%;padding-bottom: 2%;justify-content: center;">
+            <ion-button fill="outline" color="primary" (click)="presentModalFoodAllergies()">Aggiungi</ion-button>
+          </ion-row>
+        </div>
+        <div *ngIf="paramsService.getParams().groupId > 0" style="margin-bottom:10%;">
+          <ion-row *ngFor="let category of foodAllergiesService.getGroupAllergiesCategories()" style="padding: 2%;">
+            <ion-col class="no-padding">
+              <h3 style="margin-top: 2%;text-align: center;">{{category}}</h3>
+              <ion-card *ngFor="let food of foodAllergiesService.getGroupFoodAllergies() | categoryFilter: category">
+                <ion-grid>
+                  <ion-row class="no-padding">
+                    <ion-col class="no-padding">
+                      <ion-list>
                         <ion-item lines="none">
                           <ion-avatar>
                             <img [src]="food.allergy_photo">
                           </ion-avatar>
                           <ion-label style="margin-left: 3%;">{{food.allergy_name}}</ion-label>
                         </ion-item>
-                      </ion-item-sliding>
-                    </ion-list>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </ion-card>
-          </ion-col>
-        </ion-row>
-        <ion-row style="padding-top:2%;padding-bottom: 2%;justify-content: center;">
-          <ion-button fill="outline" color="primary" (click)="presentModalFoodAllergies()">Aggiungi</ion-button>
-        </ion-row>
-      </div>
-      <div *ngIf="paramsService.getParams().groupId > 0">
-        <ion-row *ngFor="let category of foodAllergiesService.getGroupAllergiesCategories()" style="padding: 2%;">
-          <ion-col class="no-padding">
-            <h3 style="margin-top: 2%;text-align: center;">{{category}}</h3>
-            <ion-card *ngFor="let food of foodAllergiesService.getGroupFoodAllergies() | categoryFilter: category">
-              <ion-grid>
-                <ion-row class="no-padding">
-                  <ion-col class="no-padding">
-                    <ion-list>
-                      <ion-item lines="none">
-                        <ion-avatar>
-                          <img [src]="food.allergy_photo">
-                        </ion-avatar>
-                        <ion-label style="margin-left: 3%;">{{food.allergy_name}}</ion-label>
-                      </ion-item>
-                    </ion-list>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </ion-card>
-          </ion-col>
-        </ion-row>
-      </div>
-    </ion-grid>
-  </ion-card>
+                      </ion-list>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </ion-card>
+            </ion-col>
+          </ion-row>
+        </div>
+      </ion-grid>
+    </ion-card>
 
-  <ion-grid>
-    <ion-row>
-      <ion-col class="ion-text-center">
-        <ion-button color="danger" style="width: 50%;" (click)="onLogout()">Logout Debug</ion-button>
-        <ion-button *ngIf="paramsService.getParams().groupId && !paramsService.getParams().dinnerId" style="width: 50%;"
-          (click)="onLeaveGroup()">Lascia il gruppo</ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+    <ion-grid>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-button color="danger" style="width: 50%;" (click)="onLogout()">Logout Debug</ion-button>
+          <ion-button *ngIf="paramsService.getParams().groupId && !paramsService.getParams().dinnerId"
+            style="width: 50%;" (click)="onLeaveGroup()">Lascia il gruppo</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
 </ion-content>

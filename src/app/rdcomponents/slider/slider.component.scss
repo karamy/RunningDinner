@@ -9,8 +9,9 @@ ion-row {
 }
 
 ion-card {
+  width:85%;
   display: flex;
-  margin-left: 2.5%;
+  margin-left: 7.6%;
   margin-right: 2.5%;
   margin-top: 1.5%;
   margin-bottom: 0%;
@@ -19,3 +20,8 @@ ion-card {
 .no-padding {
   padding: 0%;
 }
+
+h2{
+  color: #50976a;
+}
+

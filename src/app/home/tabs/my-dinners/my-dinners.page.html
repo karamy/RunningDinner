@@ -1,10 +1,8 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>My Dinners</ion-title>
+    <ion-img src="assets/Logo.png"></ion-img>
+    <ion-title>Le mie cene</ion-title>
     <ion-buttons slot="primary">
-      <rd-profile></rd-profile>
-    </ion-buttons>
-    <ion-buttons slot="secondary">
       <ion-button shape="round" size="large" routerLink="/home/chat" *ngIf="paramsService.getParams().dinnerId">
         <ion-icon size="large" name="chatbubble-ellipses-outline"></ion-icon>
       </ion-button>
