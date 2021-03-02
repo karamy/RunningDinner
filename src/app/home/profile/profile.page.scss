@@ -7,8 +7,8 @@ ion-toolbar {
   --background: transparent;
 }
 
-.edit{
-  float:right;
+.edit {
+  float: right;
 }
 
 ion-grid {
@@ -21,20 +21,19 @@ ion-row {
   width: 100%;
 }
 
-.icon-name{
-  display:inline-block;
+.icon-name {
+  display: inline-block;
   font-size: 1.2em;
-  margin-right:5%;
-  color:black;
+  margin-right: 5%;
+  color: black;
 }
 
-.icon-map{
-float:left;
+.icon-map {
+  float: left;
   font-size: 1.2em;
-  margin-right:5%;
-  color:black;
+  margin-right: 5%;
+  color: black;
 }
-
 
 ion-card {
   display: flex;
@@ -46,7 +45,7 @@ ion-card {
 }
 
 ion-button.button-small {
-  --padding-end: 0em
+  --padding-end: 0em;
 }
 
 .no-padding {
@@ -60,9 +59,9 @@ ion-button.button-small {
   display: block;
   border-radius: 50%;
   position: relative;
-  bottom: calc(-1*40px);
+  bottom: calc(-1 * 40px);
   background-color: #fff;
-  z-index:1;
+  z-index: 1;
 }
 
 .avatar-user-group {
@@ -71,12 +70,12 @@ ion-button.button-small {
   margin: 0 auto;
   display: block;
   border-radius: 50%;
-  border: 8px solid  #50976a;
+  border: 8px solid #50976a;
   background-color: #fff;
   position: absolute;
   left: 10%;
   top: 32%;
-  z-index:2;
+  z-index: 2;
 }
 
 .avatar-partner {
@@ -85,10 +84,10 @@ ion-button.button-small {
   margin: 0 auto;
   display: block;
   border-radius: 50%;
-  border: 8px solid  #50976a;
+  border: 8px solid #50976a;
   background-color: #fff;
   position: absolute;
- left:40%;
+  left: 40%;
   top: 32%;
   z-index: 1;
 }
@@ -99,7 +98,7 @@ ion-button.button-small {
   left: 108px;
 }
 
-.user-level-group{
+.user-level-group {
   display: block;
   top: 32%;
   left: 10%;
@@ -127,30 +126,30 @@ ion-button.button-small {
   border-radius: 8px;
 
   .user-meta {
-      padding-top: 40px;
+    padding-top: 40px;
 
-      .user-name {
-          font-size: 28px;
-          font-weight: 600;
-          color: #50976a;
-          display:inline-block;
-      }
-
-      .ages {
-          font-size: 21.5px;
-          font-weight: 600;
-          color: #949ea6;
-          text-transform: uppercase;
-          margin: 0 auto;
-      }
-
-      .avg-age {
-        font-size: 21.5px;
-        font-weight: 600;
-        color: #949ea6;
-        margin: 0 auto;
+    .user-name {
+      font-size: 28px;
+      font-weight: 600;
+      color: #50976a;
+      display: inline-block;
     }
-  }  
+
+    .ages {
+      font-size: 21.5px;
+      font-weight: 600;
+      color: #949ea6;
+      text-transform: uppercase;
+      margin: 0 auto;
+    }
+
+    .avg-age {
+      font-size: 21.5px;
+      font-weight: 600;
+      color: #949ea6;
+      margin: 0 auto;
+    }
+  }
 }
 
 .button-edit {
@@ -174,35 +173,37 @@ ion-button.button-small {
 
 //------WAVES---------
 
-
-html, body { height: 100%; }
+html,
 body {
-  background:radial-gradient(ellipse at center, rgba(255,254,234,1) 0%, rgba(255,254,234,1) 35%, #B7E8EB 100%);
+  height: 100%;
+}
+body {
+  background: radial-gradient(ellipse at center, rgba(255, 254, 234, 1) 0%, rgba(255, 254, 234, 1) 35%, #b7e8eb 100%);
   overflow: hidden;
 }
 
-.ocean { 
+.ocean {
   height: 60%;
-  width:100%;
-  position:fixed;
-  bottom:0;
-  left:0;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
   background: #80c898;
 }
 
 .wave {
-  background: url(../../../assets/wave.svg) repeat-x; 
+  //background: url(../../../assets/wave.svg) repeat-x;
   position: absolute;
   top: -198px;
   width: 6400px;
   height: 198px;
-  animation: wave 7s cubic-bezier( 0.36, 0.45, 0.63, 0.53) infinite;
+  animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
   transform: translate3d(0, 0, 0);
 }
 
 .wave:nth-of-type(2) {
   top: -175px;
-  animation: wave 7s cubic-bezier( 0.36, 0.45, 0.63, 0.53) -.125s infinite, swell 7s ease -1.25s infinite;
+  animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -0.125s infinite, swell 7s ease -1.25s infinite;
   opacity: 1;
 }
 
@@ -216,11 +217,12 @@ body {
 }
 
 @keyframes swell {
-  0%, 100% {
-    transform: translate3d(0,-20px,0);
+  0%,
+  100% {
+    transform: translate3d(0, -20px, 0);
   }
   50% {
-    transform: translate3d(0,5px,0);
+    transform: translate3d(0, 5px, 0);
   }
 }
 
@@ -228,75 +230,94 @@ body {
 
 .loading {
   font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
-  text-transform:uppercase;
-  
-  width:150px;
-  text-align:center;
-  line-height:50px;
-  
-  position:absolute;
-  left:0;right:0;top:50%;
-  margin:auto;
-  transform:translateY(-50%);
+  text-transform: uppercase;
+
+  width: 150px;
+  text-align: center;
+  line-height: 50px;
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  margin: auto;
+  transform: translateY(-50%);
 }
 
 .loading span {
-  position:relative;
-  z-index:999;
-  color:#fff;
+  position: relative;
+  z-index: 999;
+  color: #fff;
 }
 .loading:before {
-  content:'';
-  background:#80c898;
-  width:100px;
-  height:36px;
-  display:block;
-  position:absolute;
-  top:0;left:0;right:0;bottom:0;
-  margin:auto;
-  
-  animation:4s loadingBefore infinite ease-in-out;
+  content: "";
+  background: #80c898;
+  width: 100px;
+  height: 36px;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+
+  animation: 4s loadingBefore infinite ease-in-out;
 }
 
 @keyframes loadingBefore {
-  0%   {transform:translateX(-4px);}
-  50%  {transform:translateX(4px);}
-  100% {transform:translateX(-4px);}
+  0% {
+    transform: translateX(-4px);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  100% {
+    transform: translateX(-4px);
+  }
 }
 
-
 .loading:after {
-  content:'';
-  background:#1f683f;
-  width:14px;
-  height:45px;
-  display:block;
-  position:absolute;
-  top:0;left:0;right:0;bottom:0;
-  margin:auto;
-  opacity:.5;
-  
-  animation:4s loadingAfter infinite ease-in-out;
+  content: "";
+  background: #1f683f;
+  width: 14px;
+  height: 45px;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  opacity: 0.5;
+
+  animation: 4s loadingAfter infinite ease-in-out;
 }
 
 @keyframes loadingAfter {
-  0%   {transform:translateX(-50px);}
-  50%  {transform:translateX(50px);}
-  100% {transform:translateX(-50px);}
+  0% {
+    transform: translateX(-50px);
+  }
+  50% {
+    transform: translateX(50px);
+  }
+  100% {
+    transform: translateX(-50px);
+  }
 }
 
-.loading{
+.loading {
   margin-top: 5%;
   margin-bottom: 3%;
 }
 
-ion-slides{
-  width:85%;
+ion-slides {
+  width: 85%;
   margin-bottom: 2%;
 }
-rd-slider{
-  width:85%;
+rd-slider {
+  width: 85%;
 }
-h2{
+h2 {
   color: #50976a;
 }
