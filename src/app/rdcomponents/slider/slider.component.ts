@@ -9,7 +9,7 @@ import { BadgeInfoComponent } from './badge-info/badge-info.component';
   styleUrls: ['./slider.component.scss'],
 })
 export class SliderComponent implements OnInit {
-  @Input() route: string; // Indica in quale videata è utilizzato ('profile' o 'dinner-details')
+  @Input() route: string; // Indica in quale videata è utilizzato ('profile' o 'dinner-details' o 'contacts')
   @Input() objectsArray = [];
   @Input() type: string;
   @Input() descriptionVoid: string;

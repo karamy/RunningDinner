@@ -60,7 +60,7 @@ export class ContactsPage implements OnInit {
               this.contactList = this.contactsService.compareContacts(remoteMathContacts, localContacts);
               // Se aggiunti/rimossi contatti mostro un toast
               if (tempList.length !== this.contactList.length) {
-                this.showToast(tempList);
+                //this.showAddedContactsToast(tempList); Per ora rimosso perchè all'apertura dell'app lo faceva sempre
               }
 
               // Fine della sincronizzazione, tolgo ion-skeleton
@@ -104,7 +104,7 @@ export class ContactsPage implements OnInit {
   }
 
   // Mostro un toast se cambiamento nei contatti
-  showToast(tempList) {
+  showAddedContactsToast(tempList) {
     const diff = (this.contactList.length - tempList.length);
     let message: string;
     if (diff > 0) {

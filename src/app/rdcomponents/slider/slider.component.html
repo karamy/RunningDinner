@@ -19,7 +19,8 @@
         </ion-slides>
 
         <!-- Se profile applico i filtri 'owned' e 'notOwned' -->
-        <ion-slides [options]="slideOpts" *ngIf="objectsArray.length > 0 && route === 'profile'">
+        <ion-slides [options]="slideOpts"
+          *ngIf="objectsArray.length > 0 && (route === 'profile' || route === 'contacts')">
           <ion-slide *ngFor="let badge of objectsArray | badgeFilterPipe:'owned'">
             <ion-avatar>
               <img [src]=badge.badge_photo (click)="onBadgeClick($event, badge)" />

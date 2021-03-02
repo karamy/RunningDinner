@@ -1,15 +1,15 @@
 <!-- Ho dovuto impostare altezza fissa > 100px altrimenti me lo faceva apparire sotto, da sistemare  -->
 <div class="wrapper" style="height: 200px; overflow-y: scroll;">
 
-  <!-- gestione badge in profile -->
-  <ion-grid *ngIf=" route === 'profile'">
+  <!-- gestione badge in profile o contacts -->
+  <ion-grid *ngIf="route === 'profile' || route === 'contacts'">
     <ion-row>
       <ion-col class=" ion-text-center">
         <ion-avatar style="margin: auto;">
           <img *ngIf="!badge.progress" [src]=badge.badge_photo style="filter: grayscale(1)" />
           <img *ngIf="badge.progress" [src]=badge.badge_photo />
         </ion-avatar>
-        <p>{{badge.help}}</p>
+        <p *ngIf="badge.help">{{badge.help}}</p>
         <p>{{badge.description}}</p>
       </ion-col>
     </ion-row>

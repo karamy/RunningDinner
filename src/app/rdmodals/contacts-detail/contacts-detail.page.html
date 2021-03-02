@@ -12,21 +12,9 @@
   </div>
 </div>
 
-<!-- Nessun badge -->
-<ion-card *ngIf="contactBadges.length === 0" style="margin-bottom: 2.5%;">
-  <ion-grid>
-    <ion-row>
-      <ion-col class="ion-text-center">
-        <h3>Nessun badge posseduto</h3>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-</ion-card>
-
 <!-- Badges -->
-<rd-slider
-  [objectsArray]="paramsService.getParams().groupId > 0 ? badgesService.getGroupBadges() : badgesService.getUserBadgesData()"
-  [type]="'badge'" [descriptionVoid]="'Nessun badge presente'" [route]="'profile'">
+<rd-slider [objectsArray]="contactBadges" [type]="'badge'" [descriptionVoid]="'Il contatto non possiede alcun badge'"
+  [route]="'contacts'">
 </rd-slider>
 
 <!-- Aggiunta a gruppo -->
