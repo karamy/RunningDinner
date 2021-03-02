@@ -24,33 +24,10 @@
 </ion-card>
 
 <!-- Badges -->
-<ion-card *ngIf="contactBadges.length > 0">
-  <ion-grid>
-    <ion-row style="text-align: center;" class="no-padding">
-      <ion-col style="padding-top: 0%;">
-        <p>Badges del contatto</p>
-      </ion-col>
-    </ion-row>
-    <ion-row style="padding-bottom: 2%;">
-      <ion-col class="no-padding">
-        <ion-card *ngFor="let badge of contactBadges" style="margin: 2.5%;">
-          <ion-grid>
-            <ion-row style="align-items: center;" class="no-padding">
-              <ion-col size="3">
-                <ion-avatar>
-                  <img [src]=badge.badge_photo />
-                </ion-avatar>
-              </ion-col>
-              <ion-col>
-                <p>{{badge.description}}</p>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-</ion-card>
+<rd-slider
+  [objectsArray]="paramsService.getParams().groupId > 0 ? badgesService.getGroupBadges() : badgesService.getUserBadgesData()"
+  [type]="'badge'" [descriptionVoid]="'Nessun badge presente'" [route]="'profile'">
+</rd-slider>
 
 <!-- Aggiunta a gruppo -->
 <ion-card *ngIf="!paramsService.getParams().groupId" style="margin-bottom: 2.5%;">

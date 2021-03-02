@@ -23,10 +23,10 @@
     </div>
   </div>
   <div *ngIf="!syncInProgress">
-    <div *ngIf="myDinner">
+    <div class="dinner" *ngIf="myDinner">
       <rd-my-dinner (click)="goToDinner(myDinner)" [dinner]="myDinner"></rd-my-dinner>
     </div>
-    <h1>Cronologia Cene</h1>
+    <h2>Cronologia Cene</h2>
     <div *ngIf="dinnerHistoryList">
       <div *ngFor="let dinner of dinnerHistoryList">
         <rd-my-dinner (click)="goToDinnerWinner(dinner)" [dinner]="dinner"></rd-my-dinner>

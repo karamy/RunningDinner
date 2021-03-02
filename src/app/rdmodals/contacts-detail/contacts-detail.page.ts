@@ -3,9 +3,11 @@ import { ModalController, AlertController } from '@ionic/angular';
 import { ContactsService } from '../../home/tabs/contacts/contacts.service';
 import { RDToastService } from 'src/app/rdtoast.service';
 import { RDParamsService } from 'src/app/rdparams.service';
-import { BadgesService, UserBadge } from 'src/app/home/profile/badges.service';
+import { UserBadge } from 'src/app/home/profile/badges.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { PermissionsService } from 'src/app/auth/permissions.service';
+import { BadgesService } from '../../home/profile/badges.service';
+
 
 @Component({
   selector: 'app-contacts-detail',
@@ -22,7 +24,7 @@ export class ContactsDetailPage implements OnInit {
 
   constructor(private modalCtrl: ModalController,
     private contactsService: ContactsService,
-    private badgesService: BadgesService,
+    public badgesService: BadgesService,
     private rdToast: RDToastService,
     public paramsService: RDParamsService, // Utilizzato nell'html della pagina, non rimuovere
     private alertController: AlertController,

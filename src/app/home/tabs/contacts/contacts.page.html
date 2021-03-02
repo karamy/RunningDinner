@@ -18,8 +18,10 @@
       <ion-avatar>
         <img [src]=" contact.imageUrl" />
       </ion-avatar>
-      <p>{{contact.name}}</p>
+      <h1 class="name">{{contact.name}}</h1>
+      <ion-icon class="group" *ngIf="contact.isInGroup" name="people-circle-outline"></ion-icon>
     </ion-item>
+    <hr>
   </ion-list>
   <ion-list *ngIf="syncInProgress">
     <ion-item *ngFor="let n of [0,1,2,3,4,5,6,7]">
