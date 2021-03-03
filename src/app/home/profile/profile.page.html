@@ -20,7 +20,7 @@
     <div>
       <!-- Foto Profilo -->
       <div style="height: 130px;position: relative;">
-        <ion-avatar [class.avatar]="!profileService.getPartner()"
+        <ion-avatar (click)="onProfilelick()" [class.avatar]="!profileService.getPartner()"
           [class.avatar-user-group]="profileService.getPartner()">
           <img [src]="user.profile_photo">
         </ion-avatar>
