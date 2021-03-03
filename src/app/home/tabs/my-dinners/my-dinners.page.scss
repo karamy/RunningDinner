@@ -12,9 +12,7 @@ ion-title{
 }
 ion-img{
     width: 40px;
-    position:absolute;
-    top:20%;
-    left:3%;
+    
 }
 ion-icon{
     color:white;
@@ -24,7 +22,7 @@ h2 {
     text-align:center;
   }
   .dinner{
-      border: 5px solid #50976a;
+      background: linear-gradient(rgba(80, 151, 106, 0.7) , #fff 100%);
       margin-top:3%;
       border-radius:20px;
   }

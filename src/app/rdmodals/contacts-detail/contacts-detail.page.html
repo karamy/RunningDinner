@@ -18,13 +18,25 @@
 </rd-slider>
 
 <!-- Aggiunta a gruppo -->
-<ion-card *ngIf="!paramsService.getParams().groupId" style="margin-bottom: 2.5%;">
+<ion-card class="footer-card" *ngIf="!paramsService.getParams().groupId" style="margin-bottom: 2.5%;">
   <ion-grid>
     <ion-row class="ion-align-items-center">
       <ion-col class="ion-text-center">
-        <ion-button *ngIf="isInGroup === false" fill="clear" (click)="onAddToGroupRequest()">Aggiungi a gruppo
+        <ion-button class="addbutton" *ngIf="isInGroup === false" fill="clear" (click)="onAddToGroupRequest()">Aggiungi
+          a gruppo
         </ion-button>
         <h3 *ngIf="isInGroup === true" style="margin-top: 10px;">{{contactName}} è già in un gruppo</h3>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-card>
+
+<!-- Se sei già in un gruppo -->
+<ion-card class="footer-card" *ngIf="paramsService.getParams().groupId" style="margin-bottom: 2.5%;">
+  <ion-grid>
+    <ion-row class="ion-align-items-center">
+      <ion-col class="ion-text-center">
+        <h3 style="margin-top: 10px;">Sei già in un gruppo</h3>
       </ion-col>
     </ion-row>
   </ion-grid>

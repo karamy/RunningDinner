@@ -2,17 +2,15 @@ body{
     font-family: "Ubuntu-Italic", "Lucida Sans", helvetica, sans;
   }
   
-  .newmsg{
-    display:inline-block;
-    width:60%;
-  }
-  
   ion-icon{
     font-size: 1.5em;
     color:#9CC7AE;
   }
-  
-  .footer-button{
+
+  .send{
+    font-size:2em;
+  }
+  .sendbutton{
     float:right;
   }
   
@@ -95,5 +93,18 @@ body{
     margin-left: 0;
     margin-right: -38px;	
   }
+
+  ion-textarea{
+    border-radius: 7px;
+    margin-left: 5%;
+    --padding-start: 20px;
+    margin-top:2.5%;
+    max-height: 100px;
+    max-width: 80%;
+  }
+ 
+ 
+  
+  
 
  

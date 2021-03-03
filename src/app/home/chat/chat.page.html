@@ -1,14 +1,12 @@
-<ion-header>
+<ion-header class="ion-no-border">
   <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home/tabs/my-dinners"></ion-back-button>
+    <ion-buttons slot="secondary">
+      <ion-back-button text="Indietro" defaultHref="/home/tabs/my-dinners"></ion-back-button>
     </ion-buttons>
-    <ion-title>chat</ion-title>
     <ion-buttons slot="primary">
-      <ion-button shape="round" size="large" slot="icon-only" (click)="onReinitChat()">
+      <ion-button shape="round" size="large" (click)="onReinitChat()">
         <ion-icon size="large" name="refresh-circle-outline"></ion-icon>
       </ion-button>
-      <rd-profile></rd-profile>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -44,16 +42,13 @@
       </ion-item>
     </ion-list>
   </div>
-
 </ion-content>
 <ion-footer>
-  <form>
-    <ion-toolbar>
-      <ion-input [(ngModel)]="newMsgText" name="newmessage" class="newmsg" placeholder="Write your message ..." #newmsg
-        (keyup.enter)="sendMsg()"></ion-input>
-      <ion-button (click)="sendMsg()" [hidden]="!newMsgText" class="footer-button">
-        <ion-icon name="send-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-toolbar>
-  </form>
+  <ion-toolbar color="primary">
+    <ion-textarea [(ngModel)]="newMsgText" name="newmessage" class="newmsg" placeholder="Write your message ..." #newmsg
+      type="text" autoGrow="true" rows="1" maxLength="200"></ion-textarea>
+    <ion-button class="sendbutton" slot="primary" (click)="sendMsg()" [disabled]="!newMsgText">
+      <ion-icon class="send" name="arrow-up-circle"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
 </ion-footer>
