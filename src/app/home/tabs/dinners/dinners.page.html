@@ -37,6 +37,11 @@
       <div *ngFor="let n of [0]">
         <rd-dinner [dinner]="" [isSkeleton]="true"></rd-dinner>
       </div>
+
+      <!-- Se non ci sono cene aggiungo uno skeleton in più per riempire la schermata -->
+      <div *ngIf="!dinnerList || !dinnerList.length">
+        <rd-dinner [dinner]="" [isSkeleton]="true"></rd-dinner>
+      </div>
     </ion-list>
   </div>
   <ion-infinite-scroll threshold="1%" (ionInfinite)="loadDinners($event, true, 'infinite', true)">
