@@ -132,12 +132,16 @@ export class DinnersService {
   // Aggiorna la myDinner in localStorage
   private async writeMyDinner(myDinner: Dinner) {
     this.readMyDinner();
+
     // Se già cachata mantengo la stessa immagine, altrimenti ne genero una casuale
-    if (!this._myDinner) {
-      myDinner.image = this.assignDinnerImage(myDinner);
-    } else {
-      myDinner.image = this._myDinner.image;
+    if (myDinner) {
+      if (!this._myDinner) {
+        myDinner.image = this.assignDinnerImage(myDinner);
+      } else {
+        myDinner.image = this._myDinner.image;
+      }
     }
+
     await this.rdStorage.setItem('myDinner', JSON.stringify(myDinner));
     await this.readMyDinner();
   }
@@ -839,6 +843,7 @@ export class DinnersService {
   // Aggiorna la dinnerHistory in localStorage
   private async writeDinnerHistory(dinnerHistory: Dinner[]) {
     this.readDinnerHistory();
+
     // Se già cachata mantengo la stessa immagine, altrimenti ne genero una casuale
     for (let i = 0; i < dinnerHistory.length; i++) {
       const dinnerCached = this._dinnerHistory.find(x => x.id === dinnerHistory[i].id);
