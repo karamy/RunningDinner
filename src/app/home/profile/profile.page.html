@@ -27,7 +27,8 @@
         <ion-avatar *ngIf="profileService.getPartner()" class="avatar-partner">
           <img [src]="profileService.getPartner().profile_photo">
         </ion-avatar>
-        <ion-button *ngIf="editMode" color="light" fill="clear" class="button-edit" (click)="editImage()">
+        <ion-button *ngIf="editMode" color="black" style="z-index: 99;" fill="clear" class="button-edit"
+          (click)="editImage()">
           <ion-icon slot="icon-only" name="create-outline"></ion-icon>
         </ion-button>
       </div>
