@@ -166,7 +166,12 @@ export class AuthService {
   // ma voglio comunque disattivare le notifiche push
   async doLogout() {
     await this.spinner.create();
-    this.http.post(this.rdConstants.getApiRoute('logout'), { userId: this.getUserData().userid })
+
+    const logoutData = {
+      userId: this.getUserData().userid,
+      refreshToken: this.getRefreshToken()
+    }
+    this.http.post(this.rdConstants.getApiRoute('logout'), logoutData)
       .toPromise()
       .then(
         async () => {

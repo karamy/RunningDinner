@@ -76,7 +76,7 @@ export class BadgesService {
     userBadges = this.convertImagesToJpeg(userBadges);
     userBadges = this.setDescriptionProgress(userBadges);
     await this.rdStorage.setItem('badges', JSON.stringify(userBadges));
-    this.readUserBadges();
+    await this.readUserBadges();
   }
 
   // Legge gli userBadges presenti in localStorage e li carica nel Service
@@ -112,7 +112,7 @@ export class BadgesService {
   }
 
   // Ottengo da DB i badges del Partner
-  async getPartnerBadges(userId: number) {
+  getPartnerBadges(userId: number) {
     const groupId = this.paramsService.getParams().groupId;
     const dataToSend = {
       groupId: groupId,
@@ -123,8 +123,8 @@ export class BadgesService {
         .post(this.rdConstants.getApiRoute('getPartnerBadges'), dataToSend)
         .toPromise()
         .then(
-          res => {
-            this.writeGroupBadges(res as UserBadge[]);
+          async res => {
+            await this.writeGroupBadges(res as UserBadge[]);
             resolve();
           },
           () => {
@@ -155,7 +155,7 @@ export class BadgesService {
     }
 
     await this.rdStorage.setItem('groupBadges', JSON.stringify(groupBadges));
-    this.readGroupBadges();
+    await this.readGroupBadges();
   }
 
   // Legge il parametro groupBadges e lo carica nel Service
